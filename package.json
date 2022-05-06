@@ -48,7 +48,6 @@
     "class-validator": "^0.13.2",
     "color-name": "^1.1.4",
     "compression": "^1.7.4",
-    "csurf": "^1.11.0",
     "discord-api-types": "^0.32.1",
     "dotenv": "^16.0.0",
     "helmet": "^5.0.2",

@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 
 import { json, urlencoded } from 'express';
-import csurf from 'csurf';
 import compression from 'compression';
 
 import { AppModule } from './modules/app/app.module';
@@ -16,11 +15,9 @@ async function bootstrap() {
   app.enableCors();
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
-  app.use(csurf());
   app.use(compression());
 
   setupSwagger(app);
-
 
   await app.listen(configService.get<number>('PORT'));
 }

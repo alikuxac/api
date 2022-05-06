@@ -19,7 +19,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,test}/**/*.ts\" --fix",
+    "lint": "eslint \"{src,apps}/**/*.ts\" --fix",
     "prepare": "is-ci || husky install"
   },
   "dependencies": {
@@ -64,12 +64,12 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
-    "swagger-ui-express": "^4.3.0",
     "typeorm": "^0.3.6"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.4",
     "@commitlint/config-conventional": "^16.2.4",
+    "@compodoc/compodoc": "^1.1.19",
     "@nestjs/cli": "^8.2.5",
     "@nestjs/schematics": "^8.0.11",
     "@nestjs/testing": "^8.4.4",

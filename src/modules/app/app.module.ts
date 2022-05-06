@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ScheduleModule } from '@nestjs/schedule';
+// import { ScheduleModule } from '@nestjs/schedule';
 
 import Joi from 'joi';
 
@@ -19,7 +19,7 @@ import { HealthModule } from '../health/health.module';
         PORT: Joi.number().default(3000),
       }),
     }),
-    ScheduleModule.forRoot(),
+    // ScheduleModule.forRoot(),
     HealthModule,
   ],
   controllers: [AppController],

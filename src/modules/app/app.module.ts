@@ -32,6 +32,7 @@ import { SharedModule } from '#modules/shared/shared.module';
         DB_NAME: Joi.string().required(),
 
       }),
+    }),
     EventEmitterModule.forRoot({
       wildcard: true,
       maxListeners: 20,

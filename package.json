@@ -14,13 +14,15 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "compodoc": "npx compodoc -p tsconfig.doc.json",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps}/**/*.ts\" --fix",
-    "prepare": "is-ci || husky install"
+    "lint": "eslint \"{src}/**/*.ts\" --fix",
+    "prepare": "is-ci || husky install",
+    "test": "echo no test"
   },
   "dependencies": {
     "@discordjs/rest": "^0.4.1",

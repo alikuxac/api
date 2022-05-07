@@ -7,7 +7,6 @@ import {
   TypeOrmHealthIndicator,
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
-import { ConfigService } from '@nestjs/config';
 
 @Controller('health')
 export class HealthController {
@@ -17,7 +16,6 @@ export class HealthController {
     private mongo: MongooseHealthIndicator,
     private typeorm: TypeOrmHealthIndicator,
     private memory: MemoryHealthIndicator,
-    private configService: ConfigService,
   ) {}
 
   @Get()
@@ -29,42 +27,23 @@ export class HealthController {
     ]);
   }
 
-  // @Get('mongoose')
-  // @HealthCheck()
-  // checkMongoose() {
-  //   return this.health.check([() => this.mongo.pingCheck('mongo')]);
-  // }
-
-  // @Get('typeorm')
-  // @HealthCheck()
-  // checkTypeorm() {
-  //   return this.health.check([() => this.typeorm.pingCheck('typeorm')]);
-  // }
-
-  // Url checker
-  @Get('danbot')
+  @Get('mongoose')
   @HealthCheck()
-  checkDanbot() {
-    return this.health.check([
-      () =>
-        this.http.pingCheck('danbot', 'https://panel.danbot.host', {
-          timeout: 1000,
-        }),
-    ]);
+  checkMongoose() {
+    return this.health.check([() => this.mongo.pingCheck('mongo')]);
   }
 
-  // @Get('kuttit')
-  // @HealthCheck()
-  // checkKuttit() {
-  //   return this.health.check([
-  //     () =>
-  //       this.http.pingCheck(
-  //         'kuttit',
-  //         this.configService.get<string>('KUTTIT_URL'),
-  //         {
-  //           timeout: 1000,
-  //         },
-  //       ),
-  //   ]);
-  // }
+  @Get('typeorm')
+  @HealthCheck()
+  checkTypeorm() {
+    return this.health.check([() => this.typeorm.pingCheck('typeorm')]);
+  }
+
+  @Get('memory')
+  @HealthCheck()
+  checkMemory() {
+    return this.health.check([
+      () => this.memory.checkHeap('memory_heap', 200 * 1024 * 1024),
+    ]);
+  }
 }

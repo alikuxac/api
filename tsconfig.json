@@ -23,6 +23,7 @@
       "#root/*": ["src/*"],
       "#assets/*": ["src/assets/*"],
       "#modules/*": ["src/modules/*"],
+      "#ptero/*": ["src/lib/ptero/*"],
       "#utils/*": ["src/utils/*"],
     }
   }

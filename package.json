@@ -9,6 +9,7 @@
     "#root/*": "./dist/*.js",
     "#assets/*": "./dist/assets/*.js",
     "#modules/*": "./dist/modules/*.js",
+    "#ptero/*": "./dist/lib/ptero/*.js",
     "#utils/*": "./dist/utils/*.js"
   },
   "scripts": {
@@ -106,7 +107,7 @@
     "typescript": "^4.6.4"
   },
   "lint-staged": {
-    "src/*": "yarn format"
+    "*.ts": "yarn format"
   },
   "config": {
     "commitizen": {

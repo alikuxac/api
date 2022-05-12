@@ -1,23 +1,11 @@
 import { Module } from '@nestjs/common';
 
+// Module
 import { SharedModule } from '#modules/shared/shared.module';
-
-// Controller
-import { MinecraftController } from './minecraft/minecraft.controller';
-import { TextController } from './text/text.controller';
-
-// Sevice
-import { MinecraftService } from './minecraft/minecraft.service';
-import { TextService } from './text/text.service';
+import { MinecraftModule } from './minecraft/minecraft.module';
+import { TextModule } from './text/text.module';
 
 @Module({
-  imports: [
-    SharedModule,
-  ],
-  controllers: [
-    MinecraftController,
-    TextController,
-  ],
-  providers: [MinecraftService, TextService],
+  imports: [SharedModule, MinecraftModule, TextModule],
 })
 export class PublicModule {}

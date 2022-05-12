@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 
 import { HealthModule } from '../health/health.module';
 import { SharedModule } from '#modules/shared/shared.module';
+import { PublicModule } from '#modules/public/public.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,7 +31,6 @@ import { SharedModule } from '#modules/shared/shared.module';
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
-
       }),
     }),
     EventEmitterModule.forRoot({
@@ -41,6 +41,7 @@ import { SharedModule } from '#modules/shared/shared.module';
     ScheduleModule.forRoot(),
     HealthModule,
     SharedModule,
+    PublicModule,
   ],
   controllers: [AppController],
   providers: [AppService],

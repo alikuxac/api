@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 
 import { json, urlencoded } from 'express';
-import * as compression from 'compression';
+import compression from 'compression';
 
 import { AppModule } from './modules/app/app.module';
 

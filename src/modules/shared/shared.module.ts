@@ -32,8 +32,8 @@ import { MongooseModule } from '@nestjs/mongoose';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         uri: config.get<string>('MONGO_URI'),
-        connectionName: 'ali-bot',
-        dbName: 'ali-bot',
+        connectionName: 'discordbot',
+        dbName: 'discordbot',
       }),
     }),
 
@@ -43,8 +43,8 @@ import { MongooseModule } from '@nestjs/mongoose';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         uri: config.get('MONGO_URI'),
-        connectionName: 'ali-api',
-        dbName: 'ali-api',
+        connectionName: 'api',
+        dbName: 'api',
       }),
     }),
   ],

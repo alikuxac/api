@@ -60,6 +60,7 @@
     "minecraft-server-util": "^5.2.9",
     "mongoose": "^6.3.2",
     "nanoid": "^3.3.4",
+    "nestjs-i18n": "^9.0.12",
     "nestjs-supabase-auth": "^1.0.9",
     "nodemailer": "^6.7.5",
     "passport": "^0.5.2",

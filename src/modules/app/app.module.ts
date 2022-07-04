@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { MulterModule } from '@nestjs/platform-express';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import Joi from 'joi';
@@ -37,6 +38,12 @@ import { PublicModule } from '#modules/public/public.module';
       wildcard: true,
       maxListeners: 20,
       verboseMemoryLeak: true,
+    }),
+    MulterModule.register({
+      limits: {
+        files: 5,
+        fileSize: 10 * 1024 * 1024,
+      },
     }),
     ScheduleModule.forRoot(),
     HealthModule,

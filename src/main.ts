@@ -6,6 +6,7 @@ import compression from 'compression';
 
 import { AppModule } from './modules/app/app.module';
 
+import { RedisService } from './modules/shared/redis/redis.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -18,7 +19,13 @@ async function bootstrap() {
 
   // Initialize Service
 
+  const redis = await app.get<RedisService>(RedisService);
+  await redis.connect();
+
   await app.listen(configService.get<number>('PORT'));
 }
 
-bootstrap();
+bootstrap().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

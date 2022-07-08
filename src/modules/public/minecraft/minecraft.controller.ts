@@ -1,8 +1,15 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { MinecraftService } from './minecraft.service';
 import { javaDto, parseAddressDto, queryDto, serverDto } from './minecraft.dto';
 
-@Controller('minecraft')
+@Controller()
+@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class MinecraftController {
   constructor(private readonly minecraftService: MinecraftService) {}
 

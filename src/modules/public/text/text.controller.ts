@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { TextService } from './text.service';
 
-@Controller('text')
+@Controller()
 export class TextController {
   constructor(private readonly textService: TextService) {}
 
@@ -21,10 +21,7 @@ export class TextController {
   }
 
   @Get('base64')
-  base64(
-    @Query('text') text: string,
-    @Query('action') action: 'encode' | 'decode',
-  ) {
+  base64(@Query('text') text: string, @Query('action') action: string) {
     return this.textService.base64(text, action);
   }
 }

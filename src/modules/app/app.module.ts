@@ -32,6 +32,10 @@ import { PublicModule } from '#modules/public/public.module';
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+
+        // Redis
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().required(),
       }),
     }),
     EventEmitterModule.forRoot({

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 
 import mores from '../../../assets/morse.json';
 import type { ApiJsonString } from '../../../interfaces/json';
@@ -32,7 +32,13 @@ export class TextService {
       .join(' ');
   }
 
-  base64(text: string, action: 'encode' | 'decode') {
+  base64(text: string, action: string) {
+    if (!['encode', 'decode'].includes(action)) {
+      throw new HttpException(
+        'Invalid action. Must be encode or decode',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     switch (action) {
       case 'encode':
         return Buffer.from(text).toString('base64');

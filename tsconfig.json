@@ -20,11 +20,33 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "paths": {
-      "#root/*": ["src/*"],
-      "#assets/*": ["src/assets/*"],
-      "#modules/*": ["src/modules/*"],
-      "#ptero/*": ["src/lib/ptero/*"],
-      "#utils/*": ["src/utils/*"],
+      "#root/*": [
+        "src/*"
+      ],
+      "#assets/*": [
+        "src/assets/*"
+      ],
+      "#modules/*": [
+        "src/modules/*"
+      ],
+      "#ptero/*": [
+        "src/lib/ptero/*"
+      ],
+      "#utils/*": [
+        "src/utils/*"
+      ],
+      "@api/ptero": [
+        "libs/ptero/src"
+      ],
+      "@api/ptero/*": [
+        "libs/ptero/src/*"
+      ],
+      "@api/hypixel": [
+        "libs/hypixel/src"
+      ],
+      "@api/hypixel/*": [
+        "libs/hypixel/src/*"
+      ]
     }
   }
 }

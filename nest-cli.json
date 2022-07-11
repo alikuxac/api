@@ -1,7 +1,26 @@
 {
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
-  "projects": {},
+  "projects": {
+    "ptero": {
+      "type": "library",
+      "root": "libs/ptero",
+      "entryFile": "index",
+      "sourceRoot": "libs/ptero/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/ptero/tsconfig.lib.json"
+      }
+    },
+    "hypixel": {
+      "type": "library",
+      "root": "libs/hypixel",
+      "entryFile": "index",
+      "sourceRoot": "libs/hypixel/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/hypixel/tsconfig.lib.json"
+      }
+    }
+  },
   "compilerOptions": {
     "webpack": true
   }

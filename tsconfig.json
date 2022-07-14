@@ -35,17 +35,23 @@
       "#utils/*": [
         "src/utils/*"
       ],
-      "@api/ptero": [
+      "@lib/ptero": [
         "libs/ptero/src"
       ],
-      "@api/ptero/*": [
+      "@lib/ptero/*": [
         "libs/ptero/src/*"
       ],
-      "@api/hypixel": [
+      "@lib/hypixel": [
         "libs/hypixel/src"
       ],
-      "@api/hypixel/*": [
+      "@lib/hypixel/*": [
         "libs/hypixel/src/*"
+      ],
+      "@lib/casl": [
+        "libs/casl/src"
+      ],
+      "@lib/casl/*": [
+        "libs/casl/src/*"
       ]
     }
   }

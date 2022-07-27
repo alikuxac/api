@@ -32,7 +32,7 @@ export interface NodesPagination {
   per_page: number;
   current_page: number;
   total_pages: number;
-  links: {};
+  links: Record<string, any>;
 }
 
 export interface NodesMeta {

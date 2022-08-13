@@ -29,22 +29,19 @@
       "#modules/*": [
         "src/modules/*"
       ],
-      "#ptero/*": [
-        "src/lib/ptero/*"
-      ],
       "#utils/*": [
         "src/utils/*"
       ],
-      "@lib/ptero": [
+      "@ptero": [
         "libs/ptero/src"
       ],
-      "@lib/ptero/*": [
+      "@ptero/*": [
         "libs/ptero/src/*"
       ],
-      "@lib/hypixel": [
+      "@hypixel": [
         "libs/hypixel/src"
       ],
-      "@lib/hypixel/*": [
+      "@hypixel/*": [
         "libs/hypixel/src/*"
       ],
       "@lib/casl": [

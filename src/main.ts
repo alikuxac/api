@@ -6,7 +6,7 @@ import compression from 'compression';
 
 import { AppModule } from './modules/app/app.module';
 
-import { RedisService } from './modules/shared/redis/redis.service';
+import { RedisService } from '@shared/redis/redis.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

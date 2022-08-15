@@ -41,6 +41,11 @@
   },
   "compilerOptions": {
     "webpack": true,
-    "assets": [{ "include": "i18n/**/*", "watchAssets": true }]
+    "assets": [
+      {
+        "include": "i18n/**/*",
+        "watchAssets": true
+      }
+    ]
   }
 }

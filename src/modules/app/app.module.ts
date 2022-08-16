@@ -10,7 +10,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { HealthModule } from '../health/health.module';
-import { SharedModule } from '#modules/shared/shared.module';
+import { SharedModule } from '@shared/shared.module';
 import { PublicModule } from '#modules/public/public.module';
 @Module({
   imports: [
@@ -36,6 +36,14 @@ import { PublicModule } from '#modules/public/public.module';
         // Redis
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
+
+        // S3
+        B2_ENDPOINT: Joi.string().required(),
+        B2_ACCESS_KEY_ID: Joi.string().required(),
+        B2_SECRET_ACCESS_KEY: Joi.string().required(),
+        R2_ENDPOINT: Joi.string().required(),
+        R2_ACCESS_KEY_ID: Joi.string().required(),
+        R2_SECRET_ACCESS_KEY: Joi.string().required(),
       }),
     }),
     EventEmitterModule.forRoot({

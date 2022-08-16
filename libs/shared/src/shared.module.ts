@@ -5,6 +5,9 @@ import { HttpModule } from '@nestjs/axios';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { RedisService } from './redis/redis.service';
+import { B2Service } from './b2/b2.service';
+import { R2Service } from './r2/r2.service';
+
 @Global()
 @Module({
   imports: [
@@ -56,7 +59,7 @@ import { RedisService } from './redis/redis.service';
       }),
     }),
   ],
-  providers: [RedisService],
-  exports: [RedisService],
+  providers: [RedisService, B2Service, R2Service],
+  exports: [RedisService, B2Service, R2Service],
 })
 export class SharedModule {}

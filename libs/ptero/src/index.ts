@@ -1,2 +1,1 @@
-export * from './ptero.module';
-export * from './ptero.service';
+export * from './client';

@@ -12,6 +12,8 @@ import { AppService } from './app.service';
 import { HealthModule } from '../health/health.module';
 import { SharedModule } from '@shared/shared.module';
 import { PublicModule } from '#modules/public/public.module';
+import { UserModule } from '#modules/user/user.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -61,6 +63,7 @@ import { PublicModule } from '#modules/public/public.module';
     HealthModule,
     SharedModule,
     PublicModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

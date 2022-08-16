@@ -1,7 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 
-import mores from '../../../assets/morse.json';
-import type { ApiJsonString } from '../../../interfaces/json';
+import mores from '#root/assets/morse.json';
+import type { ApiJsonString } from '#root/interfaces/json';
+import { base64TextDto } from './dto/text.dto';
 
 const morseJson: ApiJsonString = Object.assign({}, mores);
 
@@ -32,18 +33,18 @@ export class TextService {
       .join(' ');
   }
 
-  base64(text: string, action: string) {
-    if (!['encode', 'decode'].includes(action)) {
+  base64(dto: base64TextDto) {
+    if (!['encode', 'decode'].includes(dto.action)) {
       throw new HttpException(
         'Invalid action. Must be encode or decode',
         HttpStatus.BAD_REQUEST,
       );
     }
-    switch (action) {
+    switch (dto.action) {
       case 'encode':
-        return Buffer.from(text).toString('base64');
+        return Buffer.from(dto.text).toString('base64');
       case 'decode':
-        return Buffer.from(text, 'base64').toString('ascii');
+        return Buffer.from(dto.text, 'base64').toString('ascii');
     }
   }
 }

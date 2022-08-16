@@ -35,6 +35,6 @@ export class TextController {
 
   @Get('base64')
   base64(@Query() dto: base64TextDto) {
-    return this.textService.base64(dto.text, dto.action);
+    return this.textService.base64(dto);
   }
 }

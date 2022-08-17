@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MulterModule } from '@nestjs/platform-express';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RouterModule } from '@nestjs/core';
 
 import Joi from 'joi';
 
@@ -11,8 +12,9 @@ import { AppService } from './app.service';
 
 import { HealthModule } from '../health/health.module';
 import { SharedModule } from '@shared/shared.module';
-import { PublicModule } from '#modules/public/public.module';
 import { UserModule } from '#modules/user/user.module';
+
+import { routes } from './routes';
 
 @Module({
   imports: [
@@ -60,6 +62,7 @@ import { UserModule } from '#modules/user/user.module';
       },
     }),
     ScheduleModule.forRoot(),
+    RouterModule.register(routes),
     HealthModule,
     SharedModule,
     PublicModule,

@@ -6,7 +6,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { TextService } from './text.service';
-import { TextDto, base64TextDto } from './dto/text.dto';
+import { TextDto, base64TextDto } from './text.dto';
 
 @Controller()
 @UsePipes(

@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 
 import mores from '#root/assets/morse.json';
 import type { ApiJsonString } from '#root/interfaces/json';
-import { base64TextDto } from './dto/text.dto';
+import { base64TextDto } from './text.dto';
 
 const morseJson: ApiJsonString = Object.assign({}, mores);
 

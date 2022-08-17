@@ -77,7 +77,15 @@ export class UsersService {
     return await this.UserModel.findByIdAndUpdate(
       id,
       {
-        $set: dto,
+        $set: {
+          displayName: dto.displayName,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          banned: dto.banned,
+          isActive: dto.isActive,
+          isVerified: dto.isVerified,
+          sex: dto.sex,
+        },
       },
       {
         new: true,

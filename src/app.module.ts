@@ -49,6 +49,13 @@ import { routes } from './routes';
         R2_ENDPOINT: Joi.string().required(),
         R2_ACCESS_KEY_ID: Joi.string().required(),
         R2_SECRET_ACCESS_KEY: Joi.string().required(),
+
+        // Mailer
+        MAILER_HOST: Joi.string().required(),
+        MAILER_PORT: Joi.number().required(),
+        MAILER_USER: Joi.string().required(),
+        MAILER_PASS: Joi.string().required(),
+        MAILER_SECURE: Joi.boolean().required(),
       }),
     }),
     EventEmitterModule.forRoot({
@@ -66,6 +73,9 @@ import { routes } from './routes';
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
+        defaults: {
+          from: configService.get('MAILER_FROM'),
+        },
         transport: {
           host: configService.get('MAILER_HOST'),
           port: configService.get('MAILER_PORT'),

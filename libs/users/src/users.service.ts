@@ -34,7 +34,11 @@ export class UsersService {
    * @returns User
    */
   async findOne(id: string) {
-    return await this.UserModel.findById(id).exec();
+    const checkExistId = await this.exists(id);
+    if (!checkExistId) {
+      throw new HttpException('User not found', 404);
+    }
+    return await this.UserModel.findById(checkExistId).exec();
   }
 
   /**
@@ -74,8 +78,12 @@ export class UsersService {
    * @returns Updated user
    */
   async update(id: string, dto: updateUserDto) {
+    const checkExistId = await this.exists(id);
+    if (!checkExistId) {
+      throw new HttpException('User not found', 404);
+    }
     return await this.UserModel.findByIdAndUpdate(
-      id,
+      checkExistId,
       {
         $set: {
           displayName: dto.displayName,
@@ -100,6 +108,10 @@ export class UsersService {
    * @returns Updated user
    */
   async changePasswordUser(id: string, password: string) {
+    const checkExistId = await this.exists(id);
+    if (!checkExistId) {
+      throw new HttpException('User not found', 404);
+    }
     return await this.UserModel.findByIdAndUpdate(id, {
       $set: {
         password,

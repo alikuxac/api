@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, IsIn } from 'class-validator';
 
 export class TextDto {
   @IsString()
@@ -9,7 +9,7 @@ export class TextDto {
 
 export class base64TextDto extends TextDto {
   @IsString()
-  @MaxLength(255)
+  @IsIn(['encode', 'decode'])
   @IsNotEmpty()
   action: string;
 }

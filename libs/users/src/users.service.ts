@@ -3,10 +3,10 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 // Entity
-import { User } from '@users/entities/user.entity';
+import { User } from '@users/user.entity';
 
 // Dto
-import { createUserDto, updateUserDto } from '@users/dto/user.dto';
+import { createUserDto, updateUserDto } from '@users/user.dto';
 
 @Injectable()
 export class UsersService {

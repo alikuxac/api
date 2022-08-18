@@ -6,11 +6,10 @@
   "license": "MIT",
   "main": "dist/main.js",
   "imports": {
-    "#root/*": "./dist/*.js",
-    "#assets/*": "./dist/assets/*.js",
-    "#modules/*": "./dist/modules/*.js",
-    "#ptero/*": "./dist/lib/ptero/*.js",
-    "#utils/*": "./dist/utils/*.js"
+    "@root/*": "./dist/*.js",
+    "@assets/*": "./dist/assets/*.js",
+    "@modules/*": "./dist/modules/*.js",
+    "@utils/*": "./dist/utils/*.js"
   },
   "scripts": {
     "prebuild": "rimraf dist",
@@ -100,6 +99,7 @@
     "@types/lodash": "^4.14.182",
     "@types/multer": "^1.4.7",
     "@types/node": "^17.0.31",
+    "@types/nodemailer": "^6.4.5",
     "@types/passport-discord": "^0.1.6",
     "@types/passport-facebook": "^2.1.11",
     "@types/passport-github": "^1.1.7",

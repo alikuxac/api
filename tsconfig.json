@@ -20,16 +20,16 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "paths": {
-      "#root/*": [
+      "@root/*": [
         "src/*"
       ],
-      "#assets/*": [
+      "@assets/*": [
         "src/assets/*"
       ],
-      "#modules/*": [
+      "@modules/*": [
         "src/modules/*"
       ],
-      "#utils/*": [
+      "@utils/*": [
         "src/utils/*"
       ],
       "@ptero": [
@@ -44,10 +44,10 @@
       "@hypixel/*": [
         "libs/hypixel/src/*"
       ],
-      "@lib/casl": [
+      "@casl": [
         "libs/casl/src"
       ],
-      "@lib/casl/*": [
+      "@casl/*": [
         "libs/casl/src/*"
       ],
       "@shared": [
@@ -56,11 +56,41 @@
       "@shared/*": [
         "libs/shared/src/*"
       ],
+      "@bot": [
+        "libs/bot/src"
+      ],
+      "@bot/*": [
+        "libs/bot/src/*"
+      ],
+      "@forum": [
+        "libs/forum/src"
+      ],
+      "@forum/*": [
+        "libs/forum/src/*"
+      ],
       "@users": [
         "libs/users/src"
       ],
       "@users/*": [
         "libs/users/src/*"
+      ],
+      "@service": [
+        "libs/service/src"
+      ],
+      "@service/*": [
+        "libs/service/src/*"
+      ],
+      "@finance": [
+        "libs/finance/src"
+      ],
+      "@finance/*": [
+        "libs/finance/src/*"
+      ],
+      "@auth/auth": [
+        "libs/auth/src"
+      ],
+      "@auth/auth/*": [
+        "libs/auth/src/*"
       ]
     }
   }

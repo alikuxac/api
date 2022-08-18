@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MulterModule } from '@nestjs/platform-express';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RouterModule } from '@nestjs/core';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 import Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import { HealthModule } from '../health/health.module';
+import { HealthModule } from './modules/health/health.module';
 import { SharedModule } from '@shared/shared.module';
-import { UserModule } from '#modules/user/user.module';
+import { UserModule } from '@modules/user/user.module';
 
 import { routes } from './routes';
 
@@ -62,10 +63,23 @@ import { routes } from './routes';
       },
     }),
     ScheduleModule.forRoot(),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get('MAILER_HOST'),
+          port: configService.get('MAILER_PORT'),
+          secure: configService.get('MAILER_SECURE'),
+          auth: {
+            user: configService.get('MAILER_USER'),
+            pass: configService.get('MAILER_PASS'),
+          },
+        },
+      }),
+    }),
     RouterModule.register(routes),
     HealthModule,
     SharedModule,
-    PublicModule,
     UserModule,
   ],
   controllers: [AppController],

@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 import { UserSex } from '@users/enum/sex.enum';
+import { UserRoles } from '@users/enum/role.enum';
 
 @Schema({ collection: 'users', timestamps: true, versionKey: false, _id: true })
 export class User {
@@ -54,6 +55,9 @@ export class User {
 
   @Prop({ name: 'isVerified', type: Boolean, default: false })
   isVerified: boolean;
+
+  @Prop({ name: 'role', enum: UserRoles, default: UserRoles.MEMBER })
+  role: UserRoles;
 
   comparePassword(password: string) {
     return bcrypt.compareSync(password, this.password);

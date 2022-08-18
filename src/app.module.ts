@@ -59,6 +59,10 @@ import { routes } from './routes';
 
         // API
         HYPIXEL_KEY: Joi.string().required(),
+
+        // Admin
+        ADMIN_EMAIL: Joi.string().required(),
+        ADMIN_PASSWORD: Joi.string().required(),
       }),
     }),
     EventEmitterModule.forRoot({

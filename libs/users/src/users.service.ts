@@ -1,4 +1,5 @@
 import { Injectable, HttpException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -8,12 +9,36 @@ import { User } from '@users/user.entity';
 // Dto
 import { createUserDto, updateUserDto } from '@users/user.dto';
 
+// Enum
+import { UserSex } from '@users/enum/sex.enum';
+import { UserRoles } from '@users/enum/role.enum';
+
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly UserModel: Model<User>,
+    private readonly configService: ConfigService,
   ) {}
+
+  async init() {
+    const users = await this.findAll();
+    if (users.length === 0) {
+      const admin = new this.UserModel({
+        username: 'admin',
+        password: this.configService.get('ADMIN_PASSWORD'),
+        email: this.configService.get('ADMIN_EMAIL'),
+        displayName: 'Admin',
+        firstName: 'Admin',
+        lastName: 'Admin',
+        isActive: true,
+        isVerified: true,
+        role: UserRoles.ADMIN,
+        sex: UserSex.UNKNOWN,
+      });
+      return await admin.save();
+    }
+  }
 
   // Check if user exists
   async exists(id: string) {

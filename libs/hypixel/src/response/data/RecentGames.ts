@@ -14,6 +14,7 @@ export interface RecentGamesAtrribute {
 }
 
 export type RecentGamesBadRequest = FailedResponse;
+export type RecentGamesForbidden = FailedResponse;
 export type RecentGamesUnprocessableEntity = FailedResponse;
 export type RecentGamesFailed = FailedResponse;
 export type RecentGamesRateLimit = RateLimitResponse;

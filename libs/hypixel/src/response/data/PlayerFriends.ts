@@ -13,6 +13,7 @@ export interface PlayerFriendsAtrribute {
 }
 
 export type PlayerFriendsBadRequest = FailedResponse;
+export type PlayerFriendsForbidden = FailedResponse;
 export type PlayerFriendsUnprocessableEntity = FailedResponse;
 export type PlayerFriendsFailed = FailedResponse;
 export type PlayerFriendsRateLimit = RateLimitResponse;

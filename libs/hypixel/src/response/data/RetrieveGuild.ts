@@ -5,5 +5,6 @@ export interface RetrieveGuildSuccess extends BaseResponse {
 }
 
 export type RetrieveGuildBadRequest = FailedResponse;
+export type RetrieveGuildForbidden = FailedResponse;
 export type RetrieveGuildFailed = FailedResponse;
 export type RetrieveGuildRateLimit = RateLimitResponse;

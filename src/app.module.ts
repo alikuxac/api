@@ -56,6 +56,9 @@ import { routes } from './routes';
         MAILER_USER: Joi.string().required(),
         MAILER_PASS: Joi.string().required(),
         MAILER_SECURE: Joi.boolean().required(),
+
+        // API
+        HYPIXEL_KEY: Joi.string().required(),
       }),
     }),
     EventEmitterModule.forRoot({

@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '@users/user.entity';
 
 // Dto
-import { createUserDto, updateUserDto } from '@users/user.dto';
+import { createUserDto, updateUserDto, providerDto } from '@users/user.dto';
 
 // Enum
 import { UserSex } from '@users/enum/sex.enum';
@@ -82,6 +82,23 @@ export class UsersService {
    */
   async findByEmail(email: string) {
     return await this.UserModel.findOne({ email }).exec();
+  }
+
+  /**
+   *
+   * @param provider Provider name
+   * @param id provider id
+   * @returns
+   */
+  async findByProviderId(provider: string, id: string) {
+    return await this.UserModel.findOne({
+      providers: {
+        $elemMatch: {
+          provider,
+          providerId: id,
+        },
+      },
+    }).exec();
   }
 
   // Create user
@@ -203,5 +220,40 @@ export class UsersService {
         banned: true,
       },
     }).exec();
+  }
+
+  async linkUser(id: string, dto: providerDto) {
+    const checkExistId = await this.exists(id);
+    if (!checkExistId) {
+      throw new HttpException('User not found', 404);
+    }
+    return await this.UserModel.findByIdAndUpdate(id, {
+      $push: {
+        providers: {
+          provider: dto.provider,
+          providerId: dto.providerId,
+          name: dto.name,
+        },
+      },
+    }).exec();
+  }
+
+  async unlinkUser(id: string, provider: string) {
+    const checkExistId = await this.exists(id);
+    if (!checkExistId) {
+      throw new HttpException('User not found', 404);
+    }
+    const checkProvider = await this.UserModel.findById(id).exec();
+    if (checkProvider.providers.length === 0) {
+      throw new HttpException('No provider found', 404);
+    } else {
+      return await this.UserModel.findByIdAndUpdate(id, {
+        $pull: {
+          providers: {
+            provider,
+          },
+        },
+      }).exec();
+    }
   }
 }

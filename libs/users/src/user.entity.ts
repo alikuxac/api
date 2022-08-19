@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 
 import { UserSex } from '@users/enum/sex.enum';
 import { UserRoles } from '@users/enum/role.enum';
+import { UserProvider } from '@users/interfaces/providers.interface';
 
 @Schema({ collection: 'users', timestamps: true, versionKey: false, _id: true })
 export class User {
@@ -58,6 +59,9 @@ export class User {
 
   @Prop({ name: 'role', enum: UserRoles, default: UserRoles.MEMBER })
   role: UserRoles;
+
+  @Prop({ name: 'providers', type: Array<UserProvider>, default: [] })
+  providers: UserProvider[];
 
   comparePassword(password: string) {
     return bcrypt.compareSync(password, this.password);

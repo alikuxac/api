@@ -5,9 +5,13 @@ import {
   IsNotEmpty,
   IsOptional,
   IsEnum,
+  IsArray,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserSex } from '@users/enum/sex.enum';
+import { UserRoles } from '@users/enum/role.enum';
 
 export class createUserDto {
   @ApiProperty({ name: 'email', description: 'User email' })
@@ -43,32 +47,56 @@ export class createUserDto {
   @IsOptional()
   lastName?: string;
 
-  @ApiProperty({ default: false })
+  @ApiPropertyOptional({ default: false })
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
 
-  @ApiProperty({ default: false })
+  @ApiPropertyOptional({ default: false })
   @IsBoolean()
   @IsOptional()
   banned?: boolean;
 
-  @ApiProperty({ default: false })
+  @ApiPropertyOptional({ default: false })
   @IsBoolean()
   @IsOptional()
   isVerified?: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     default: UserSex.UNKNOWN,
     enum: UserSex,
   })
   @IsEnum(UserSex)
   @IsOptional()
   sex?: UserSex;
+
+  @ApiPropertyOptional()
+  @IsEnum(UserRoles)
+  role?: UserRoles;
+
+  @ApiPropertyOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => providerDto)
+  providers?: providerDto[];
 }
 
 export class updateUserDto extends createUserDto {
   @IsString()
   @IsOptional()
   id: string;
+}
+
+export class providerDto {
+  @IsString()
+  @IsNotEmpty()
+  providerId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  provider: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 }

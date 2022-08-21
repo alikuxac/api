@@ -2,6 +2,7 @@ import { Injectable, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { isEmail } from 'class-validator';
 
 // Entity
 import { User } from '@users/entities';
@@ -76,7 +77,9 @@ export class UsersService {
    * @returns User
    */
   async findByUsername(username: string) {
-    return await this.UserModel.findOne({ username }).exec();
+    return await this.UserModel.findOne({
+      username: username.toLowerCase(),
+    }).exec();
   }
 
   /**
@@ -85,6 +88,10 @@ export class UsersService {
    * @returns User
    */
   async findByEmail(email: string) {
+    const IsEmail = isEmail(email);
+    if (!IsEmail) {
+      throw new HttpException('Email is not valid', 400);
+    }
     return await this.UserModel.findOne({ email }).exec();
   }
 

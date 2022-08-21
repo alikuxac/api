@@ -1,3 +1,4 @@
+export * from './apikey-auth.strategy';
 export * from './discord-auth.strategy';
 export * from './facebook-auth.strategy';
 export * from './github-auth.strategy';

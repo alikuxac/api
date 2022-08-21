@@ -6,6 +6,7 @@ import { AuthController } from './auth.controller';
 
 // Strategy
 import {
+  ApiKeyStrategy,
   DiscordStrategy,
   FacebookStrategy,
   GithubStrategy,
@@ -19,6 +20,7 @@ import {
   controllers: [AuthController],
   providers: [
     AuthService,
+    ApiKeyStrategy,
     DiscordStrategy,
     FacebookStrategy,
     GithubStrategy,

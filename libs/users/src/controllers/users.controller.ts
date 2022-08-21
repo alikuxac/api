@@ -9,7 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtOrApiKeyGuard } from '@auth/guards';
-import { UsersService, UserRoleService } from '@users/services';
+import {
+  UsersService,
+  UserRoleService,
+  UserApiKeyService,
+} from '@users/services';
 import {
   createUserDto,
   updateUserDto,
@@ -19,6 +23,9 @@ import {
   createUserRoleDto,
   updateUserRolePermissionDto,
   removeRolePermissionDto,
+  createUserApiKeyDto,
+  updateUserApiKeyDto,
+  deleteUserApiKeyDto,
 } from '@users/dto';
 
 @Controller('user')
@@ -27,6 +34,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly userRoleService: UserRoleService,
+    private readonly userApiKeyService: UserApiKeyService,
   ) {}
 
   // User Management
@@ -118,6 +126,35 @@ export class UsersController {
     return await this.usersService.enableUser(id);
   }
 
+  @Get(':id/api-key')
+  async findApiKey(@Param('id') id: string) {
+    return await this.userApiKeyService.findOne(id);
+  }
+
+  @Post(':id/api-key')
+  async createUserApiKey(
+    @Param('id') id: string,
+    @Body() dto: createUserApiKeyDto,
+  ) {
+    return await this.userApiKeyService.create(id, dto);
+  }
+
+  @Patch(':id/api-key')
+  async updateApiKey(
+    @Param('id') id: string,
+    @Body() dto: updateUserApiKeyDto,
+  ) {
+    return await this.userApiKeyService.updateWithUser(id, dto);
+  }
+
+  @Delete(':id/api-key')
+  async removeApiKey(
+    @Param('id') id: string,
+    @Body() dto: deleteUserApiKeyDto,
+  ) {
+    return await this.userApiKeyService.remove(id, dto);
+  }
+
   // Role Manager
   @Get('role')
   async findAllRoles() {
@@ -158,5 +195,11 @@ export class UsersController {
     @Body() dto: removeRolePermissionDto,
   ) {
     return await this.userRoleService.removePermission(id, dto);
+  }
+
+  // ApiKey Management
+  @Get('apikey')
+  async findAllApiKeys() {
+    return await this.userApiKeyService.findAll();
   }
 }

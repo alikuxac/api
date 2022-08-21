@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile } from 'passport-discord';
 
-import { IDiscordAuthPayload } from '../payload/discord-auth.payload';
 import { AuthService } from '../auth.service';
 
 @Injectable()
@@ -35,7 +34,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
       verified,
       avatar,
     } = profile;
-    const data: IDiscordAuthPayload = {
+    const data = {
       id,
       username,
       email,

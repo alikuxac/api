@@ -86,10 +86,10 @@
       "@finance/*": [
         "libs/finance/src/*"
       ],
-      "@auth/auth": [
+      "@auth": [
         "libs/auth/src"
       ],
-      "@auth/auth/*": [
+      "@auth/*": [
         "libs/auth/src/*"
       ]
     }

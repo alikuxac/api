@@ -14,6 +14,7 @@ import { AppService } from './app.service';
 import { HealthModule } from './modules/health/health.module';
 import { SharedModule } from '@shared/shared.module';
 import { UsersModule } from '@users';
+import { AuthModule } from '@auth';
 import { routes } from './routes';
 
 @Module({
@@ -26,6 +27,8 @@ import { routes } from './routes';
         NODE_ENV: Joi.string().default('development'),
         PORT: Joi.number().default(3000),
         CACHE_TTL: Joi.number().default(120),
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRES_IN: Joi.number().default(86400),
 
         // Database
         MONGO_URI: Joi.string().required(),
@@ -97,6 +100,7 @@ import { routes } from './routes';
     HealthModule,
     SharedModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

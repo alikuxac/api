@@ -6,7 +6,9 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtOrApiKeyGuard } from '@auth/guards';
 import { UsersService, UserRoleService } from '@users/services';
 import {
   createUserDto,
@@ -20,6 +22,7 @@ import {
 } from '@users/dto';
 
 @Controller('user')
+@UseGuards(JwtOrApiKeyGuard)
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -62,7 +65,7 @@ export class UsersController {
     return await this.usersService.findByEmail(email);
   }
 
-  @Post(':id/change-password')
+  @Patch(':id/change-password')
   async changePassword(
     @Param('id') id: string,
     @Body() dto: changePasswordDto,
@@ -70,47 +73,47 @@ export class UsersController {
     return await this.usersService.changePasswordUser(id, dto.password);
   }
 
-  @Post(':id/active')
+  @Patch(':id/active')
   async active(@Param('id') id: string) {
     return await this.usersService.activeUser(id);
   }
 
-  @Post(':id/deactive')
+  @Patch(':id/deactive')
   async deactive(@Param('id') id: string) {
     return await this.usersService.deactiveUser(id);
   }
 
-  @Post(':id/verify')
+  @Patch(':id/verify')
   async verify(@Param('id') id: string) {
     return await this.usersService.verifyUser(id);
   }
 
-  @Post(':id/ban')
+  @Patch(':id/ban')
   async ban(@Param('id') id: string) {
     return await this.usersService.banUser(id);
   }
 
-  @Post([':id/link', ':id/link-provider'])
+  @Patch([':id/link', ':id/link-provider'])
   async link(@Param('id') id: string, @Body() dto: providerDto) {
     return await this.usersService.linkUser(id, dto);
   }
 
-  @Post(':id/unlink/:provider')
+  @Patch(':id/unlink/:provider')
   async unlink(@Param('id') id: string, @Param('provider') provider: string) {
     return await this.usersService.unlinkUser(id, provider);
   }
 
-  @Post([':id/set-role', ':id/setrole'])
+  @Patch([':id/set-role', ':id/setrole'])
   async setRole(@Param('id') id: string, @Body() dto: setRoleDto) {
     return await this.usersService.setRole(id, dto.roleName);
   }
 
-  @Post(':id/disable')
+  @Patch(':id/disable')
   async disable(@Param('id') id: string) {
     return await this.usersService.disableUser(id);
   }
 
-  @Post(':id/enable')
+  @Patch(':id/enable')
   async enable(@Param('id') id: string) {
     return await this.usersService.enableUser(id);
   }

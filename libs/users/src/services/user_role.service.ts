@@ -44,7 +44,7 @@ export class UserRoleService {
         description: 'Admin',
         permissions: [
           {
-            action: UserRolePermission.ManageAll,
+            action: UserRolePermission.Manage,
             allowed: true,
             restricted: false,
           },

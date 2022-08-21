@@ -1,12 +1,8 @@
 export enum UserRolePermission {
   // All
-  ManageAll = 'manageAll',
-  ReadAll = 'readAll',
-  UpdateAll = 'updateAll',
-  DeleteAll = 'deleteAll',
+  Manage = 'manage',
 
   // User
-  ManageUser = 'manageUser',
   ReadUser = 'readUser',
   ReadOtherUser = 'readOtherUser',
   CreateUser = 'createUser',
@@ -18,7 +14,6 @@ export enum UserRolePermission {
   SetUserRole = 'setUserRole',
 
   // Role
-  ManageRole = 'manageRole',
   ReadRole = 'readRole',
   ReadOtherRole = 'readOtherRole',
   CreateRole = 'createRole',

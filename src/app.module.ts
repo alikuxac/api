@@ -13,8 +13,7 @@ import { AppService } from './app.service';
 
 import { HealthModule } from './modules/health/health.module';
 import { SharedModule } from '@shared/shared.module';
-import { UserModule } from '@modules/user/user.module';
-
+import { UsersModule } from '@users';
 import { routes } from './routes';
 
 @Module({
@@ -97,7 +96,7 @@ import { routes } from './routes';
     RouterModule.register(routes),
     HealthModule,
     SharedModule,
-    UserModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,7 +11,6 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserSex } from '@users/enum/sex.enum';
-import { UserRoles } from '@users/enum/role.enum';
 
 export class createUserDto {
   @ApiProperty({ name: 'email', description: 'User email' })
@@ -71,8 +70,9 @@ export class createUserDto {
   sex?: UserSex;
 
   @ApiPropertyOptional()
-  @IsEnum(UserRoles)
-  role?: UserRoles;
+  @IsString()
+  @IsOptional()
+  role?: string;
 
   @ApiPropertyOptional()
   @IsArray()
@@ -99,4 +99,16 @@ export class providerDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+}
+
+export class changePasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export class setRoleDto {
+  @IsString()
+  @IsNotEmpty()
+  roleName: string;
 }

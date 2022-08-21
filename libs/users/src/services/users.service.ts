@@ -4,25 +4,29 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 // Entity
-import { User } from '@users/user.entity';
+import { User } from '@users/entities';
 
 // Dto
-import { createUserDto, updateUserDto, providerDto } from '@users/user.dto';
+import { createUserDto, updateUserDto, providerDto } from '@users/dto/user.dto';
 
 // Enum
 import { UserSex } from '@users/enum/sex.enum';
-import { UserRoles } from '@users/enum/role.enum';
+
+// Service
+import { UserRoleService } from '@users/services';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly UserModel: Model<User>,
+    private readonly userRoleService: UserRoleService,
     private readonly configService: ConfigService,
   ) {}
 
   async init() {
     const users = await this.findAll();
+    const adminRole = await this.userRoleService.getAdminRole();
     if (users.length === 0) {
       const admin = new this.UserModel({
         username: 'admin',
@@ -33,7 +37,7 @@ export class UsersService {
         lastName: 'Admin',
         isActive: true,
         isVerified: true,
-        role: UserRoles.ADMIN,
+        role: adminRole,
         sex: UserSex.UNKNOWN,
       });
       return await admin.save();
@@ -109,7 +113,13 @@ export class UsersService {
     if (userExist) {
       throw new HttpException('User already exists', 409);
     }
-    const user = new this.UserModel(dto);
+    const roleName = dto.role ?? 'user';
+    const userRole = this.userRoleService.findOneByName(roleName);
+    if (!userRole) {
+      throw new HttpException('User role not found', 404);
+    }
+    delete dto.role; // Remove role from dto
+    const user = new this.UserModel({ ...dto, role: userRole });
     return await user.save();
   }
 
@@ -222,6 +232,12 @@ export class UsersService {
     }).exec();
   }
 
+  /**
+   *
+   * @param id User id
+   * @param dto Provider dto
+   * @returns
+   */
   async linkUser(id: string, dto: providerDto) {
     const checkExistId = await this.exists(id);
     if (!checkExistId) {
@@ -238,6 +254,11 @@ export class UsersService {
     }).exec();
   }
 
+  /**
+   * @param id User id
+   * @param provider Provider name
+   * @returns
+   */
   async unlinkUser(id: string, provider: string) {
     const checkExistId = await this.exists(id);
     if (!checkExistId) {
@@ -255,5 +276,51 @@ export class UsersService {
         },
       }).exec();
     }
+  }
+
+  /**
+   * @param id User id
+   * @param roleName Role name
+   * @returns
+   */
+  async setRole(id: string, roleName: string) {
+    const checkExistId = await this.exists(id);
+    if (!checkExistId) {
+      throw new HttpException('User not found', 404);
+    }
+    const roleExist = await this.userRoleService.findOneByName(roleName);
+    if (!roleExist) {
+      throw new HttpException('Role not found', 404);
+    }
+    return await this.UserModel.findByIdAndUpdate(id, {
+      $set: {
+        role: roleExist,
+      },
+    }).exec();
+  }
+
+  /**
+   *
+   * @param id
+   * @returns
+   */
+  async disableUser(id: string) {
+    return await this.UserModel.findByIdAndUpdate(id, {
+      $set: {
+        isDisabled: true,
+      },
+    }).exec();
+  }
+
+  /**
+   * @param id User id
+   * @returns
+   */
+  async enableUser(id: string) {
+    return await this.UserModel.findByIdAndUpdate(id, {
+      $set: {
+        isDisabled: false,
+      },
+    }).exec();
   }
 }

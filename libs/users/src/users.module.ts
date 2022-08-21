@@ -1,24 +1,43 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SharedModule } from '@shared';
 
-import { UsersService } from './users.service';
+import { UsersService, UserRoleService } from '@users/services';
+import { UsersController } from '@users/controllers';
 
 // Entity
-import { User, UserSchema } from './user.entity';
+import { User, UserSchema, UserRole, UserRoleSchema } from '@users/entities';
 
 @Module({
   imports: [
+    SharedModule,
     MongooseModule.forFeature(
       [
         {
           name: User.name,
           schema: UserSchema,
         },
+        {
+          name: UserRole.name,
+          schema: UserRoleSchema,
+        },
       ],
       'api',
     ),
   ],
-  providers: [UsersService],
-  exports: [UsersService],
+  controllers: [UsersController],
+  providers: [UsersService, UserRoleService],
+  exports: [UsersService, UserRoleService],
 })
-export class UsersModule {}
+export class UsersModule implements OnModuleInit {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly usersRoleSerive: UserRoleService,
+  ) {}
+
+  async onModuleInit() {
+    this.usersRoleSerive.init().then(async () => {
+      await this.usersService.init();
+    });
+  }
+}

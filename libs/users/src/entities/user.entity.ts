@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 import { UserSex } from '@users/enum/sex.enum';
-import { UserRoles } from '@users/enum/role.enum';
 import { UserProvider } from '@users/interfaces/providers.interface';
+
+import { UserRole } from '@users/entities';
 
 @Schema({ collection: 'users', timestamps: true, versionKey: false, _id: true })
 export class User {
@@ -57,8 +58,15 @@ export class User {
   @Prop({ name: 'isVerified', type: Boolean, default: false })
   isVerified: boolean;
 
-  @Prop({ name: 'role', enum: UserRoles, default: UserRoles.MEMBER })
-  role: UserRoles;
+  @Prop({ name: 'isDisabled', type: Boolean, default: false })
+  isDisabled: boolean;
+
+  @Prop({
+    name: 'role',
+    type: mongoose.Schema.Types.ObjectId,
+    ref: UserRole.name,
+  })
+  role: UserRole;
 
   @Prop({ name: 'providers', type: Array<UserProvider>, default: [] })
   providers: UserProvider[];

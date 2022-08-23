@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MulterModule } from '@nestjs/platform-express';
@@ -10,6 +11,13 @@ import Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+import {
+  ApiKeyGuard,
+  JwtAuthGuard,
+  JwtOrApiKeyGuard,
+  LocalAuthGuard,
+} from '@auth/guards';
 
 import { HealthModule } from './modules/health/health.module';
 import { SharedModule } from '@shared/shared.module';
@@ -103,6 +111,24 @@ import { routes } from './routes';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtOrApiKeyGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: LocalAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

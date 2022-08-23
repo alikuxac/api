@@ -1,5 +1,11 @@
-import { IsString, IsEnum, IsOptional, IsBoolean } from 'class-validator';
-
+import {
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsBoolean,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { UserRolePermission } from '@users/enum';
 
 export class createUserRoleDto {
@@ -7,10 +13,12 @@ export class createUserRoleDto {
   name: string;
 
   @IsString()
-  description: string;
+  @IsOptional()
+  description?: string;
 
-  @IsEnum(UserRolePermission)
-  permissions: UserRolePermission[];
+  @ValidateNested({ each: true })
+  @Type(() => UserRolePermissionDto)
+  permissions: UserRolePermissionDto[];
 }
 
 export class updateUserRoleDto {
@@ -22,15 +30,12 @@ export class updateUserRoleDto {
   description?: string;
 }
 
-export class updateUserRolePermissionDto {
+export class UserRolePermissionDto {
   @IsEnum(UserRolePermission)
   action: UserRolePermission;
 
   @IsBoolean()
   allowed: boolean;
-
-  @IsBoolean()
-  restricted: boolean;
 }
 
 export class removeRolePermissionDto {

@@ -3,12 +3,12 @@ import mongoose, { Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 import { UserSex } from '@users/enum/sex.enum';
-import { UserProvider } from '@users/interfaces/providers.interface';
+import { UserProvider, ApiKey } from '@users/interfaces';
 
 import { UserRole } from '@users/entities';
 
 @Schema({ collection: 'users', timestamps: true, versionKey: false, _id: true })
-export class User {
+export class User extends Document {
   @Prop({
     name: 'username',
     type: String,

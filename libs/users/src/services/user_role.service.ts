@@ -10,7 +10,7 @@ import {
   createUserRoleDto,
   removeRolePermissionDto,
   updateUserRoleDto,
-  updateUserRolePermissionDto,
+  UserRolePermissionDto,
 } from '@users/dto';
 
 // Enum
@@ -120,7 +120,7 @@ export class UserRoleService {
     );
   }
 
-  async addPermission(id: string, dto: updateUserRolePermissionDto) {
+  async addPermission(id: string, dto: UserRolePermissionDto) {
     const userRole = await this.findOne(id);
     if (!userRole) {
       throw new HttpException('User role not found', 404);
@@ -148,8 +148,10 @@ export class UserRoleService {
         userRole.permissions.indexOf(existPermission),
         1,
       );
+      return await userRole.save();
+    } else {
+      throw new HttpException('Permission not found', 404);
     }
-    return await userRole.save();
   }
 
   async getPermissions(id: string) {

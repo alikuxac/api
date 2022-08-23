@@ -12,8 +12,13 @@ export class AppController {
   }
 
   @Get('uptime')
-  getUptime(): string {
+  getUptime() {
     return this.appService.getUptime();
+  }
+
+  @Get('permissions')
+  getPermissions() {
+    return this.appService.getRolePermission();
   }
 
   @Get('status')

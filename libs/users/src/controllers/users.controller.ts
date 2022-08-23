@@ -17,7 +17,7 @@ import {
   providerDto,
   setRoleDto,
   createUserRoleDto,
-  updateUserRolePermissionDto,
+  UserRolePermissionDto,
   removeRolePermissionDto,
   createUserApiKeyDto,
   deleteUserApiKeyDto,
@@ -165,7 +165,7 @@ export class UsersController {
   @Post('role/:id/add-permission')
   async addPermission(
     @Param('id') id: string,
-    @Body() dto: updateUserRolePermissionDto,
+    @Body() dto: UserRolePermissionDto,
   ) {
     return await this.userRoleService.addPermission(id, dto);
   }

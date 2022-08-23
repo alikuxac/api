@@ -12,10 +12,11 @@ export enum UserRolePermission {
   ChangePassword = 'changePassword',
   ResetPassword = 'resetPassword',
   SetUserRole = 'setUserRole',
+  CreateUserApiKey = 'createUserApiKey',
+  DeleteUserApiKey = 'deleteUserApiKey',
 
   // Role
   ReadRole = 'readRole',
-  ReadOtherRole = 'readOtherRole',
   CreateRole = 'createRole',
   UpdateRole = 'updateRole',
   DeleteRole = 'deleteRole',

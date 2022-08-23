@@ -3,12 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { isEmail } from 'class-validator';
+import { customAlphabet } from 'nanoid';
 
 // Entity
 import { User } from '@users/entities';
 
 // Dto
 import { createUserDto, updateUserDto, providerDto } from '@users/dto/user.dto';
+import { createUserApiKeyDto } from '@users/dto/user_apikey.dto';
 
 // Enum
 import { UserSex } from '@users/enum/sex.enum';
@@ -18,6 +20,9 @@ import { UserRoleService } from '@users/services';
 
 @Injectable()
 export class UsersService {
+  private nanoid = (size = 20) =>
+    customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', size);
+
   constructor(
     @InjectModel(User.name)
     private readonly UserModel: Model<User>,
@@ -107,6 +112,16 @@ export class UsersService {
         $elemMatch: {
           provider,
           providerId: id,
+        },
+      },
+    }).exec();
+  }
+
+  async findByApiKey(apiKey: string) {
+    return await this.UserModel.findOne({
+      apikeys: {
+        $elemMatch: {
+          value: apiKey,
         },
       },
     }).exec();
@@ -327,6 +342,38 @@ export class UsersService {
     return await this.UserModel.findByIdAndUpdate(id, {
       $set: {
         isDisabled: false,
+      },
+    }).exec();
+  }
+
+  // APikey
+  async createApiKey(id: string, dto: createUserApiKeyDto) {
+    const checkExistId = await this.exists(id);
+    if (!checkExistId) {
+      throw new HttpException('User not found', 404);
+    }
+    const value = 'ali_' + this.nanoid(20);
+    return await this.UserModel.findByIdAndUpdate(id, {
+      $push: {
+        apikeys: {
+          name: dto.name,
+          description: dto.description ?? '',
+          value,
+        },
+      },
+    }).exec();
+  }
+
+  async deleteApiKey(id: string, value: string) {
+    const checkExistId = await this.exists(id);
+    if (!checkExistId) {
+      throw new HttpException('User not found', 404);
+    }
+    return await this.UserModel.findByIdAndUpdate(id, {
+      $pull: {
+        apikeys: {
+          value,
+        },
       },
     }).exec();
   }

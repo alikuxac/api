@@ -1,10 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsIP, IsString, ValidateNested, MinLength } from 'class-validator';
-
-export class IpDto {
-  @IsIP()
-  ip: string;
-}
+import { IsString, IsOptional, MinLength } from 'class-validator';
 
 export class createUserApiKeyDto {
   @IsString()
@@ -12,19 +6,8 @@ export class createUserApiKeyDto {
   name: string;
 
   @IsString()
-  description: string;
-
-  @ValidateNested({ each: true })
-  @Type(() => IpDto)
-  ipWhitelist: IpDto[];
-}
-
-export class updateUserApiKeyDto {
-  @IsString()
-  name: string;
-
-  @IsString()
-  description: string;
+  @IsOptional()
+  description?: string;
 }
 
 export class deleteUserApiKeyDto {

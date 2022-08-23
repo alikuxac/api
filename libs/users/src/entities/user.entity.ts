@@ -69,7 +69,14 @@ export class User {
   role: UserRole;
 
   @Prop({ name: 'providers', type: Array<UserProvider>, default: [] })
-  providers: UserProvider[];
+  providers: UserProvider[] = [];
+
+  @Prop({
+    name: 'apikeys',
+    type: Array<ApiKey>,
+    default: [],
+  })
+  apikeys: ApiKey[] = [];
 
   comparePassword(password: string) {
     return bcrypt.compareSync(password, this.password);

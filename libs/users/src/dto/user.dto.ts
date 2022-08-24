@@ -112,3 +112,9 @@ export class setRoleDto {
   @IsNotEmpty()
   roleName: string;
 }
+
+export class updatePasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

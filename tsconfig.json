@@ -74,12 +74,6 @@
       "@users/*": [
         "libs/users/src/*"
       ],
-      "@service": [
-        "libs/service/src"
-      ],
-      "@service/*": [
-        "libs/service/src/*"
-      ],
       "@finance": [
         "libs/finance/src"
       ],

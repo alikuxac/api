@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { IUserRolePermission } from '@users/interfaces';
+import { UserRolePermission } from '@users/enum';
 
 @Schema({
   collection: 'users_role',
@@ -27,10 +27,17 @@ export class UserRole extends Document {
   description: string;
 
   @Prop({
-    type: Array<IUserRolePermission>,
+    name: 'position',
+    type: Number,
+    default: 0,
+  })
+  position: number;
+
+  @Prop({
+    type: Array<UserRolePermission>,
     default: [],
   })
-  permissions: IUserRolePermission[];
+  permissions: UserRolePermission[];
 }
 
 export const UserRoleSchema = SchemaFactory.createForClass(UserRole);

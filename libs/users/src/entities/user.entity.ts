@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 import { UserSex } from '@users/enum/sex.enum';
@@ -61,12 +61,15 @@ export class User extends Document {
   @Prop({ name: 'isDisabled', type: Boolean, default: false })
   isDisabled: boolean;
 
+  @Prop({ name: 'isOwner', type: Boolean, default: false })
+  isOwner: boolean;
+
   @Prop({
     name: 'role',
-    type: mongoose.Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: UserRole.name,
   })
-  role: UserRole;
+  role: Types.ObjectId;
 
   @Prop({ name: 'providers', type: Array<UserProvider>, default: [] })
   providers: UserProvider[] = [];

@@ -4,14 +4,16 @@ export enum UserRolePermission {
 
   // User
   ReadUser = 'readUser',
-  ReadOtherUser = 'readOtherUser',
   CreateUser = 'createUser',
   UpdateUser = 'updateUser',
-  UpdateOtherUser = 'updateOtherUser',
   DeleteUser = 'deleteUser',
   ChangePassword = 'changePassword',
   ResetPassword = 'resetPassword',
   SetUserRole = 'setUserRole',
+  ActiveUser = 'activeUser',
+  DeactiveUser = 'deactiveUser',
+  BanUser = 'banUser',
+  UnbanUser = 'unbanUser',
   CreateUserApiKey = 'createUserApiKey',
   DeleteUserApiKey = 'deleteUserApiKey',
 
@@ -20,4 +22,5 @@ export enum UserRolePermission {
   CreateRole = 'createRole',
   UpdateRole = 'updateRole',
   DeleteRole = 'deleteRole',
+  EditRolePermissions = 'editRolePermissions',
 }

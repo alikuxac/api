@@ -4,6 +4,8 @@ import {
   IsOptional,
   IsBoolean,
   ValidateNested,
+  IsNumber,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { UserRolePermission } from '@users/enum';
@@ -28,6 +30,11 @@ export class updateUserRoleDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(1)
+  position?: number;
 }
 
 export class UserRolePermissionDto {

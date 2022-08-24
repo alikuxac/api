@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { CaslService } from './casl.service';
+
+import { UserCaslModule } from './actions';
 
 @Module({
-  providers: [CaslService],
-  exports: [CaslService],
+  imports: [UserCaslModule],
 })
 export class CaslModule {}

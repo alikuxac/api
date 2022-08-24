@@ -6,7 +6,7 @@ import { isEmail } from 'class-validator';
 import { customAlphabet } from 'nanoid';
 
 // Entity
-import { User } from '@users/entities';
+import { User, UserRole } from '@users/entities';
 
 // Dto
 import { createUserDto, updateUserDto, providerDto } from '@users/dto/user.dto';
@@ -32,7 +32,7 @@ export class UsersService {
 
   async init() {
     const users = await this.findAll();
-    const adminRole = await this.userRoleService.getAdminRole();
+    const userRole = await this.userRoleService.getUserRole();
     if (users.length === 0) {
       const admin = new this.UserModel({
         username: 'admin',
@@ -43,7 +43,8 @@ export class UsersService {
         lastName: 'Admin',
         isActive: true,
         isVerified: true,
-        role: adminRole,
+        isOwner: true,
+        role: userRole._id,
         sex: UserSex.UNKNOWN,
       });
       return await admin.save();
@@ -55,12 +56,18 @@ export class UsersService {
     return await this.UserModel.exists({ _id: id });
   }
 
+  async getTotalUsers() {
+    return await this.UserModel.countDocuments().exec();
+  }
+
   /**
    * Find all
    * @returns Users
    */
   async findAll() {
-    return await this.UserModel.find().exec();
+    return await this.UserModel.find()
+      .populate({ path: 'role', model: UserRole.name })
+      .lean();
   }
 
   /**
@@ -68,12 +75,16 @@ export class UsersService {
    * @param id User id
    * @returns User
    */
-  async findOne(id: string) {
+  async findOne(id: string, full?: boolean) {
     const checkExistId = await this.exists(id);
     if (!checkExistId) {
       throw new HttpException('User not found', 404);
     }
-    return await this.UserModel.findById(checkExistId).exec();
+    const user = this.UserModel.findOne({ _id: id });
+    if (full) {
+      user.populate({ path: 'role', model: UserRole.name });
+    }
+    return await user.lean();
   }
 
   /**
@@ -84,7 +95,9 @@ export class UsersService {
   async findByUsername(username: string) {
     return await this.UserModel.findOne({
       username: username.toLowerCase(),
-    }).exec();
+    })
+      .populate({ path: 'role', model: UserRole.name })
+      .lean();
   }
 
   /**
@@ -97,7 +110,9 @@ export class UsersService {
     if (!IsEmail) {
       throw new HttpException('Email is not valid', 400);
     }
-    return await this.UserModel.findOne({ email }).exec();
+    return await this.UserModel.findOne({ email })
+      .populate({ path: 'role', model: UserRole.name })
+      .lean();
   }
 
   /**
@@ -114,7 +129,9 @@ export class UsersService {
           providerId: id,
         },
       },
-    }).exec();
+    })
+      .populate({ path: 'role', model: UserRole.name })
+      .lean();
   }
 
   async findByApiKey(apiKey: string) {
@@ -124,7 +141,9 @@ export class UsersService {
           value: apiKey,
         },
       },
-    }).exec();
+    })
+      .populate({ path: 'role', model: UserRole.name })
+      .lean();
   }
 
   // Create user
@@ -136,12 +155,12 @@ export class UsersService {
       throw new HttpException('User already exists', 409);
     }
     const roleName = dto.role ?? 'user';
-    const userRole = this.userRoleService.findOneByName(roleName);
+    const userRole = await this.userRoleService.findOneByName(roleName);
     if (!userRole) {
       throw new HttpException('User role not found', 404);
     }
     delete dto.role; // Remove role from dto
-    const user = new this.UserModel({ ...dto, role: userRole });
+    const user = new this.UserModel({ ...dto, role: userRole._id });
     return await user.save();
   }
 
@@ -305,18 +324,26 @@ export class UsersService {
    * @param roleName Role name
    * @returns
    */
-  async setRole(id: string, roleName: string) {
-    const checkExistId = await this.exists(id);
-    if (!checkExistId) {
+  async setRole(id: string, roleName: string, user: User) {
+    const userExist = await this.findOne(id);
+    if (!userExist) {
       throw new HttpException('User not found', 404);
     }
+    const userRole = await this.userRoleService.findOne(user.role.toString());
     const roleExist = await this.userRoleService.findOneByName(roleName);
     if (!roleExist) {
       throw new HttpException('Role not found', 404);
     }
+    if (roleExist.position > userRole.position) {
+      throw new HttpException(
+        'You can not set this role because you are not high enough',
+        403,
+      );
+    }
+    userExist.role = roleExist._id;
     return await this.UserModel.findByIdAndUpdate(id, {
       $set: {
-        role: roleExist,
+        role: roleExist._id,
       },
     }).exec();
   }
@@ -347,13 +374,42 @@ export class UsersService {
   }
 
   // APikey
+  async findApiKeyByName(id: string, name: string) {
+    return await this.UserModel.findOne({
+      _id: id,
+      apikeys: { $elemMatch: { name } },
+    }).exec();
+  }
+
   async createApiKey(id: string, dto: createUserApiKeyDto) {
     const checkExistId = await this.exists(id);
     if (!checkExistId) {
       throw new HttpException('User not found', 404);
     }
+    const user = await this.UserModel.findById(id).exec();
+    const checkApiKey = user.apikeys.find((apikey) => apikey.name === dto.name);
+    if (checkApiKey) {
+      throw new HttpException('ApiKey with name already exist', 409);
+    }
     const value = 'ali_' + this.nanoid(20);
     return await this.UserModel.findByIdAndUpdate(id, {
+      $push: {
+        apikeys: {
+          name: dto.name,
+          description: dto.description ?? '',
+          value,
+        },
+      },
+    }).exec();
+  }
+
+  async createOwnApiKey(dto: createUserApiKeyDto, user: User) {
+    const checkApiKey = user.apikeys.find((apikey) => apikey.name === dto.name);
+    if (checkApiKey) {
+      throw new HttpException('ApiKey with name already exist', 409);
+    }
+    const value = 'ali_' + this.nanoid(20);
+    return await this.UserModel.findByIdAndUpdate(user._id, {
       $push: {
         apikeys: {
           name: dto.name,

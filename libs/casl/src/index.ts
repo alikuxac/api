@@ -1,2 +1,3 @@
 export * from './casl.module';
-export * from './casl.service';
+
+export * from './actions';

@@ -60,6 +60,10 @@ export class UsersService {
     return await this.UserModel.countDocuments().exec();
   }
 
+  async validateWithEmail(email: string) {
+    return await this.UserModel.findOne({ email }).exec();
+  }
+
   /**
    * Find all
    * @returns Users

@@ -23,6 +23,7 @@ import { HealthModule } from './modules/health/health.module';
 import { SharedModule } from '@shared/shared.module';
 import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
+import { CaslModule } from '@casl';
 import { routes } from './routes';
 
 @Module({
@@ -109,6 +110,7 @@ import { routes } from './routes';
     SharedModule,
     UsersModule,
     AuthModule,
+    CaslModule,
   ],
   controllers: [AppController],
   providers: [

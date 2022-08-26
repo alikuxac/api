@@ -1,7 +1,7 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module, OnModuleInit, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SharedModule } from '@shared';
-import { UserCaslModule } from '@casl';
+import { CaslModule } from '@casl';
 import { UsersService, UserRoleService } from '@users/services';
 import { UsersController } from '@users/controllers';
 
@@ -11,7 +11,7 @@ import { User, UserSchema, UserRole, UserRoleSchema } from '@users/entities';
 @Module({
   imports: [
     SharedModule,
-    UserCaslModule,
+    forwardRef(() => CaslModule),
     MongooseModule.forFeature(
       [
         {

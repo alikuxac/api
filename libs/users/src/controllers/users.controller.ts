@@ -1,4 +1,6 @@
 import {
+  Inject,
+  forwardRef,
   Controller,
   Req,
   Get,
@@ -36,9 +38,13 @@ import { UserAbilityFactory, UserRoleAbilityFactory } from '@casl/actions/user';
 @UseGuards(JwtOrApiKeyGuard)
 export class UsersController {
   constructor(
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
+    @Inject(forwardRef(() => UserRoleService))
     private readonly userRoleService: UserRoleService,
+    @Inject(forwardRef(() => UserAbilityFactory))
     private readonly userAbilityFactory: UserAbilityFactory,
+    @Inject(forwardRef(() => UserRoleAbilityFactory))
     private readonly userRoleAbilityFactory: UserRoleAbilityFactory,
   ) {}
 

@@ -5,8 +5,6 @@ import bcrypt from 'bcryptjs';
 import { UserSex } from '@users/enum/sex.enum';
 import { UserProvider, ApiKey } from '@users/interfaces';
 
-import { UserRole } from '@users/entities';
-
 @Schema({ collection: 'users', timestamps: true, versionKey: false, _id: true })
 export class User extends Document {
   @Prop({
@@ -41,6 +39,7 @@ export class User extends Document {
 
   @Prop({
     name: 'sex',
+    type: String,
     enum: UserSex,
     default: UserSex.UNKNOWN,
   })
@@ -67,7 +66,7 @@ export class User extends Document {
   @Prop({
     name: 'role',
     type: Types.ObjectId,
-    ref: UserRole.name,
+    ref: 'Role',
   })
   role: Types.ObjectId;
 
@@ -80,10 +79,6 @@ export class User extends Document {
     default: [],
   })
   apikeys: ApiKey[] = [];
-
-  comparePassword(password: string) {
-    return bcrypt.compareSync(password, this.password);
-  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

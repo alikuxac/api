@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { SharedModule } from '@shared';
 import { AuthService } from './auth.service';
@@ -15,10 +16,13 @@ import {
   LocalStrategy,
 } from './strategies';
 
+import { UsersModule } from '@users';
+
 @Module({
-  imports: [SharedModule],
+  imports: [SharedModule, UsersModule],
   controllers: [AuthController],
   providers: [
+    JwtService,
     AuthService,
     ApiKeyStrategy,
     DiscordStrategy,
@@ -28,6 +32,15 @@ import {
     JwtStrategy,
     LocalStrategy,
   ],
-  exports: [AuthService],
+  exports: [
+    AuthService,
+    ApiKeyStrategy,
+    DiscordStrategy,
+    FacebookStrategy,
+    GithubStrategy,
+    GoogleStrategy,
+    JwtStrategy,
+    LocalStrategy,
+  ],
 })
 export class AuthModule {}

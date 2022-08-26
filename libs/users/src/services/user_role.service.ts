@@ -22,9 +22,9 @@ export class UserRoleService {
   private readonly rolePermissionArray = Object.values(UserRolePermission);
 
   constructor(
-    @InjectModel(UserRole.name)
+    @InjectModel(UserRole.name, 'api')
     private readonly userRoleModel: Model<UserRole>,
-    @InjectModel(User.name)
+    @InjectModel(User.name, 'api')
     private readonly usersModel: Model<User>,
   ) {}
 

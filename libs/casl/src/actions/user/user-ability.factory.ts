@@ -5,7 +5,7 @@ import {
   AbilityClass,
   ExtractSubjectType,
 } from '@casl/ability';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 
 import { User } from '@users/entities';
 import { UserRolePermission as userActions } from '@users/enum';
@@ -17,7 +17,10 @@ type UserAbility = Ability<[userActions, userSubjects]>;
 
 @Injectable()
 export class UserAbilityFactory {
-  constructor(private readonly userRoleService: UserRoleService) {}
+  constructor(
+    @Inject(forwardRef(() => UserRoleService))
+    private readonly userRoleService: UserRoleService,
+  ) {}
 
   async createAbilityForUser(user: User): Promise<UserAbility> {
     const { can, build } = new AbilityBuilder<

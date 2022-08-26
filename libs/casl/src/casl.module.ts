@@ -1,8 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
-import { UserCaslModule } from './actions';
+import { UserAbilityFactory, UserRoleAbilityFactory } from './actions';
+import { UsersModule } from '@users';
 
 @Module({
-  imports: [UserCaslModule],
+  imports: [forwardRef(() => UsersModule)],
+  providers: [UserAbilityFactory, UserRoleAbilityFactory],
+  exports: [UserAbilityFactory, UserRoleAbilityFactory],
 })
 export class CaslModule {}

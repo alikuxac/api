@@ -1,5 +1,6 @@
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 // Profile
 import { Profile as fbProfile } from 'passport-facebook';
@@ -8,14 +9,15 @@ import { Profile as discordProfile } from 'passport-discord';
 import { Profile as githubProfile } from 'passport-github';
 
 import { UsersService } from '@users';
-import { User } from '@users/entities/user.entity';
-import { signUpDto } from './auth.dto';
+import { signUpDto, signInDto } from './auth.dto';
+import { comparePassword } from '@utils/utils';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {}
 
   async validateFacebookLogin(profile: fbProfile) {
@@ -101,16 +103,26 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.usersService.validateWithEmail(email);
-    if (user && user.comparePassword(password)) {
+    if (user && comparePassword(password, user.password)) {
       return user;
     }
     return null;
   }
 
-  async login(user: User) {
+  async login(dto: signInDto) {
+    const user = await this.usersService.findByUsernameOrEmail(dto.email);
+    console.log(user);
+    if (!user) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
+    if (!comparePassword(dto.password, user.password)) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
     const payload = { email: user.email, role: user.role };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, {
+        secret: this.configService.get('JWT_SECRET'),
+      }),
     };
   }
 
@@ -120,6 +132,11 @@ export class AuthService {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
     const user = await this.usersService.create(dto);
-    return user;
+    const payload = { email: user.email, role: user.role };
+    return {
+      access_token: this.jwtService.sign(payload, {
+        secret: this.configService.get('JWT_SECRET'),
+      }),
+    };
   }
 }

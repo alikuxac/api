@@ -1,4 +1,4 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable, HttpException, forwardRef, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -24,8 +24,9 @@ export class UsersService {
     customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', size);
 
   constructor(
-    @InjectModel(User.name)
+    @InjectModel(User.name, 'api')
     private readonly UserModel: Model<User>,
+    @Inject(forwardRef(() => UserRoleService))
     private readonly userRoleService: UserRoleService,
     private readonly configService: ConfigService,
   ) {}
@@ -148,6 +149,12 @@ export class UsersService {
     })
       .populate({ path: 'role', model: UserRole.name })
       .lean();
+  }
+
+  async findByUsernameOrEmail(value: string) {
+    return await this.UserModel.findOne({
+      $or: [{ username: value }, { email: value }],
+    }).exec();
   }
 
   // Create user

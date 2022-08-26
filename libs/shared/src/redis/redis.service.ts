@@ -11,7 +11,6 @@ export class RedisService {
   async connect() {
     this.client = createClient({
       url: this.configService.get('REDIS_URL'),
-      password: this.configService.get('REDIS_PASSWORD'),
     });
 
     this.client.on('connect', () => console.log('Redis is connecting'));

@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MulterModule } from '@nestjs/platform-express';
@@ -11,13 +10,6 @@ import Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
-import {
-  ApiKeyGuard,
-  JwtAuthGuard,
-  JwtOrApiKeyGuard,
-  LocalAuthGuard,
-} from '@auth/guards';
 
 import { HealthModule } from './modules/health/health.module';
 import { SharedModule } from '@shared/shared.module';
@@ -42,24 +34,37 @@ import { routes } from './routes';
         // Database
         MONGO_URI: Joi.string().required(),
 
-        // Typeorm
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.number().required(),
-        DB_USER: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-
         // Redis
-        REDIS_HOST: Joi.string().required(),
+        REDIS_URL: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
 
         // S3
-        B2_ENDPOINT: Joi.string().required(),
-        B2_ACCESS_KEY_ID: Joi.string().required(),
-        B2_SECRET_ACCESS_KEY: Joi.string().required(),
-        R2_ENDPOINT: Joi.string().required(),
-        R2_ACCESS_KEY_ID: Joi.string().required(),
-        R2_SECRET_ACCESS_KEY: Joi.string().required(),
+        B2_ENABLED: Joi.boolean().required(),
+        B2_ENDPOINT: Joi.when('B2_ENABLED', {
+          is: true,
+          then: Joi.string().required(),
+        }),
+        B2_ACCESS_KEY_ID: Joi.when('B2_ENABLED', {
+          is: true,
+          then: Joi.string().required(),
+        }),
+        B2_SECRET_ACCESS_KEY: Joi.when('B2_ENABLED', {
+          is: true,
+          then: Joi.string().required(),
+        }),
+        R2_ENABLED: Joi.boolean().required(),
+        R2_ENDPOINT: Joi.when('R2_ENABLED', {
+          is: true,
+          then: Joi.string().required(),
+        }),
+        R2_ACCESS_KEY_ID: Joi.when('R2_ENABLED', {
+          is: true,
+          then: Joi.string().required(),
+        }),
+        R2_SECRET_ACCESS_KEY: Joi.when('R2_ENABLED', {
+          is: true,
+          then: Joi.string().required(),
+        }),
 
         // Mailer
         MAILER_HOST: Joi.string().required(),
@@ -67,6 +72,24 @@ import { routes } from './routes';
         MAILER_USER: Joi.string().required(),
         MAILER_PASS: Joi.string().required(),
         MAILER_SECURE: Joi.boolean().required(),
+
+        // Discord
+        DISCORD_TOKEN: Joi.string().required(),
+        DISCORD_CLIENT_ID: Joi.string().required(),
+        DISCORD_CLIENT_SECRET: Joi.string().required(),
+
+        // Github
+        GITHUB_CLIENT_ID: Joi.string().required(),
+        GITHUB_CLIENT_SECRET: Joi.string().required(),
+        GITHUB_REDIRECT_URI: Joi.string().required(),
+
+        // Google
+        GOOGLE_CLIENT_ID: Joi.string().required(),
+        GOOGLE_CLIENT_SECRET: Joi.string().required(),
+
+        // Facebook
+        FACEBOOK_APP_ID: Joi.string().required(),
+        FACEBOOK_APP_SECRET: Joi.string().required(),
 
         // API
         HYPIXEL_KEY: Joi.string().required(),
@@ -90,17 +113,18 @@ import { routes } from './routes';
     ScheduleModule.forRoot(),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         defaults: {
-          from: configService.get('MAILER_FROM'),
+          from: configService.get<string>('MAILER_FROM'),
         },
         transport: {
-          host: configService.get('MAILER_HOST'),
-          port: configService.get('MAILER_PORT'),
-          secure: configService.get('MAILER_SECURE'),
+          host: configService.get<string>('MAILER_HOST'),
+          port: configService.get<number>('MAILER_PORT'),
+          secure: configService.get<boolean>('MAILER_SECURE'),
           auth: {
-            user: configService.get('MAILER_USER'),
-            pass: configService.get('MAILER_PASS'),
+            user: configService.get<string>('MAILER_USER'),
+            pass: configService.get<string>('MAILER_PASS'),
           },
         },
       }),
@@ -113,24 +137,6 @@ import { routes } from './routes';
     CaslModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ApiKeyGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: JwtOrApiKeyGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: LocalAuthGuard,
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

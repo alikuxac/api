@@ -1,4 +1,10 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": ["github>alikuxac/renovate"]
+    "extends": ["github>alikuxac/renovate"],
+    "packageRules": [
+        {
+            "matchPackageNames": ["nanoid"],
+            "allowedVersions": "3.3.4"
+        }
+    ]
 }

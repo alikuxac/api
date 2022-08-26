@@ -20,7 +20,7 @@ import { R2Service } from './r2/r2.service';
       session: false,
     }),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: { expiresIn: configService.get('JWT_EXPIRES_IN') },
@@ -29,44 +29,40 @@ import { R2Service } from './r2/r2.service';
 
     // MongoDB Ali-Bot
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
+      connectionName: 'discordbot',
+      useFactory: async (config: ConfigService) => ({
         uri: config.get<string>('MONGO_URI'),
-        connectionName: 'discordbot',
         dbName: 'discordbot',
       }),
     }),
 
     // MongoDB Ali-API
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
+      connectionName: 'api',
       useFactory: (config: ConfigService) => ({
         uri: config.get('MONGO_URI'),
-        connectionName: 'api',
         dbName: 'api',
       }),
     }),
 
     // MongoDB Forum
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
+      connectionName: 'forum',
       useFactory: (config: ConfigService) => ({
         uri: config.get('MONGO_URI'),
-        connectionName: 'forum',
         dbName: 'forum',
       }),
     }),
 
     // MongoDB Finance
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
+      connectionName: 'finance',
       useFactory: (config: ConfigService) => ({
         uri: config.get('MONGO_URI'),
-        connectionName: 'finance',
         dbName: 'finance',
       }),
     }),

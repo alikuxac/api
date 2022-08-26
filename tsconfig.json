@@ -56,12 +56,6 @@
       "@shared/*": [
         "libs/shared/src/*"
       ],
-      "@bot": [
-        "libs/bot/src"
-      ],
-      "@bot/*": [
-        "libs/bot/src/*"
-      ],
       "@forum": [
         "libs/forum/src"
       ],

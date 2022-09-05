@@ -5,8 +5,10 @@ import { MulterModule } from '@nestjs/platform-express';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RouterModule } from '@nestjs/core';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { DiscordModule } from '@discord-nestjs/core';
 
 import Joi from 'joi';
+import { GatewayIntentBits } from 'discord.js';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -74,6 +76,7 @@ import { routes } from './routes';
         MAILER_SECURE: Joi.boolean().required(),
 
         // Discord
+        DISCORD_PREFIX: Joi.string().required(),
         DISCORD_TOKEN: Joi.string().required(),
         DISCORD_CLIENT_ID: Joi.string().required(),
         DISCORD_CLIENT_SECRET: Joi.string().required(),
@@ -126,6 +129,30 @@ import { routes } from './routes';
             user: configService.get<string>('MAILER_USER'),
             pass: configService.get<string>('MAILER_PASS'),
           },
+        },
+      }),
+    }),
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.get('DISCORD_TOKEN'),
+        prefix: configService.get<string>('DISCORD_PREFIX'),
+        prefixGlobalOptions: { isIgnoreBotMessage: true },
+        discordClientOptions: {
+          intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.GuildPresences,
+            GatewayIntentBits.GuildVoiceStates,
+            GatewayIntentBits.GuildEmojisAndStickers,
+            GatewayIntentBits.GuildIntegrations,
+            GatewayIntentBits.GuildWebhooks,
+            GatewayIntentBits.GuildInvites,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.DirectMessages,
+          ],
         },
       }),
     }),

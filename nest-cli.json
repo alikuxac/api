@@ -55,6 +55,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/auth/tsconfig.lib.json"
       }
+    },
+    "finance": {
+      "type": "library",
+      "root": "libs/finance",
+      "entryFile": "index",
+      "sourceRoot": "libs/finance/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/finance/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {

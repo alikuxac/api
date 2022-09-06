@@ -16,6 +16,7 @@ import { SharedModule } from '@shared/shared.module';
 import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
+import { FinanceModule } from '@finance';
 import { routes } from './routes';
 
 @Module({
@@ -135,6 +136,7 @@ import { routes } from './routes';
     UsersModule,
     AuthModule,
     CaslModule,
+    FinanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

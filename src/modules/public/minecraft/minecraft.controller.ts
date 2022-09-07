@@ -8,7 +8,7 @@ import {
 import { MinecraftService } from './minecraft.service';
 import { javaDto, parseAddressDto, queryDto, serverDto } from './minecraft.dto';
 
-@Controller()
+@Controller(['minecraft', 'mc'])
 @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
 export class MinecraftController {
   constructor(private readonly minecraftService: MinecraftService) {}

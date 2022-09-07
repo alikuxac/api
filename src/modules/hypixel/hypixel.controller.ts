@@ -10,7 +10,7 @@ import { HypixelService } from './hypixel.service';
 import { uuidDto, guildDto } from './hypixel.dto';
 import { HypixelGuard } from '@hypixel/hypixel.guard';
 
-@Controller()
+@Controller('hypixel')
 @UsePipes(
   new ValidationPipe({
     transform: true,

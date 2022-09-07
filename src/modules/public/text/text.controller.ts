@@ -8,7 +8,7 @@ import {
 import { TextService } from './text.service';
 import { TextDto, base64TextDto } from './text.dto';
 
-@Controller()
+@Controller(['text', 'txt'])
 @UsePipes(
   new ValidationPipe({
     transform: true,

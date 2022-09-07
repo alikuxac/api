@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { map, lastValueFrom } from 'rxjs';
 
+import { RedisService } from '@shared/redis/redis.service';
+
 import {
   ApiKeyInfomationSuccess,
   ApiKeyInfomationFailed,
@@ -36,12 +38,14 @@ import {
 
 @Injectable()
 export class HypixelService {
+  private basedKey = 'hypixel_';
   private readonly baseUrl = 'https://api.hypixel.net';
   private key: string;
 
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
   ) {
     this.key = this.configService.get('HYPIXEL_KEY');
   }
@@ -53,6 +57,14 @@ export class HypixelService {
   }
 
   async getApiKeyInfomation() {
+    const apiKey = `${this.basedKey}key`;
+    const cachedData = await this.redisService.get(apiKey);
+    if (cachedData) {
+      return JSON.parse(cachedData) as
+        | ApiKeyInfomationSuccess
+        | ApiKeyInfomationRateLimit
+        | ApiKeyInfomationFailed;
+    }
     const responseData = await lastValueFrom(
       this.httpService
         .get(`${this.baseUrl}/key`, {
@@ -73,10 +85,20 @@ export class HypixelService {
           }),
         ),
     );
+    await this.redisService.set(apiKey, JSON.stringify(responseData), 300);
     return responseData;
   }
 
   async getSpecificPlayer(uuid: string) {
+    const specificKey = `${this.basedKey}player:${uuid}`;
+    const cachedData = await this.redisService.get(specificKey);
+    if (cachedData) {
+      return JSON.parse(cachedData) as
+        | SpecificPlayerSuccess
+        | SpecificPlayerRateLimit
+        | SpecificPlayerBadRequest
+        | SpecificPlayerFailed;
+    }
     const responseData = await lastValueFrom(
       this.httpService
         .get(`${this.baseUrl}/player`, {
@@ -98,10 +120,22 @@ export class HypixelService {
           }),
         ),
     );
+    await this.redisService.set(specificKey, JSON.stringify(responseData), 300);
     return responseData;
   }
 
   async getFriend(uuid: string) {
+    const friendKey = `${this.basedKey}friend:${uuid}`;
+    const cachedData = await this.redisService.get(friendKey);
+    if (cachedData) {
+      return JSON.parse(cachedData) as
+        | PlayerFriendsSuccess
+        | PlayerFriendsRateLimit
+        | PlayerFriendsBadRequest
+        | PlayerFriendsFailed
+        | PlayerFriendsForbidden
+        | PlayerFriendsUnprocessableEntity;
+    }
     const responseData = await lastValueFrom(
       this.httpService
         .get(`${this.baseUrl}/friends`, {
@@ -127,10 +161,22 @@ export class HypixelService {
           }),
         ),
     );
+    await this.redisService.set(friendKey, JSON.stringify(responseData), 300);
     return responseData;
   }
 
   async getRecentGames(uuid: string) {
+    const recentKey = `${this.basedKey}recent:${uuid}`;
+    const cachedData = await this.redisService.get(recentKey);
+    if (cachedData) {
+      return JSON.parse(cachedData) as
+        | RecentGamesSuccess
+        | RecentGamesRateLimit
+        | RecentGamesBadRequest
+        | RecentGamesFailed
+        | RecentGamesForbidden
+        | RecentGamesUnprocessableEntity;
+    }
     const responseData = await lastValueFrom(
       this.httpService
         .get(`${this.baseUrl}/recentgames`, {
@@ -156,10 +202,20 @@ export class HypixelService {
           }),
         ),
     );
+    await this.redisService.set(recentKey, JSON.stringify(responseData), 300);
     return responseData;
   }
 
   async getPlayerOnlineStatus(uuid: string) {
+    const onlineKey = `${this.basedKey}online:${uuid}`;
+    const cachedData = await this.redisService.get(onlineKey);
+    if (cachedData) {
+      return JSON.parse(cachedData) as
+        | PlayerOnlineStatusSuccess
+        | PlayerOnlineStatusRateLimit
+        | PlayerOnlineStatusBadRequest
+        | PlayerOnlineStatusFailed;
+    }
     const responseData = await lastValueFrom(
       this.httpService
         .get(`${this.baseUrl}/player`, {
@@ -181,10 +237,20 @@ export class HypixelService {
           }),
         ),
     );
+    await this.redisService.set(onlineKey, JSON.stringify(responseData), 300);
     return responseData;
   }
 
   async getGuild(id: string, player: string, name: string) {
+    const guildKey = `${this.basedKey}guild:${id}:${player}:${name}`;
+    const cachedData = await this.redisService.get(guildKey);
+    if (cachedData) {
+      return JSON.parse(cachedData) as
+        | RetrieveGuildSuccess
+        | RetrieveGuildBadRequest
+        | RetrieveGuildForbidden
+        | RetrieveGuildFailed;
+    }
     const responseData = await lastValueFrom(
       this.httpService
         .get(`${this.baseUrl}/guild`, {
@@ -208,6 +274,7 @@ export class HypixelService {
           }),
         ),
     );
+    await this.redisService.set(guildKey, JSON.stringify(responseData), 300);
     return responseData;
   }
 }

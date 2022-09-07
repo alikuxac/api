@@ -16,8 +16,12 @@ import {
 // Enum
 import { UserRolePermission } from '@users/enum';
 
+// Service
+import { RedisService } from '@shared/redis/redis.service';
+
 @Injectable()
 export class UserRoleService {
+  private readonly baseKey = 'userRole_';
   private readonly defaultRole = ['user'];
   private readonly rolePermissionArray = Object.values(UserRolePermission);
 
@@ -26,6 +30,7 @@ export class UserRoleService {
     private readonly userRoleModel: Model<UserRole>,
     @InjectModel(User.name, 'api')
     private readonly usersModel: Model<User>,
+    private readonly redisService: RedisService,
   ) {}
 
   async getUserRole() {
@@ -53,19 +58,47 @@ export class UserRoleService {
   }
 
   async count() {
-    return await this.userRoleModel.countDocuments().exec();
+    const countKey = `${this.baseKey}count`;
+    const count = await this.redisService.get(countKey);
+    if (count) {
+      return +count;
+    }
+    const result = await this.userRoleModel.countDocuments().exec();
+    await this.redisService.set(countKey, result.toString());
+    return result;
   }
 
   async findAll() {
-    return await this.userRoleModel.find().exec();
+    const findAllKey = `${this.baseKey}findAll`;
+    const roles = await this.redisService.get(findAllKey);
+    if (roles) {
+      return JSON.parse(roles) as UserRole[];
+    }
+    const result = await this.userRoleModel.find().exec();
+    await this.redisService.set(findAllKey, JSON.stringify(result));
+    return result;
   }
 
   async findOne(id: string) {
-    return await this.userRoleModel.findById(id).exec();
+    const findOneKey = `${this.baseKey}findOne_${id}`;
+    const role = await this.redisService.get(findOneKey);
+    if (role) {
+      return JSON.parse(role) as UserRole;
+    }
+    const result = await this.userRoleModel.findById(id).exec();
+    await this.redisService.set(findOneKey, JSON.stringify(result));
+    return result;
   }
 
   async findOneByName(name: string) {
-    return await this.userRoleModel.findOne({ name }).exec();
+    const findOneByNameKey = `${this.baseKey}findOneByName_${name}`;
+    const role = await this.redisService.get(findOneByNameKey);
+    if (role) {
+      return JSON.parse(role) as UserRole;
+    }
+    const result = await this.userRoleModel.findOne({ name }).exec();
+    await this.redisService.set(findOneByNameKey, JSON.stringify(result));
+    return result;
   }
 
   async create(dto: createUserRoleDto) {
@@ -126,7 +159,7 @@ export class UserRoleService {
       throw new HttpException('User role not found', 404);
     }
     await this.userRoleModel.findByIdAndDelete(userRole._id);
-
+    await this.redisService.del(`${this.baseKey}findOneByName_${name}`);
     const defaultUserRole = await this.getUserRole();
     return await this.usersModel.updateMany(
       { role: userRole._id },

@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MulterModule } from '@nestjs/platform-express';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { RouterModule } from '@nestjs/core';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 import Joi from 'joi';
@@ -16,7 +15,9 @@ import { SharedModule } from '@shared/shared.module';
 import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
-import { routes } from './routes';
+import { HypixelModule } from './modules/hypixel/hypixel.module';
+import { MinecraftModule } from './modules/public/minecraft/minecraft.module';
+import { TextModule } from './modules/public/text/text.module';
 
 @Module({
   imports: [
@@ -129,12 +130,14 @@ import { routes } from './routes';
         },
       }),
     }),
-    RouterModule.register(routes),
     HealthModule,
     SharedModule,
     UsersModule,
     AuthModule,
     CaslModule,
+    HypixelModule,
+    MinecraftModule,
+    TextModule,
   ],
   controllers: [AppController],
   providers: [AppService],

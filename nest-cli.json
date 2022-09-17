@@ -65,7 +65,8 @@
         "watchAssets": true,
         "outDir": "dist/apps/api"
       }
-    ]
+    ],
+    "plugins": ["@nestjs/swagger"]
   },
   "generateOptions": {
     "spec": false

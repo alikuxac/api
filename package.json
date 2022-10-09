@@ -47,7 +47,7 @@
     "@notionhq/client": "^2.2.1",
     "@types/bcryptjs": "^2.4.2",
     "aws-sdk": "^2.1231.0",
-    "axios": "^0.27.2",
+    "axios": "^1.1.2",
     "bcryptjs": "^2.4.3",
     "cache-manager": "^5.0.0",
     "class-transformer": "^0.5.1",

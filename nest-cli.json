@@ -55,6 +55,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/auth/tsconfig.lib.json"
       }
+    },
+    "discord": {
+      "type": "library",
+      "root": "libs/discord",
+      "entryFile": "index",
+      "sourceRoot": "libs/discord/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/discord/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {
@@ -66,7 +75,9 @@
         "outDir": "dist/apps/api"
       }
     ],
-    "plugins": ["@nestjs/swagger"]
+    "plugins": [
+      "@nestjs/swagger"
+    ]
   },
   "generateOptions": {
     "spec": false

@@ -79,6 +79,12 @@
       ],
       "@auth/*": [
         "libs/auth/src/*"
+      ],
+      "@discord": [
+        "libs/discord/src"
+      ],
+      "@discord/*": [
+        "libs/discord/src/*"
       ]
     }
   }

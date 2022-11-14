@@ -19,6 +19,8 @@ import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
 import { PublicModule } from './modules/public/public.module';
 
+import { BotGateway } from '@discord';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -151,6 +153,7 @@ import { PublicModule } from './modules/public/public.module';
             GatewayIntentBits.GuildInvites,
             GatewayIntentBits.MessageContent,
             GatewayIntentBits.DirectMessages,
+            GatewayIntentBits.MessageContent,
           ],
         },
       }),
@@ -163,6 +166,6 @@ import { PublicModule } from './modules/public/public.module';
     PublicModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, BotGateway],
 })
 export class AppModule {}

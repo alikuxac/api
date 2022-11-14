@@ -10,7 +10,7 @@ import { GuildMember, Events } from 'discord.js';
 @Injectable()
 export class guildMemeberAddEvent {
   constructor(
-    @InjectModel('StickRole', 'discordbot')
+    @InjectModel('StickRole', 'api')
     private readonly stickRoleModel: Model<StickRole>,
   ) {}
 

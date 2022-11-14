@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BotGateway } from './bot.gateway';
 import { DiscordModule } from '@discord-nestjs/core';
-import { StickRole, StickRoleSchema } from './entities';
 
 import { Commands } from './commands';
+import { StickRole, StickRoleSchema } from './entities';
 
 @Module({
   imports: [

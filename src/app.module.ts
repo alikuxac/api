@@ -17,9 +17,7 @@ import { SharedModule } from '@shared/shared.module';
 import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
-import { HypixelModule } from './modules/hypixel/hypixel.module';
-import { MinecraftModule } from './modules/public/minecraft/minecraft.module';
-import { TextModule } from './modules/public/text/text.module';
+import { PublicModule } from './modules/public/public.module';
 
 @Module({
   imports: [
@@ -162,9 +160,7 @@ import { TextModule } from './modules/public/text/text.module';
     UsersModule,
     AuthModule,
     CaslModule,
-    HypixelModule,
-    MinecraftModule,
-    TextModule,
+    PublicModule,
   ],
   controllers: [AppController],
   providers: [AppService],

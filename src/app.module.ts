@@ -18,6 +18,7 @@ import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
 import { PublicModule } from './modules/public/public.module';
+import { LanguagesModule } from './modules/languages/languages.module';
 
 import { BotGateway } from '@discord';
 
@@ -164,6 +165,7 @@ import { BotGateway } from '@discord';
     AuthModule,
     CaslModule,
     PublicModule,
+    LanguagesModule,
   ],
   controllers: [AppController],
   providers: [AppService, BotGateway],

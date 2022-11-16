@@ -16,6 +16,7 @@ import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
 import { PublicModule } from './modules/public/public.module';
+import { LanguagesModule } from './modules/languages/languages.module';
 
 @Module({
   imports: [
@@ -134,6 +135,7 @@ import { PublicModule } from './modules/public/public.module';
     AuthModule,
     CaslModule,
     PublicModule,
+    LanguagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

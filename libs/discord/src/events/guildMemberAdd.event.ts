@@ -8,18 +8,20 @@ import { StickRole } from '../entities/stickRole.entity';
 import { GuildMember, Events } from 'discord.js';
 
 @Injectable()
-export class guildMemeberAddEvent {
+export class guildMemberAddEvent {
   constructor(
-    @InjectModel('StickRole', 'api')
+    @InjectModel(StickRole.name, 'api')
     private readonly stickRoleModel: Model<StickRole>,
   ) {}
 
   @On(Events.GuildMemberAdd)
   async CheckStickRole(member: GuildMember) {
-    const stickRole = await this.stickRoleModel.findOne({
-      guildID: member.guild.id,
-      id: member.id,
-    });
+    const stickRole = await this.stickRoleModel
+      .findOne({
+        guildID: member.guild.id,
+        id: member.id,
+      })
+      .exec();
 
     // If no stick role is found, return
     if (!stickRole) return;

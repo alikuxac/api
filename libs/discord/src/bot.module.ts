@@ -3,7 +3,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BotGateway } from './bot.gateway';
 import { DiscordModule } from '@discord-nestjs/core';
 
+import { controllerArray } from './controllers';
 import { Commands } from './commands';
+import { Events } from './events';
 import {
   StickRole,
   StickRoleSchema,
@@ -22,6 +24,7 @@ import {
       'api',
     ),
   ],
-  providers: [BotGateway, ...Commands],
+  controllers: [...controllerArray],
+  providers: [BotGateway, ...Commands, ...Events],
 })
 export class BotModule {}

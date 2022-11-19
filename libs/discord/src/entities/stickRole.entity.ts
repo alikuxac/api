@@ -14,8 +14,11 @@ export class StickRole extends Document {
   @Prop({ name: 'userId', type: String, length: 30 })
   userId: string;
 
-  @Prop({ name: 'roleId', type: String, length: 30 })
+  @Prop({ name: 'roleId', type: String, length: 30, unique: true, index: true })
   roleId: string;
+
+  @Prop({ name: 'color', type: String, lentgh: 10 })
+  color: string;
 }
 
 export const StickRoleSchema = SchemaFactory.createForClass(StickRole);

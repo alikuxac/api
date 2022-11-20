@@ -10,13 +10,12 @@ import Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import { HealthModule } from './modules/health/health.module';
 import { SharedModule } from '@shared/shared.module';
 import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
-import { PublicModule } from './modules/public/public.module';
-import { LanguagesModule } from './modules/languages/languages.module';
+
+import { modules } from '@modules';
 
 @Module({
   imports: [
@@ -129,13 +128,11 @@ import { LanguagesModule } from './modules/languages/languages.module';
         },
       }),
     }),
-    HealthModule,
     SharedModule,
     UsersModule,
     AuthModule,
     CaslModule,
-    PublicModule,
-    LanguagesModule,
+    ...modules,
   ],
   controllers: [AppController],
   providers: [AppService],

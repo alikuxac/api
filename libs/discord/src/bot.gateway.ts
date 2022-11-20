@@ -13,6 +13,7 @@ export class BotGateway {
 
   @Once(Events.ClientReady)
   async onClientReady() {
+    this.client.setMaxListeners(100);
     this.logger.log('Client ready');
   }
 

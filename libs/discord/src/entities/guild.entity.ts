@@ -20,6 +20,12 @@ export class DiscordGuild extends Document {
 
   @Prop({ name: 'prefix', type: Array, default: [] })
   prefix: string[];
+
+  @Prop({ name: 'isLeft', type: Boolean, default: false })
+  isLeft: boolean;
+
+  @Prop({ name: 'leftDate', type: Date, default: null })
+  leftDate: Date | null;
 }
 
 export const DiscordGuildSchema = SchemaFactory.createForClass(DiscordGuild);

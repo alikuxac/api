@@ -93,12 +93,6 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('email')) return next();
-  this.email = this.email.toLowerCase();
-  next();
-});
-
 UserSchema.pre('save', function (next) {
   if (!this.isModified('username')) return next();
   this.username = this.username.toLowerCase();

@@ -10,7 +10,8 @@ import { UpdateLanguageDto } from './dto/update-language.dto';
 @Injectable()
 export class LanguagesService {
   constructor(
-    @InjectModel(Language.name) private readonly langModel: Model<Language>,
+    @InjectModel(Language.name, 'api')
+    private readonly langModel: Model<Language>,
   ) {}
 
   async create(dto: CreateLanguageDto) {

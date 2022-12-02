@@ -29,12 +29,6 @@ export class DiscordBan extends Document {
 
   @Prop({ name: 'staffId', nullable: true })
   staffId: string;
-
-  @Prop()
-  createdAt: Date;
-
-  @Prop()
-  updatedAt: Date;
 }
 
 export const DiscordBanSchema = SchemaFactory.createForClass(DiscordBan);

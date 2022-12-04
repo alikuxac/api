@@ -1,7 +1,7 @@
 {
   "hello_world": "Hello world!",
   "uptime": {
-    "one": "{count} second",
-    "other": "{count} seconds"
+    "one": "{count} giây",
+    "other": "{count} giây"
   }
 }

@@ -4,6 +4,12 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { MulterModule } from '@nestjs/platform-express';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MailerModule } from '@nestjs-modules/mailer';
+import {
+  I18nModule,
+  QueryResolver,
+  CookieResolver,
+  HeaderResolver,
+} from 'nestjs-i18n';
 
 import Joi from 'joi';
 
@@ -16,6 +22,7 @@ import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
 
 import { modules } from '@modules';
+import path from 'path';
 
 @Module({
   imports: [
@@ -127,6 +134,18 @@ import { modules } from '@modules';
           },
         },
       }),
+    }),
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        new QueryResolver(['lang', 'language', 'l']),
+        new HeaderResolver(['x-custom-lang']),
+        new CookieResolver(['lang', 'l']),
+      ],
     }),
     SharedModule,
     UsersModule,

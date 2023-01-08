@@ -82,6 +82,12 @@
       ],
       "@auth/*": [
         "libs/auth/src/*"
+      ],
+      "@systems": [
+        "libs/systems/src"
+      ],
+      "@systems/*": [
+        "libs/systems/src/*"
       ]
     }
   }

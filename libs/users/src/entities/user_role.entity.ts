@@ -15,7 +15,6 @@ export class UserRole extends Document {
     required: true,
     trim: true,
     unique: true,
-    uppercase: true,
   })
   name: string;
 
@@ -41,4 +40,3 @@ export class UserRole extends Document {
 }
 
 export const UserRoleSchema = SchemaFactory.createForClass(UserRole);
-export type UserRoleDocument = UserRole & Document;

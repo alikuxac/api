@@ -4,18 +4,25 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { MulterModule } from '@nestjs/platform-express';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MailerModule } from '@nestjs-modules/mailer';
+import {
+  I18nModule,
+  QueryResolver,
+  CookieResolver,
+  HeaderResolver,
+} from 'nestjs-i18n';
 
 import Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import { HealthModule } from './modules/health/health.module';
 import { SharedModule } from '@shared/shared.module';
 import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
 import { CaslModule } from '@casl';
-import { PublicModule } from './modules/public/public.module';
+
+import { modules } from '@modules';
+import path from 'path';
 
 @Module({
   imports: [
@@ -128,12 +135,23 @@ import { PublicModule } from './modules/public/public.module';
         },
       }),
     }),
-    HealthModule,
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        new QueryResolver(['lang', 'language', 'l']),
+        new HeaderResolver(['x-custom-lang']),
+        new CookieResolver(['lang', 'l']),
+      ],
+    }),
     SharedModule,
     UsersModule,
     AuthModule,
     CaslModule,
-    PublicModule,
+    ...modules,
   ],
   controllers: [AppController],
   providers: [AppService],

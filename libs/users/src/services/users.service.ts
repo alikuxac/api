@@ -1,6 +1,6 @@
 import { Injectable, HttpException, forwardRef, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Model, LeanDocument } from 'mongoose';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { isEmail } from 'class-validator';
 import { customAlphabet } from 'nanoid';
@@ -64,14 +64,7 @@ export class UsersService {
   }
 
   async validateWithEmail(email: string) {
-    const validateKey = `${this.baseKey}validate:${email}`;
-    const cachedData = await this.redisService.get(validateKey);
-    if (cachedData) {
-      return JSON.parse(cachedData) as User;
-    }
-
     const user = await this.UserModel.findOne({ email }).exec();
-    await this.redisService.set(validateKey, JSON.stringify(user), 60 * 60);
     return user;
   }
 
@@ -82,7 +75,7 @@ export class UsersService {
   async findAll() {
     return await this.UserModel.find()
       .populate({ path: 'role', model: UserRole.name })
-      .lean();
+      .exec();
   }
 
   /**
@@ -95,17 +88,11 @@ export class UsersService {
     if (!checkExistId) {
       throw new HttpException('User not found', 404);
     }
-    const findOneKey = `${this.baseKey}findOne:${id}`;
-    const cachedData = await this.redisService.get(findOneKey);
-    if (cachedData) {
-      return JSON.parse(cachedData) as LeanDocument<User>;
-    }
     const user = this.UserModel.findOne({ _id: id });
     if (full) {
       user.populate({ path: 'role', model: UserRole.name });
     }
-    const result = await user.lean();
-    await this.redisService.set(findOneKey, JSON.stringify(result), 300);
+    const result = await user.exec();
     return result;
   }
 
@@ -115,17 +102,11 @@ export class UsersService {
    * @returns User
    */
   async findByUsername(username: string) {
-    const findByUsernameKey = `${this.baseKey}findByUsername:${username}`;
-    const cachedData = await this.redisService.get(findByUsernameKey);
-    if (cachedData) {
-      return JSON.parse(cachedData) as LeanDocument<User>;
-    }
     const result = await this.UserModel.findOne({
       username: username.toLowerCase(),
     })
       .populate({ path: 'role', model: UserRole.name })
-      .lean();
-    await this.redisService.set(findByUsernameKey, JSON.stringify(result), 300);
+      .exec();
     return result;
   }
 
@@ -139,15 +120,9 @@ export class UsersService {
     if (!IsEmail) {
       throw new HttpException('Email is not valid', 400);
     }
-    const findByEmailKey = `${this.baseKey}findByEmail:${email}`;
-    const cachedData = await this.redisService.get(findByEmailKey);
-    if (cachedData) {
-      return JSON.parse(cachedData) as LeanDocument<User>;
-    }
     const result = await this.UserModel.findOne({ email })
       .populate({ path: 'role', model: UserRole.name })
-      .lean();
-    await this.redisService.set(findByEmailKey, JSON.stringify(result), 300);
+      .exec();
     return result;
   }
 
@@ -158,11 +133,6 @@ export class UsersService {
    * @returns
    */
   async findByProviderId(provider: string, id: string) {
-    const findByProviderIdKey = `${this.baseKey}findByProviderId:${provider}:${id}`;
-    const cachedData = await this.redisService.get(findByProviderIdKey);
-    if (cachedData) {
-      return JSON.parse(cachedData) as LeanDocument<User>;
-    }
     const result = await this.UserModel.findOne({
       providers: {
         $elemMatch: {
@@ -172,21 +142,11 @@ export class UsersService {
       },
     })
       .populate({ path: 'role', model: UserRole.name })
-      .lean();
-    await this.redisService.set(
-      findByProviderIdKey,
-      JSON.stringify(result),
-      300,
-    );
+      .exec();
     return result;
   }
 
   async findByApiKey(apiKey: string) {
-    const findByApiKeyKey = `${this.baseKey}findByApiKey:${apiKey}`;
-    const cachedData = await this.redisService.get(findByApiKeyKey);
-    if (cachedData) {
-      return JSON.parse(cachedData) as LeanDocument<User>;
-    }
     const result = await this.UserModel.findOne({
       apikeys: {
         $elemMatch: {
@@ -195,27 +155,16 @@ export class UsersService {
       },
     })
       .populate({ path: 'role', model: UserRole.name })
-      .lean();
-    await this.redisService.set(findByApiKeyKey, JSON.stringify(result), 300);
+      .exec();
     return result;
   }
 
   async findByUsernameOrEmail(value: string) {
-    const findByUsernameOrEmailKey = `${this.baseKey}findByUsernameOrEmail:${value}`;
-    const cachedData = await this.redisService.get(findByUsernameOrEmailKey);
-    if (cachedData) {
-      return JSON.parse(cachedData) as LeanDocument<User>;
-    }
     const result = await this.UserModel.findOne({
       $or: [{ username: value }, { email: value }],
     })
       .populate({ path: 'role', model: UserRole.name })
-      .lean();
-    await this.redisService.set(
-      findByUsernameOrEmailKey,
-      JSON.stringify(result),
-      300,
-    );
+      .exec();
     return result;
   }
 

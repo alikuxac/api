@@ -27,16 +27,6 @@ import { R2Service } from './r2/r2.service';
       }),
     }),
 
-    // MongoDB Ali-Bot
-    MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      connectionName: 'discordbot',
-      useFactory: async (config: ConfigService) => ({
-        uri: config.get<string>('MONGO_URI'),
-        dbName: 'discordbot',
-      }),
-    }),
-
     // MongoDB Ali-API
     MongooseModule.forRootAsync({
       inject: [ConfigService],
@@ -44,26 +34,6 @@ import { R2Service } from './r2/r2.service';
       useFactory: (config: ConfigService) => ({
         uri: config.get('MONGO_URI'),
         dbName: 'api',
-      }),
-    }),
-
-    // MongoDB Forum
-    MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      connectionName: 'forum',
-      useFactory: (config: ConfigService) => ({
-        uri: config.get('MONGO_URI'),
-        dbName: 'forum',
-      }),
-    }),
-
-    // MongoDB Finance
-    MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      connectionName: 'finance',
-      useFactory: (config: ConfigService) => ({
-        uri: config.get('MONGO_URI'),
-        dbName: 'finance',
       }),
     }),
   ],

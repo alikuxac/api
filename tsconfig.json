@@ -26,6 +26,9 @@
       "@assets/*": [
         "src/assets/*"
       ],
+      "@modules": [
+        "src/modules"
+      ],
       "@modules/*": [
         "src/modules/*"
       ],

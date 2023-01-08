@@ -38,7 +38,7 @@ export class UserRoleService {
   }
 
   async init() {
-    const userRoles = await this.findAll();
+    const userRoles = await this.userRoleModel.find();
     if (userRoles.length === 0) {
       const user = new this.userRoleModel({
         name: 'user',

@@ -1,4 +1,6 @@
 import {
+  Inject,
+  forwardRef,
   Controller,
   Get,
   Post,
@@ -6,44 +8,105 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common';
+import { JwtOrApiKeyGuard } from '@auth';
 import { RolesService } from './roles.service';
 import { createRoleDto, updatePositionDto, updateRoleDto } from './roles.dto';
+import { RolePermission } from './role.enum';
+import { RoleAbilityFactory } from './role-ability.factory';
+import { Role } from './roles.entity';
 
-@Controller('systems/roles')
+@Controller('system/roles')
+@UseGuards(JwtOrApiKeyGuard)
 export class RolesController {
-  constructor(private readonly rolesService: RolesService) {}
+  constructor(
+    private readonly rolesService: RolesService,
+    @Inject(forwardRef(() => RoleAbilityFactory))
+    private readonly roleAbilityFactory: RoleAbilityFactory,
+  ) {}
 
   @Post()
-  async create(@Body() dto: createRoleDto) {
+  async create(@Req() req, @Body() dto: createRoleDto) {
+    const ability = await this.roleAbilityFactory.createAbilityForUser(
+      req.user,
+    );
+    if (!ability.can(RolePermission.CreateRole, Role)) {
+      throw new ForbiddenException('You do not have permission to create role');
+    }
     return await this.rolesService.create(dto);
   }
 
   @Get()
-  async findAll() {
+  async findAll(@Req() req) {
+    const ability = await this.roleAbilityFactory.createAbilityForUser(
+      req.user,
+    );
+    if (!ability.can(RolePermission.ReadRole, Role)) {
+      throw new ForbiddenException(
+        'You do not have permission to read role infomation',
+      );
+    }
     return await this.rolesService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Req() req, @Param('id') id: string) {
+    const ability = await this.roleAbilityFactory.createAbilityForUser(
+      req.user,
+    );
+    if (!ability.can(RolePermission.ReadRole, Role)) {
+      throw new ForbiddenException(
+        'You do not have permission to read role infomation',
+      );
+    }
     return await this.rolesService.findOne(id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: updateRoleDto) {
-    return await this.rolesService.update(+id, dto);
+  async update(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() dto: updateRoleDto,
+  ) {
+    const ability = await this.roleAbilityFactory.createAbilityForUser(
+      req.user,
+    );
+    if (!ability.can(RolePermission.UpdateRole, Role)) {
+      throw new ForbiddenException(
+        'You do not have permission to update role.',
+      );
+    }
+    return await this.rolesService.update(id, dto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.rolesService.remove(+id);
+  async remove(@Req() req, @Param('id') id: string) {
+    const ability = await this.roleAbilityFactory.createAbilityForUser(
+      req.user,
+    );
+    if (!ability.can(RolePermission.DeleteRole, Role)) {
+      throw new ForbiddenException('You do not have permission to delete.');
+    }
+    return await this.rolesService.remove(id);
   }
 
   @Patch(':id/position')
   async updatePosition(
+    @Req() req,
     @Param('id') id: string,
     @Body() dto: updatePositionDto,
   ) {
+    const ability = await this.roleAbilityFactory.createAbilityForUser(
+      req.user,
+    );
+    if (!ability.can(RolePermission.ChangePosition, Role)) {
+      throw new ForbiddenException(
+        'You do not have permission to change postion.',
+      );
+    }
     return await this.rolesService.swapRole(id, dto.position);
   }
 }

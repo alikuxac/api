@@ -94,7 +94,7 @@ export class RolesService {
     return result;
   }
 
-  async update(id: number, dto: updateRoleDto) {
+  async update(id: string, dto: updateRoleDto) {
     const role = await this.roleModel.findById(id).exec();
     if (!role) {
       throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
@@ -121,7 +121,7 @@ export class RolesService {
     return await role.save();
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const role = await this.roleModel.findById(id).exec();
     if (!role) {
       throw new HttpException('Role not found', HttpStatus.NOT_FOUND);

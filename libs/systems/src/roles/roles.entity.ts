@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import { Document } from 'mongoose';
+
+import { RolePermission } from './role.enum';
 
 @Schema({
   collection: 'roles',
@@ -27,8 +29,12 @@ export class Role extends Document {
   })
   position: number;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, default: [] })
-  permissions: mongoose.Schema.Types.ObjectId[];
+  @Prop({
+    type: Array<RolePermission>,
+    default: [],
+    enum: RolePermission,
+  })
+  permissions: RolePermission[];
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

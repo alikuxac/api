@@ -1,44 +1,43 @@
-import { Module, OnModuleInit, forwardRef } from '@nestjs/common';
+import { Inject, Module, OnModuleInit, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SharedModule } from '@shared';
-import { CaslModule } from '@casl';
-import { UsersService, UserRoleService } from '@users/services';
-import { UsersController } from '@users/controllers';
+import { UsersService } from '@users/services';
+import { userControllers } from '@users/controllers';
+import { userFactoryArray } from '@users/factory';
 
 // Entity
-import { User, UserSchema, UserRole, UserRoleSchema } from '@users/entities';
+import { User, UserSchema } from '@users/entities';
+
+import { RolesModule, RolesService } from '@systems';
 
 @Module({
   imports: [
     SharedModule,
-    forwardRef(() => CaslModule),
+    forwardRef(() => RolesModule),
     MongooseModule.forFeature(
       [
         {
           name: User.name,
           schema: UserSchema,
         },
-        {
-          name: UserRole.name,
-          schema: UserRoleSchema,
-        },
       ],
       'api',
     ),
   ],
-  controllers: [UsersController],
-  providers: [UsersService, UserRoleService],
-  exports: [UsersService, UserRoleService],
+  controllers: [...userControllers],
+  providers: [UsersService, ...userFactoryArray],
+  exports: [UsersService, ...userFactoryArray],
 })
 export class UsersModule implements OnModuleInit {
   constructor(
     private readonly usersService: UsersService,
-    private readonly usersRoleSerive: UserRoleService,
+    @Inject(forwardRef(() => RolesService))
+    private readonly rolesService: RolesService,
   ) {}
 
   async onModuleInit() {
-    this.usersRoleSerive.init().then(async () => {
-      await this.usersService.init();
+    this.rolesService.init().then(async (role) => {
+      await this.usersService.init(role._id);
     });
   }
 }

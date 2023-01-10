@@ -7,3 +7,4 @@ export * from './entities';
 export * from './enum';
 export * from './interfaces';
 export * from './controllers';
+export * from './factory';

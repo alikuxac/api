@@ -1,31 +1,25 @@
 import {
   InferSubjects,
   AbilityBuilder,
-  Ability,
-  AbilityClass,
+  createMongoAbility,
   ExtractSubjectType,
 } from '@casl/ability';
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 
 import { User } from '@users/entities';
-import { UserRolePermission as userActions } from '@users/enum';
-import { UserRoleService } from '@users/services';
+import { RolePermission as userActions, RolesService } from '@systems';
 
 type userSubjects = InferSubjects<typeof User> | 'User' | 'all';
-
-type UserAbility = Ability<[userActions, userSubjects]>;
 
 @Injectable()
 export class UserAbilityFactory {
   constructor(
-    @Inject(forwardRef(() => UserRoleService))
-    private readonly userRoleService: UserRoleService,
+    @Inject(forwardRef(() => RolesService))
+    private readonly userRoleService: RolesService,
   ) {}
 
-  async createAbilityForUser(user: User): Promise<UserAbility> {
-    const { can, build } = new AbilityBuilder<
-      Ability<[userActions, userSubjects]>
-    >(Ability as AbilityClass<UserAbility>);
+  async createAbilityForUser(user: User) {
+    const { can, build } = new AbilityBuilder(createMongoAbility);
 
     const role = await this.userRoleService.findOne(user.role.toString());
 
@@ -53,7 +47,7 @@ export class UserAbilityFactory {
 
     return build({
       detectSubjectType: (subject) =>
-        subject.constructor as ExtractSubjectType<User>,
+        subject.constructor as ExtractSubjectType<userSubjects>,
     });
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
-import { UserRolePermission } from '@users/enum';
+import { RolePermission } from '@systems';
 
 @Injectable()
 export class AppService {
@@ -17,10 +17,10 @@ export class AppService {
   }
 
   getRolePermission() {
-    return Object.keys(UserRolePermission).map((key) => {
+    return Object.keys(RolePermission).map((key) => {
       return {
         key,
-        value: UserRolePermission[key],
+        value: RolePermission[key],
       };
     });
   }

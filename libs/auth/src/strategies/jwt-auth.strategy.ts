@@ -1,13 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { UserRole } from '@users/entities';
 import { UsersService } from '@users';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 interface IPayload {
   email: string;
-  role: UserRole;
+  role: string;
 }
 
 @Injectable()

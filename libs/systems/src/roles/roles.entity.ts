@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 import { RolePermission } from './role.enum';
 
 @Schema({
-  collection: 'roles',
+  collection: 'role',
   versionKey: false,
   timestamps: true,
   toJSON: {
@@ -12,24 +12,26 @@ import { RolePermission } from './role.enum';
   },
 })
 export class Role extends Document {
-  @Prop({ unique: true, index: true })
+  @Prop({ unique: true, index: true, length: 50, required: true })
   name: string;
 
   @Prop({
+    name: 'description',
     type: String,
     default: '',
     trim: true,
+    length: 255,
   })
   description: string;
 
   @Prop({
     name: 'position',
     type: Number,
-    default: 0,
   })
   position: number;
 
   @Prop({
+    name: 'permissions',
     type: Array<RolePermission>,
     default: [],
     enum: RolePermission,

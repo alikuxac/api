@@ -4,3 +4,9 @@ export * from './roles.entity';
 export * from './roles.module';
 export * from './roles.service';
 export * from './role.enum';
+export * from './role-ability.factory';
+
+/**
+ * TODO:
+ * add permission controller, service
+ */

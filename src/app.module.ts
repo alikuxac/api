@@ -19,10 +19,10 @@ import { AppService } from './app.service';
 import { SharedModule } from '@shared/shared.module';
 import { UsersModule } from '@users';
 import { AuthModule } from '@auth';
-import { CaslModule } from '@casl';
 
 import { modules } from '@modules';
 import path from 'path';
+import { SystemsModule } from '@systems';
 
 @Module({
   imports: [
@@ -148,9 +148,9 @@ import path from 'path';
       ],
     }),
     SharedModule,
+    SystemsModule,
     UsersModule,
     AuthModule,
-    CaslModule,
     ...modules,
   ],
   controllers: [AppController],

@@ -1,4 +1,10 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -23,21 +29,34 @@ export class RolesService {
   ) {}
 
   async getUserRole() {
-    const userRoleKey = `${this.baseKey}userRole`;
-    const role = await this.redisService.get(userRoleKey);
-    if (role) {
-      return JSON.parse(role) as Role;
-    }
     const result = await this.roleModel
       .findOne({ name: this.defaultRole[0] })
       .exec();
-    await this.redisService.set(userRoleKey, JSON.stringify(result));
     return result;
   }
 
+  async getHighestPosition() {
+    const position = await this.redisService.get(`${this.baseKey}position`);
+    if (position) {
+      return +position;
+    }
+    const latestRole = await this.roleModel
+      .findOne({})
+      .sort({ position: -1 })
+      .lean()
+      .exec();
+    await this.redisService.set(
+      `${this.baseKey}position`,
+      latestRole.position.toString(),
+    );
+    return latestRole.position;
+  }
+
   async init() {
-    const roleArray = await this.roleModel.find().exec();
-    if (roleArray.length === 0) {
+    const userRole = await this.roleModel
+      .findOne({ name: this.defaultRole[0] })
+      .exec();
+    if (!userRole) {
       const role = new this.roleModel({
         name: 'user',
         description: 'User',
@@ -46,6 +65,7 @@ export class RolesService {
       });
       return await role.save();
     }
+    return userRole;
   }
 
   async create(dto: createRoleDto) {
@@ -62,7 +82,11 @@ export class RolesService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const role = new this.roleModel({ ...dto });
+    const role = new this.roleModel({
+      name: dto.name,
+      description: dto.description ?? '',
+      permissions: dto.permissions ?? [],
+    });
     const latestRole = await this.roleModel
       .findOne({})
       .sort({ position: -1 })
@@ -72,26 +96,27 @@ export class RolesService {
     return await role.save();
   }
 
-  async findAll() {
-    const findAllKey = `${this.baseKey}findAll`;
-    const roles = await this.redisService.get(findAllKey);
-    if (roles) {
-      return JSON.parse(roles) as Role[];
-    }
-    const result = await this.roleModel.find().exec();
-    await this.redisService.set(findAllKey, JSON.stringify(result));
+  async findAll(page = 0) {
+    const limit = 10;
+    const result = await this.roleModel
+      .find()
+      .limit(limit)
+      .skip(limit * page)
+      .exec();
     return result;
   }
 
   async findOne(id: string) {
-    const findOneKey = `${this.baseKey}findOne_${id}`;
-    const role = await this.redisService.get(findOneKey);
-    if (role) {
-      return JSON.parse(role) as Role;
-    }
     const result = await this.roleModel.findById(id).exec();
-    await this.redisService.set(findOneKey, JSON.stringify(result));
     return result;
+  }
+
+  async findOneByName(name: string) {
+    const roleExist = await this.roleModel.findOne({ name: name }).exec();
+    if (!roleExist) {
+      throw new NotFoundException('No role with this name');
+    }
+    return { role: roleExist };
   }
 
   async update(id: string, dto: updateRoleDto) {
@@ -126,14 +151,15 @@ export class RolesService {
     if (!role) {
       throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
     }
-    const userRole = await this.getUserRole();
-    return await this.userModel.updateMany(
-      { role: role._id },
-      { role: userRole._id },
-    );
+    const userCount = await this.userModel.find({ role: role._id }).exec();
+    if (userCount.length > 0) {
+      throw new BadRequestException('Users that have role are more than 1.');
+    }
+    return await this.roleModel.deleteOne({ _id: id }).exec();
   }
 
-  async swapRole(id: string, position: number) {
+  async swapRole(user: User, id: string, position: number) {
+    const userRole = await this.roleModel.findById(user.role).exec();
     const role = await this.roleModel.findById(id).exec();
     if (!role) {
       throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
@@ -141,6 +167,13 @@ export class RolesService {
     const roleWithPosition = await this.roleModel.findOne({ position }).exec();
     if (!roleWithPosition) {
       throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
+    }
+    if (
+      !user.isOwner &&
+      (userRole.position < role.position ||
+        userRole.position < roleWithPosition.position)
+    ) {
+      throw new BadRequestException('You dont have permission to do this');
     }
     const temp = role.position;
     role.position = roleWithPosition.position;

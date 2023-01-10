@@ -1,4 +1,10 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { RolePermission } from './role.enum';
 import { PartialType, OmitType } from '@nestjs/swagger';
 
@@ -24,4 +30,10 @@ export class updatePositionDto {
   @IsString()
   @IsNotEmpty()
   position: number;
+}
+
+export class queryGetAllDto {
+  @IsNumber()
+  @IsOptional()
+  page?: number;
 }

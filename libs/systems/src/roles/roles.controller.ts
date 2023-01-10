@@ -3,18 +3,26 @@ import {
   forwardRef,
   Controller,
   Get,
+  Query,
   Post,
   Body,
   Patch,
   Param,
   Delete,
   UseGuards,
+  UsePipes,
   Req,
+  ValidationPipe,
   ForbiddenException,
 } from '@nestjs/common';
 import { JwtOrApiKeyGuard } from '@auth';
 import { RolesService } from './roles.service';
-import { createRoleDto, updatePositionDto, updateRoleDto } from './roles.dto';
+import {
+  createRoleDto,
+  queryGetAllDto,
+  updatePositionDto,
+  updateRoleDto,
+} from './roles.dto';
 import { RolePermission } from './role.enum';
 import { RoleAbilityFactory } from './role-ability.factory';
 import { Role } from './roles.entity';
@@ -40,7 +48,8 @@ export class RolesController {
   }
 
   @Get()
-  async findAll(@Req() req) {
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  async findAll(@Req() req, @Query() dto: queryGetAllDto) {
     const ability = await this.roleAbilityFactory.createAbilityForUser(
       req.user,
     );
@@ -49,7 +58,7 @@ export class RolesController {
         'You do not have permission to read role infomation',
       );
     }
-    return await this.rolesService.findAll();
+    return await this.rolesService.findAll(dto.page);
   }
 
   @Get(':id')
@@ -107,6 +116,6 @@ export class RolesController {
         'You do not have permission to change postion.',
       );
     }
-    return await this.rolesService.swapRole(id, dto.position);
+    return await this.rolesService.swapRole(req.user, id, dto.position);
   }
 }

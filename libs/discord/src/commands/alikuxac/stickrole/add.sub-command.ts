@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { StickRole } from '@discord/entities';
-import { AddStickRoleDto } from '@discord/dto/bot/stickRole.dto';
+import { AddStickRoleDto } from '@discord/dto/stickRole.dto';
 
 @UsePipes(TransformPipe)
 @SubCommand({

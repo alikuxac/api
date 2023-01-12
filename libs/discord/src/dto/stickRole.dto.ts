@@ -1,6 +1,8 @@
+import { IsNumberString, IsOptional } from 'class-validator';
 import { Param, ParamType } from '@discord-nestjs/core';
 import { Role, User } from 'discord.js';
 
+// Bot
 export class AddStickRoleDto {
   @Param({
     type: ParamType.ROLE,
@@ -36,4 +38,15 @@ export class checkStickRoleDto {
     required: true,
   })
   user: User;
+}
+
+// Api
+export class getAllStickRoleDto {
+  @IsNumberString()
+  @IsOptional()
+  limit?: number;
+
+  @IsNumberString()
+  @IsOptional()
+  page?: number;
 }

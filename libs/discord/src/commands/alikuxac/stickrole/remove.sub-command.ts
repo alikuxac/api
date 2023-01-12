@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { StickRole } from '@discord/entities';
-import { RemoveStickRoleDto } from '@discord/dto/bot/stickRole.dto';
+import { RemoveStickRoleDto } from '@discord/dto/stickRole.dto';
 
 @UsePipes(TransformPipe)
 @SubCommand({
@@ -45,13 +45,20 @@ export class RemoveStickRoleCommand
       });
       return;
     } else {
-      const role = guild.roles.fetch(checkExist.roleId);
-      r;
-      await this.stickRoleModel.deleteOne({ user: userToAdd.id });
+      const role = await guild.roles.fetch(checkExist.roleId);
+      const member = guild.members.cache.get(userToAdd.id);
+      Promise.all([
+        await this.stickRoleModel.deleteOne({
+          guildId: guild.id,
+          user: userToAdd.id,
+        }),
+        await member.roles.remove(role),
+      ]);
       await interaction.reply({
         content: `Stick role has been removed from ${userToAdd.username}`,
         ephemeral: true,
       });
+      return;
     }
   }
 }

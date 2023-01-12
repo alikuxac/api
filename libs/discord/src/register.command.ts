@@ -1,4 +1,4 @@
-import { SlashCommandBuildewr } from 'discord.js';
+import { SlashCommandBuilder } from 'discord.js';
 
 // Slash Command
 const alikuxacCommand = new SlashCommandBuilder()

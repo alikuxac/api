@@ -6,6 +6,7 @@ import { DiscordModule } from '@discord-nestjs/core';
 import { controllerArray } from './controllers';
 import { Commands } from './commands';
 import { Events } from './events';
+import { Guard } from './guards';
 import {
   StickRole,
   StickRoleSchema,
@@ -25,6 +26,6 @@ import {
     ),
   ],
   controllers: [...controllerArray],
-  providers: [BotGateway, ...Commands, ...Events],
+  providers: [BotGateway, ...Commands, ...Events, ...Guard],
 })
 export class BotModule {}

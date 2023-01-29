@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
 
 import { DateTime } from 'luxon';
 
 @Injectable()
 export class FunService {
+  constructor(private readonly i18nService: I18nService) {}
+
   getAge(date: string) {
     const birthDate = DateTime.fromISO(date);
 
     const diff = birthDate.diffNow(['year'], {
       conversionAccuracy: 'casual',
     });
-    return {
-      success: true,
-      message: `Một ai đó sinh vào năm ${birthDate.year}, hiện tại được ${diff.years} tuổi rồi.`,
-    };
+    return this.i18nService.t('fun.get_age', {
+      args: { year: diff },
+    });
+    // return {
+    //   success: true,
+    //   message: `Một ai đó sinh vào năm ${birthDate.year}, hiện tại được ${diff.years} tuổi rồi.`,
+    // };
   }
 
   yearProcess() {

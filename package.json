@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@casl/ability": "^6.3.3",
-    "@discord-nestjs/common": "^4.0.8",
+    "@discord-nestjs/common": "^5.1.4",
     "@discord-nestjs/core": "^4.3.1",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/axios": "^1.0.1",

@@ -11,6 +11,8 @@ import { RedisService } from '@shared/redis/redis.service';
 import { HttpExceptionFilter } from './shared/filter/http-exception.filter';
 import { LoggingInterceptor, TimeoutInterceptor } from './shared/interceptors';
 
+import { setupSwagger } from './swagger';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['debug', 'error', 'log', 'warn', 'verbose'],
@@ -30,6 +32,8 @@ async function bootstrap() {
   // Initialize Service
   const redis = app.get<RedisService>(RedisService);
   await redis.connect();
+
+  setupSwagger(app);
 
   await app.listen(configService.get<number>('PORT'));
 }

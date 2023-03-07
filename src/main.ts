@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { json, urlencoded } from 'express';
 import compression from 'compression';
 
-import { AppModule } from './app.module';
+import { AppModule } from './app/app.module';
 
 import { RedisService } from '@shared/redis/redis.service';
 

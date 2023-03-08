@@ -12,6 +12,7 @@ import {
 } from 'nestjs-i18n';
 
 import Joi from 'joi';
+import configs from '../configs';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -27,11 +28,12 @@ import { SystemsModule } from '@systems';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      load: configs,
       isGlobal: true,
       envFilePath: ['.env'],
       validationSchema: Joi.object({
         // APP
-        NODE_ENV: Joi.string().default('development'),
+        NODE_ENV: Joi.string().default('development').required(),
         PORT: Joi.number().default(3000),
         CACHE_TTL: Joi.number().default(120),
         JWT_SECRET: Joi.string().required(),
@@ -45,7 +47,7 @@ import { SystemsModule } from '@systems';
         REDIS_PORT: Joi.number().required(),
 
         // S3
-        B2_ENABLED: Joi.boolean().required(),
+        B2_ENABLED: Joi.boolean().default(false).required(),
         B2_ENDPOINT: Joi.when('B2_ENABLED', {
           is: true,
           then: Joi.string().required(),
@@ -58,7 +60,7 @@ import { SystemsModule } from '@systems';
           is: true,
           then: Joi.string().required(),
         }),
-        R2_ENABLED: Joi.boolean().required(),
+        R2_ENABLED: Joi.boolean().default(false).required(),
         R2_ENDPOINT: Joi.when('R2_ENABLED', {
           is: true,
           then: Joi.string().required(),

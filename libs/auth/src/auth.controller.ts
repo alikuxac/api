@@ -7,6 +7,7 @@ import {
   Get,
   Res,
   Body,
+  Injectable,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
@@ -14,8 +15,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 
 import { signInDto, signUpDto } from './auth.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@Injectable()
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

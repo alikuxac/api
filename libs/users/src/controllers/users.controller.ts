@@ -13,6 +13,7 @@ import {
   UseGuards,
   ParseBoolPipe,
   ForbiddenException,
+  Injectable,
 } from '@nestjs/common';
 import { JwtOrApiKeyGuard } from '@auth/guards';
 import { UsersService } from '@users/services';
@@ -29,8 +30,11 @@ import { User } from '@users/entities';
 
 import { UserAbilityFactory } from '@users/factory';
 import { RolePermission as userPerms } from '@systems';
+import { ApiTags } from '@nestjs/swagger';
 
+@Injectable()
 @Controller('user')
+@ApiTags('Users')
 @UseGuards(JwtOrApiKeyGuard)
 export class UsersController {
   constructor(

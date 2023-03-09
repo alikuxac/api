@@ -26,8 +26,10 @@ import {
 import { RolePermission } from './role.enum';
 import { RoleAbilityFactory } from './role-ability.factory';
 import { Role } from './roles.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('system/roles')
+@ApiTags('Roles')
 @UseGuards(JwtOrApiKeyGuard)
 export class RolesController {
   constructor(

@@ -16,9 +16,11 @@ import { UserAbilityFactory } from '@users/factory';
 import { updateUserDto, updatePasswordDto } from '@users/dto';
 import { User } from '@users/entities';
 import { UsersService } from '@users/services';
+import { ApiTags } from '@nestjs/swagger';
 
 @Injectable()
 @Controller('user/me')
+@ApiTags('Personal User')
 @UseGuards(JwtOrApiKeyGuard)
 export class UserPersonalController {
   constructor(
@@ -57,7 +59,7 @@ export class UserPersonalController {
     return userRole;
   }
 
-  @Patch('me')
+  @Patch()
   async updateMe(@Req() req, @Body() dto: updateUserDto) {
     return await this.usersService.update(req.user.id, dto);
   }

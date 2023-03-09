@@ -10,8 +10,10 @@ import {
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('languages')
+@ApiTags('Languages')
 export class LanguagesController {
   constructor(private readonly languagesService: LanguagesService) {}
 

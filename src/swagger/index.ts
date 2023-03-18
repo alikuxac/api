@@ -1,19 +1,31 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import {
-  SWAGGER_API_ROOT,
-  SWAGGER_API_NAME,
-  SWAGGER_API_DESCRIPTION,
-  SWAGGER_API_CURRENT_VERSION,
-} from './constant';
 
 export const setupSwagger = (app: INestApplication) => {
+  const configService = app.get(ConfigService);
+  const logger = new Logger();
+
+  const docTitle: string = configService.get<string>('doc.title');
+  const docDescription: string = configService.get<string>('doc.description');
+  const docPrefix: string = configService.get<string>('doc.prefix');
+  const docVersion: string = configService.get<string>('doc.version');
+
   const options = new DocumentBuilder()
-    .setTitle(SWAGGER_API_NAME)
-    .setDescription(SWAGGER_API_DESCRIPTION)
-    .setVersion(SWAGGER_API_CURRENT_VERSION)
-    .addBearerAuth()
+    .setTitle(docTitle)
+    .setDescription(docDescription)
+    .setVersion(docVersion)
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'accessToken',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup(SWAGGER_API_ROOT, app, document);
+  SwaggerModule.setup(docPrefix, app, document);
+
+  logger.log(`==========================================================`);
+
+  logger.log(`Docs will serve on ${docPrefix}`, 'NestApplication');
+
+  logger.log(`==========================================================`);
 };

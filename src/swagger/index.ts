@@ -2,7 +2,7 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-export const setupSwagger = (app: INestApplication) => {
+export default async function (app: INestApplication) {
   const configService = app.get(ConfigService);
   const logger = new Logger();
 
@@ -28,4 +28,4 @@ export const setupSwagger = (app: INestApplication) => {
   logger.log(`Docs will serve on ${docPrefix}`, 'NestApplication');
 
   logger.log(`==========================================================`);
-};
+}

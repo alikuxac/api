@@ -7,7 +7,7 @@ export default registerAs(
   (): Record<string, any> => ({
     title: 'Alikuxac API',
     description: 'Alikuxac API',
-    prefix: 'docs',
+    prefix: '/docs',
     version: packageJson.version,
   }),
 );

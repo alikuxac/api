@@ -47,29 +47,11 @@
       "@hypixel/*": [
         "libs/hypixel/src/*"
       ],
-      "@casl": [
-        "libs/casl/src"
-      ],
-      "@casl/*": [
-        "libs/casl/src/*"
-      ],
-      "@shared": [
-        "libs/shared/src"
-      ],
-      "@shared/*": [
-        "libs/shared/src/*"
-      ],
       "@forum": [
         "libs/forum/src"
       ],
       "@forum/*": [
         "libs/forum/src/*"
-      ],
-      "@users": [
-        "libs/users/src"
-      ],
-      "@users/*": [
-        "libs/users/src/*"
       ],
       "@finance": [
         "libs/finance/src"
@@ -77,18 +59,6 @@
       "@finance/*": [
         "libs/finance/src/*"
       ],
-      "@auth": [
-        "libs/auth/src"
-      ],
-      "@auth/*": [
-        "libs/auth/src/*"
-      ],
-      "@systems": [
-        "libs/systems/src"
-      ],
-      "@systems/*": [
-        "libs/systems/src/*"
-      ]
     }
   }
 }

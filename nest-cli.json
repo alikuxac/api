@@ -19,50 +19,14 @@
       "compilerOptions": {
         "tsConfigPath": "libs/hypixel/tsconfig.lib.json"
       }
-    },
-    "shared": {
-      "type": "library",
-      "root": "libs/shared",
-      "entryFile": "index",
-      "sourceRoot": "libs/shared/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/shared/tsconfig.lib.json"
-      }
-    },
-    "users": {
-      "type": "library",
-      "root": "libs/users",
-      "entryFile": "index",
-      "sourceRoot": "libs/users/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/users/tsconfig.lib.json"
-      }
-    },
-    "auth": {
-      "type": "library",
-      "root": "libs/auth",
-      "entryFile": "index",
-      "sourceRoot": "libs/auth/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/auth/tsconfig.lib.json"
-      }
-    },
-    "systems": {
-      "type": "library",
-      "root": "libs/systems",
-      "entryFile": "index",
-      "sourceRoot": "libs/systems/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/systems/tsconfig.lib.json"
-      }
     }
   },
   "compilerOptions": {
-    "webpack": true,
     "assets": [
       {
         "include": "i18n/**/*",
-        "watchAssets": true
+        "watchAssets": true,
+         "outDir": "dist/src" 
       }
     ],
     "plugins": ["@nestjs/swagger"]

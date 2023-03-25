@@ -45,7 +45,6 @@ export class UserAuthController {
     const tokenType: string = await this.authService.getTokenType();
     const expiresIn: number =
       await this.authService.getAccessTokenExpirationTime();
-    // const payloadEncryption = await this.authService.getPayloadEncryption();
 
     const payloadAccessToken: Record<string, any> =
       await this.authService.createPayloadAccessToken(payload, rememberMe);
@@ -58,35 +57,9 @@ export class UserAuthController {
         },
       );
 
-    // let payloadHashedAccessToken: Record<string, any> | string =
-    //   payloadAccessToken;
-    // let payloadHashedRefreshToken: Record<string, any> | string =
-    //   payloadRefreshToken;
-
-    // if (payloadEncryption) {
-    //   payloadHashedAccessToken = await this.authService.encryptAccessToken(
-    //     payloadAccessToken,
-    //   );
-    //   payloadHashedRefreshToken = await this.authService.encryptRefreshToken(
-    //     payloadRefreshToken,
-    //   );
-    // }
-
-    // console.log('access payload: ', payloadAccessToken);
-    // console.log('refresh payload: ', payloadRefreshToken);
-
     const accessToken: string = await this.authService.createAccessToken(
       payloadAccessToken,
     );
-
-    // console.log(
-    //   'validate access token',
-    //   await this.authService.validateAccessToken(accessToken),
-    // );
-    // console.log(
-    //   'decode access token',
-    //   await this.authService.payloadAccessToken(accessToken),
-    // );
 
     const refreshToken: string = await this.authService.createRefreshToken(
       payloadRefreshToken,

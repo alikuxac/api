@@ -30,7 +30,6 @@ export class AuthJwtAccessStrategy extends PassportStrategy(
   }
 
   async validate({ data }: Record<string, any>): Promise<Record<string, any>> {
-    console.log('data: ', data);
     const payloadEncryption: boolean =
       await this.authService.getPayloadEncryption();
 

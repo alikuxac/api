@@ -9,7 +9,6 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { isEmail } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
 import { customAlphabet } from 'nanoid';
 
 // Entity

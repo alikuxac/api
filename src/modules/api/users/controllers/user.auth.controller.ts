@@ -12,7 +12,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 
 import { AuthService } from '@root/common/auth/services/auth.service';
-import { UsersService } from 'src/modules/api/users/services';
+import { UsersService } from 'src/modules/api/users/services/users.service';
 
 import { signInDto, signUpDto } from 'src/modules/api/users/dto/user.auth.dto';
 import { ApiTags } from '@nestjs/swagger';

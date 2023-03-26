@@ -14,7 +14,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 // import { JwtAuthAccessGuard } from 'src/common/auth/guards/jwt-access/jwt-access.guard';
-import { UsersService } from 'src/modules/api/users/services';
+import { UsersService } from 'src/modules/api/users/services/users.service';
 import {
   createUserDto,
   updateUserDto,
@@ -25,7 +25,7 @@ import {
 } from 'src/modules/api/users/dto';
 import { User } from 'src/modules/api/users/entities';
 
-import { UserAbilityFactory } from 'src/modules/api/users/factory';
+import { UserAbilityFactory } from 'src/modules/api/users/factory/user-ability.factory';
 import { RolePermission as userPerms } from 'src/modules/api/roles';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';

@@ -6,7 +6,7 @@ import {
 } from '@casl/ability';
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 
-import { User } from 'src/modules/api/users';
+import { User } from 'src/modules/api/users/entities/user.entity';
 import { Role } from '../entity/roles.entity';
 import { RolesService } from '../service/roles.service';
 import { RolePermission } from '../constants/role.constant';

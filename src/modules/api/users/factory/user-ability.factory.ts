@@ -7,8 +7,9 @@ import {
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/modules/api/users';
-import { RolePermission as userActions, Role } from 'src/modules/api/roles';
+import { User } from 'src/modules/api/users/entities/user.entity';
+import { Role } from 'src/modules/api/roles/entity/roles.entity';
+import { RolePermission as userActions } from 'src/modules/api/roles/constants/role.constant';
 
 type userSubjects = InferSubjects<typeof User> | 'User' | 'all';
 

@@ -4,7 +4,7 @@ import { TerminusModule } from '@nestjs/terminus';
 // Module
 import { HealthModule } from '@root/health/health.module';
 import { FunModule } from 'src/modules/public/fun/fun.module';
-import { UsersModule } from '@root/modules/api/users';
+import { UsersModule } from '@root/modules/api/users/users.module';
 import { AuthModule } from '@root/common/auth/auth.module';
 
 // Controller
@@ -14,6 +14,12 @@ import { UserAuthController } from '@root/modules/api/users/controllers/user.aut
 
 @Module({
   controllers: [HealthController, FunController, UserAuthController],
-  imports: [HealthModule, FunModule, UsersModule, AuthModule, TerminusModule],
+  imports: [
+    HealthModule,
+    FunModule,
+    UsersModule.forFeature(),
+    AuthModule,
+    TerminusModule,
+  ],
 })
 export class RouterModule {}

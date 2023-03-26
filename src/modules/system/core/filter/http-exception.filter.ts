@@ -24,6 +24,7 @@ export class HttpExceptionFilter<T extends HttpException>
     if (response && typeof response.status === 'function') {
       response.status(statusCode).json({
         ...error,
+        success: false,
         path: request.url,
         timestamp: new Date().toISOString(),
       });

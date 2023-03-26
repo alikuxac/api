@@ -8,12 +8,10 @@ import {
   Param,
   Delete,
   Query,
-  // UseGuards,
   ParseBoolPipe,
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-// import { JwtAuthAccessGuard } from 'src/common/auth/guards/jwt-access/jwt-access.guard';
 import { UsersService } from 'src/modules/api/users/services/users.service';
 import {
   createUserDto,
@@ -26,9 +24,8 @@ import {
 import { User } from 'src/modules/api/users/entities';
 
 import { UserAbilityFactory } from 'src/modules/api/users/factory/user-ability.factory';
-import { RolePermission as userPerms } from 'src/modules/api/roles';
+import { RolePermission as userPerms } from 'src/modules/api/roles/constants/role.constant';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
 
 @Injectable()
 @Controller('user')
@@ -41,7 +38,6 @@ export class UsersController {
 
   // User Management
   @Get()
-  @AuthJwtAccessProtected()
   async findAll(@Req() req) {
     const ability = await this.userAbilityFactory.createAbilityForUser(
       req.user,

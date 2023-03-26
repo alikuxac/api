@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
-import { RolePermission } from 'src/modules/api/roles';
+import { RolePermission } from 'src/modules/api/roles/constants/role.constant';
 
 @Injectable()
 export class AppService {

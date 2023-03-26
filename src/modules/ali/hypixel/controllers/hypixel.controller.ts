@@ -11,6 +11,7 @@ import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { HypixelService } from '../services/hypixel.service';
 import { uuidDto, guildDto } from '../dto/hypixel.dto';
 import { HypixelGuard } from '@hypixel/hypixel.guard';
+import { SkipAuth } from '@root/common/auth/decorators/auth.skip.decorator';
 
 @Controller('hypixel')
 @UsePipes(
@@ -19,6 +20,7 @@ import { HypixelGuard } from '@hypixel/hypixel.guard';
     transformOptions: { enableImplicitConversion: true },
   }),
 )
+@SkipAuth()
 @UseGuards(HypixelGuard)
 @ApiTags('Hypixel')
 export class HypixelController {

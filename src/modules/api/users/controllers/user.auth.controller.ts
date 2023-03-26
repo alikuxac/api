@@ -16,6 +16,7 @@ import { UsersService } from 'src/modules/api/users/services/users.service';
 
 import { signInDto, signUpDto } from 'src/modules/api/users/dto/user.auth.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { SkipAuth } from '@root/common/auth/decorators/auth.skip.decorator';
 
 @Injectable()
 @Controller('auth')
@@ -27,6 +28,7 @@ export class UserAuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @SkipAuth()
   @Post('login')
   async login(@Body() { email, password, rememberMe = false }: signInDto) {
     const user = await this.usersService.findByUsernameOrEmail(email);
@@ -79,6 +81,7 @@ export class UserAuthController {
     req.logout();
   }
 
+  @SkipAuth()
   @Post('signup')
   async signup(@Body() dto: signUpDto) {
     const checkUser = await this.usersService.findByEmail(dto.email);

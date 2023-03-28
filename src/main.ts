@@ -1,38 +1,42 @@
 import { NestFactory } from '@nestjs/core';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { json, urlencoded } from 'express';
 import compression from 'compression';
 
-import { AppModule } from './app.module';
+import { AppModule } from './app/app.module';
 
-import { RedisService } from '@shared/redis/redis.service';
-import { B2Service } from '@shared/b2/b2.service';
-import { R2Service } from '@shared/r2/r2.service';
+import { RedisService } from 'src/shared/services/redis.service';
+
+import setupSwagger from './swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['debug', 'error', 'log', 'warn', 'verbose'],
+    bodyParser: false,
   });
+  const logger = new Logger();
 
   const configService = app.get(ConfigService);
 
+  const port = configService.get<number>('app.port');
+
   app.enableCors();
+
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.use(compression());
 
   // Initialize Service
   const redis = app.get<RedisService>(RedisService);
-  redis.connect();
+  await redis.connect();
 
-  const b2 = app.get<B2Service>(B2Service);
-  b2.connect();
+  await setupSwagger(app);
 
-  const r2 = app.get<R2Service>(R2Service);
-  r2.connect();
-
-  await app.listen(configService.get<number>('PORT'));
+  await app.listen(port, () => {
+    logger.log(`Server is running at port ${port}`);
+  });
 }
 
 bootstrap().catch((err) => {

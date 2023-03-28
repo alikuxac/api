@@ -1,6 +1,6 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src/modules",
+  "sourceRoot": "src",
   "projects": {
     "ptero": {
       "type": "library",
@@ -55,15 +55,6 @@
       "compilerOptions": {
         "tsConfigPath": "libs/auth/tsconfig.lib.json"
       }
-    },
-    "discord": {
-      "type": "library",
-      "root": "libs/discord",
-      "entryFile": "index",
-      "sourceRoot": "libs/discord/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/discord/tsconfig.lib.json"
-      }
     }
   },
   "compilerOptions": {
@@ -72,7 +63,7 @@
       {
         "include": "i18n/**/*",
         "watchAssets": true,
-        "outDir": "dist/apps/api"
+         "outDir": "dist/src" 
       }
     ],
     "plugins": [

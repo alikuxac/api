@@ -59,6 +59,12 @@
       "@finance/*": [
         "libs/finance/src/*"
       ],
+      "@auth": [
+        "libs/auth/src"
+      ],
+      "@auth/*": [
+        "libs/auth/src/*"
+      ]
     }
   }
 }

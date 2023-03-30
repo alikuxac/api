@@ -1,23 +1,21 @@
 import {
   Command,
-  UsePipes,
-  Payload,
   InjectDiscordClient,
-  DiscordTransformedCommand,
-  TransformedCommandExecutionContext,
+  InteractionEvent,
+  Handler,
+  IA,
 } from '@discord-nestjs/core';
-import { TransformPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Client, EmbedBuilder } from 'discord.js';
+import { Client, EmbedBuilder, CommandInteraction } from 'discord.js';
 import util from 'util';
 
-import { DiscordEval } from '@discord/entities';
-import { EvalDto } from '@discord/dto/bot';
+import { DiscordEval } from 'src/modules/bot/discord/entities';
+import { EvalDto } from 'src/modules/bot/discord/dto/eval.dto';
 
-@UsePipes(TransformPipe)
 @Command({ name: 'eval', description: 'Eval command', dmPermission: true })
-export class EvalCommand implements DiscordTransformedCommand<EvalDto> {
+export class EvalCommand {
   constructor(
     @InjectDiscordClient()
     private readonly client: Client,
@@ -43,9 +41,10 @@ export class EvalCommand implements DiscordTransformedCommand<EvalDto> {
     return text;
   }
 
+  @Handler()
   async handler(
-    @Payload() dto: EvalDto,
-    { interaction }: TransformedCommandExecutionContext,
+    @InteractionEvent(SlashCommandPipe) dto: EvalDto,
+    @IA() interaction: CommandInteraction,
   ) {
     const { code } = dto;
     try {

@@ -1,14 +1,18 @@
-import { DiscordGuard } from '@discord-nestjs/core';
-import { Message, Events } from 'discord.js';
+import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { Message } from 'discord.js';
 
-export class NoAttachmentGuard implements DiscordGuard {
-  canActive(event: Events.MessageCreate, [message]: [Message]) {
-    return message.attachments.size > 0;
+export class NoAttachmentGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const message = context.getArgByIndex(0) as Message;
+
+    return message.attachments.size === 0;
   }
 }
 
-export class HaveAttachmentGuard implements DiscordGuard {
-  canActive(event: Events.MessageCreate, [message]: [Message]) {
-    return message.attachments.size === 0;
+export class HaveAttachmentGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const message = context.getArgByIndex(0) as Message;
+
+    return message.attachments.size > 0;
   }
 }

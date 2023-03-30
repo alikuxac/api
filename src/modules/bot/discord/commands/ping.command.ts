@@ -1,16 +1,15 @@
-import { Command, DiscordCommand } from '@discord-nestjs/core';
+import { Command, Handler, IA } from '@discord-nestjs/core';
 import { CommandInteraction } from 'discord.js';
 
 @Command({
   name: 'ping',
   description: 'Ping the bot',
 })
-export class PingCommand implements DiscordCommand {
-  async handler(interaction: CommandInteraction) {
+export class PingCommand {
+  @Handler()
+  async handler(@IA() interaction: CommandInteraction) {
     await interaction.reply({
-      content: `Pong from JavaScript! Bot Latency ${Math.round(
-        interaction.client.ws.ping,
-      )}ms.`,
+      content: `Bot latency ${Math.round(interaction.client.ws.ping)} ms.`,
       ephemeral: true,
     });
   }

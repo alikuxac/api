@@ -28,4 +28,4 @@ import {
   controllers: [...controllerArray],
   providers: [BotGateway, ...Commands, ...Events, ...Guard],
 })
-export class BotModule {}
+export class BotDiscordModule {}

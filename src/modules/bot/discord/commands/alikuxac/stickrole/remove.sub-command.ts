@@ -1,33 +1,25 @@
-import {
-  SubCommand,
-  DiscordTransformedCommand,
-  UsePipes,
-  Payload,
-  TransformedCommandExecutionContext,
-} from '@discord-nestjs/core';
-import { TransformPipe } from '@discord-nestjs/common';
+import { IA, InteractionEvent, SubCommand } from '@discord-nestjs/core';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { StickRole } from '@discord/entities';
-import { RemoveStickRoleDto } from '@discord/dto/stickRole.dto';
+import { StickRole } from 'src/modules/bot/discord/entities';
+import { RemoveStickRoleDto } from 'src/modules/bot/discord/dto/stickRole.dto';
+import { CommandInteraction } from 'discord.js';
 
-@UsePipes(TransformPipe)
 @SubCommand({
   name: 'addsStickRole',
   description: 'Stick a role to a user',
 })
-export class RemoveStickRoleCommand
-  implements DiscordTransformedCommand<RemoveStickRoleDto>
-{
+export class RemoveStickRoleCommand {
   constructor(
     @InjectModel(StickRole.name, 'api')
     private readonly stickRoleModel: Model<StickRole>,
   ) {}
 
   async handler(
-    @Payload() dto: RemoveStickRoleDto,
-    { interaction }: TransformedCommandExecutionContext,
+    @InteractionEvent(SlashCommandPipe) dto: RemoveStickRoleDto,
+    @IA() interaction: CommandInteraction,
   ) {
     const { user: userToAdd } = dto;
     const { guild } = interaction;

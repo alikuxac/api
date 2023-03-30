@@ -1,33 +1,31 @@
 import {
   SubCommand,
-  DiscordTransformedCommand,
-  UsePipes,
-  Payload,
-  TransformedCommandExecutionContext,
+  InteractionEvent,
+  Handler,
+  IA,
 } from '@discord-nestjs/core';
-import { TransformPipe } from '@discord-nestjs/common';
+import { SlashCommandPipe } from '@discord-nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { StickRole } from '@discord/entities';
-import { checkStickRoleDto } from '@discord/dto/stickRole.dto';
+import { StickRole } from 'src/modules/bot/discord/entities';
+import { checkStickRoleDto } from 'src/modules/bot/discord/dto/stickRole.dto';
+import { CommandInteraction } from 'discord.js';
 
-@UsePipes(TransformPipe)
 @SubCommand({
   name: 'addsStickRole',
   description: 'Stick a role to a user',
 })
-export class checkStickRoleCommand
-  implements DiscordTransformedCommand<checkStickRoleDto>
-{
+export class checkStickRoleCommand {
   constructor(
     @InjectModel(StickRole.name, 'api')
     private readonly stickRoleModel: Model<StickRole>,
   ) {}
 
+  @Handler()
   async handler(
-    @Payload() dto: checkStickRoleDto,
-    { interaction }: TransformedCommandExecutionContext,
+    @InteractionEvent(SlashCommandPipe) dto: checkStickRoleDto,
+    @IA() interaction: CommandInteraction,
   ) {
     const { user: userToCheck } = dto;
     const checkExist = await this.stickRoleModel

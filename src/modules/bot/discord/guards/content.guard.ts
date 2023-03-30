@@ -1,14 +1,18 @@
-import { DiscordGuard } from '@discord-nestjs/core';
-import { Message, Events } from 'discord.js';
+import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { Message } from 'discord.js';
 
-export class NoContentGuard implements DiscordGuard {
-  canActive(event: Events.MessageCreate, [message]: [Message]) {
-    return !message.content;
+export class NoContentGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const message = context.getArgByIndex(0) as Message;
+
+    return message.content.length === 0;
   }
 }
 
-export class ContentGuard implements DiscordGuard {
-  canActive(event: Events.MessageCreate, [message]: [Message]) {
+export class ContentGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const message = context.getArgByIndex(0) as Message;
+
     return message.content.length > 0;
   }
 }

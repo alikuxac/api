@@ -1,7 +1,7 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { BansStatus } from '@discord/interfaces';
+import { BansStatus } from 'src/modules/bot/discord/interfaces/bans.interface';
 
 @Schema({ collection: 'discord_bans', timestamps: true, versionKey: false })
 export class DiscordBan extends Document {

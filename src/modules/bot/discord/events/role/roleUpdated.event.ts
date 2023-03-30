@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { On } from '@discord-nestjs/core';
 
-import { StickRole } from '@discord/entities';
+import { StickRole } from 'src/modules/bot/discord/entities';
 
 import { Events, Role } from 'discord.js';
 

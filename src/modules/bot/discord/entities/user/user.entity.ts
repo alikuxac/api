@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { UserAfk } from '@discord/interfaces';
+import { UserAfk } from 'src/modules/bot/discord/interfaces';
 
 @Schema({
   collection: 'discord_users',

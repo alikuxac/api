@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisClientType, createClient } from 'redis';
 
@@ -6,26 +10,35 @@ import { RedisClientType, createClient } from 'redis';
 export class RedisService {
   private client: RedisClientType;
   private isConnected = false;
-  constructor(private readonly configService: ConfigService) {}
+  private logger = new Logger(RedisService.name);
 
-  async connect() {
+  constructor(private readonly configService: ConfigService) {
     this.client = createClient({
       url: this.configService.get('REDIS_URL'),
     });
 
-    this.client.on('connect', () => console.log('Redis is connecting'));
+    this.clientListener();
+    this.connect();
+  }
+
+  private clientListener() {
+    this.client.on('connect', () => this.logger.log('Redis is connecting'));
 
     this.client.on('ready', () => {
       this.isConnected = true;
-      console.log('Redis connected');
+      this.logger.log('Redis connected');
     });
 
-    this.client.on('end', () => console.log('Redis disconnected'));
+    this.client.on('end', () => this.logger.log('Redis disconnected'));
 
-    this.client.on('error', (err) => console.error(err));
+    this.client.on('error', (err) => this.logger.error(err));
 
-    this.client.on('reconnecting', () => console.log('Redis is reconnecting'));
+    this.client.on('reconnecting', () =>
+      this.logger.log('Redis is reconnecting'),
+    );
+  }
 
+  async connect() {
     await this.client.connect();
   }
 

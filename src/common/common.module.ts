@@ -21,6 +21,8 @@ import configs from 'src/configs';
 // Custom Module
 import { HelperModule } from 'src/common/helper/helper.module';
 import { AuthModule } from 'src/common/auth/auth.module';
+import { AwsModule } from 'src/common/aws/aws.module';
+import { DatabaseModule } from 'src/common/database/database.module';
 
 @Global()
 @Module({
@@ -210,6 +212,8 @@ import { AuthModule } from 'src/common/auth/auth.module';
     }),
     HttpModule,
     HelperModule,
+    DatabaseModule,
+    AwsModule,
     AuthModule,
   ],
 })

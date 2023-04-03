@@ -7,8 +7,6 @@ import compression from 'compression';
 
 import { AppModule } from './app/app.module';
 
-import { RedisService } from 'src/shared/services/redis.service';
-
 import setupSwagger from './swagger';
 
 async function bootstrap() {
@@ -27,10 +25,6 @@ async function bootstrap() {
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.use(compression());
-
-  // Initialize Service
-  const redis = app.get<RedisService>(RedisService);
-  await redis.connect();
 
   await setupSwagger(app);
 

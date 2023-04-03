@@ -2,12 +2,13 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisClientType, createClient } from 'redis';
 
 @Injectable()
-export class RedisService {
+export class RedisService implements OnModuleInit {
   private client: RedisClientType;
   private isConnected = false;
   private logger = new Logger(RedisService.name);
@@ -16,7 +17,9 @@ export class RedisService {
     this.client = createClient({
       url: this.configService.get('REDIS_URL'),
     });
+  }
 
+  onModuleInit() {
     this.clientListener();
     this.connect();
   }
@@ -29,13 +32,17 @@ export class RedisService {
       this.logger.log('Redis connected');
     });
 
-    this.client.on('end', () => this.logger.log('Redis disconnected'));
+    this.client.on('end', () => {
+      this.isConnected = false;
+      this.logger.log('Redis disconnected');
+    });
 
     this.client.on('error', (err) => this.logger.error(err));
 
-    this.client.on('reconnecting', () =>
-      this.logger.log('Redis is reconnecting'),
-    );
+    this.client.on('reconnecting', () => {
+      this.isConnected = false;
+      this.logger.log('Redis is reconnecting');
+    });
   }
 
   async connect() {

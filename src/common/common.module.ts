@@ -23,6 +23,8 @@ import { HelperModule } from 'src/common/helper/helper.module';
 import { AuthModule } from 'src/common/auth/auth.module';
 import { AwsModule } from 'src/common/aws/aws.module';
 import { DatabaseModule } from 'src/common/database/database.module';
+import { DiscordModule } from '@discord-nestjs/core';
+import { GatewayIntentBits } from 'discord.js';
 
 @Global()
 @Module({
@@ -84,6 +86,7 @@ import { DatabaseModule } from 'src/common/database/database.module';
         MAILER_SECURE: Joi.boolean().required(),
 
         // Discord
+        DISCORD_PREFIX: Joi.string().optional().default('!').min(1).max(5),
         DISCORD_TOKEN: Joi.string().required(),
 
         // Auth
@@ -193,6 +196,31 @@ import { DatabaseModule } from 'src/common/database/database.module';
       useFactory: (config: ConfigService) => ({
         uri: config.get('MONGO_URI'),
         dbName: 'api',
+      }),
+    }),
+    DiscordModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.get('discord.token'),
+        prefix: configService.get<string>('discord.prefix'),
+        prefixGlobalOptions: { isIgnoreBotMessage: true },
+        discordClientOptions: {
+          intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.GuildPresences,
+            GatewayIntentBits.GuildVoiceStates,
+            GatewayIntentBits.GuildEmojisAndStickers,
+            GatewayIntentBits.GuildIntegrations,
+            GatewayIntentBits.GuildWebhooks,
+            GatewayIntentBits.GuildInvites,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.DirectMessages,
+            GatewayIntentBits.MessageContent,
+          ],
+        },
       }),
     }),
     HttpModule,

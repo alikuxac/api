@@ -85,21 +85,6 @@ import { DatabaseModule } from 'src/common/database/database.module';
 
         // Discord
         DISCORD_TOKEN: Joi.string().required(),
-        DISCORD_CLIENT_ID: Joi.string().required(),
-        DISCORD_CLIENT_SECRET: Joi.string().required(),
-
-        // Github
-        GITHUB_CLIENT_ID: Joi.string().required(),
-        GITHUB_CLIENT_SECRET: Joi.string().required(),
-        GITHUB_REDIRECT_URI: Joi.string().required(),
-
-        // Google
-        GOOGLE_CLIENT_ID: Joi.string().required(),
-        GOOGLE_CLIENT_SECRET: Joi.string().required(),
-
-        // Facebook
-        FACEBOOK_APP_ID: Joi.string().required(),
-        FACEBOOK_APP_SECRET: Joi.string().required(),
 
         // Auth
         AUTH_JWT_SUBJECT: Joi.string().required(),

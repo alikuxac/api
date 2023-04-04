@@ -9,7 +9,6 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { isEmail } from 'class-validator';
-import { customAlphabet } from 'nanoid';
 
 // Entity
 import { User } from 'src/modules/api/users/entities/user.entity';
@@ -18,9 +17,7 @@ import { User } from 'src/modules/api/users/entities/user.entity';
 import {
   createUserDto,
   updateUserDto,
-  providerDto,
 } from 'src/modules/api/users/dto/user.dto';
-import { createUserApiKeyDto } from 'src/modules/api/users/dto/user_apikey.dto';
 
 // Enum
 import { UserSex } from 'src/modules/api/users/constants/user.constant';
@@ -29,8 +26,6 @@ import { UserSex } from 'src/modules/api/users/constants/user.constant';
 import { Role } from 'src/modules/api/roles/entity/roles.entity';
 @Injectable()
 export class UsersService implements OnModuleInit {
-  private nanoid = (size = 20) =>
-    customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', size);
   private logger = new Logger(UsersService.name);
 
   constructor(
@@ -83,7 +78,10 @@ export class UsersService implements OnModuleInit {
    * @returns Users
    */
   async findAll(limit = 10, page = 0) {
-    return await this.UserModel.find().populate('role').exec();
+    return await this.UserModel.find()
+      .limit(limit)
+      .skip(page * limit)
+      .exec();
   }
 
   /**
@@ -130,39 +128,6 @@ export class UsersService implements OnModuleInit {
     }
     const result = await this.UserModel.findOne({ email })
       .populate('role')
-      .exec();
-    return result;
-  }
-
-  /**
-   *
-   * @param provider Provider name
-   * @param id provider id
-   * @returns
-   */
-  async findByProviderId(provider: string, id: string) {
-    const result = await this.UserModel.findOne({
-      providers: {
-        $elemMatch: {
-          provider,
-          providerId: id,
-        },
-      },
-    })
-      .populate({ path: 'role', model: Role.name })
-      .exec();
-    return result;
-  }
-
-  async findByApiKey(apiKey: string) {
-    const result = await this.UserModel.findOne({
-      apikeys: {
-        $elemMatch: {
-          value: apiKey,
-        },
-      },
-    })
-      .populate({ path: 'role', model: Role.name })
       .exec();
     return result;
   }
@@ -312,52 +277,6 @@ export class UsersService implements OnModuleInit {
 
   /**
    *
-   * @param id User id
-   * @param dto Provider dto
-   * @returns
-   */
-  async linkUser(id: string, dto: providerDto) {
-    const checkExistId = await this.exists(id);
-    if (!checkExistId) {
-      throw new HttpException('User not found', 404);
-    }
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $push: {
-        providers: {
-          provider: dto.provider,
-          providerId: dto.providerId,
-          name: dto.name,
-        },
-      },
-    }).exec();
-  }
-
-  /**
-   * @param id User id
-   * @param provider Provider name
-   * @returns
-   */
-  async unlinkUser(id: string, provider: string) {
-    const checkExistId = await this.exists(id);
-    if (!checkExistId) {
-      throw new HttpException('User not found', 404);
-    }
-    const checkProvider = await this.UserModel.findById(id).exec();
-    if (checkProvider.providers.length === 0) {
-      throw new HttpException('No provider found', 404);
-    } else {
-      return await this.UserModel.findByIdAndUpdate(id, {
-        $pull: {
-          providers: {
-            provider,
-          },
-        },
-      }).exec();
-    }
-  }
-
-  /**
-   *
    * @param id
    * @returns
    */
@@ -377,67 +296,6 @@ export class UsersService implements OnModuleInit {
     return await this.UserModel.findByIdAndUpdate(id, {
       $set: {
         isDisabled: false,
-      },
-    }).exec();
-  }
-
-  // APikey
-  async findApiKeyByName(id: string, name: string) {
-    return await this.UserModel.findOne({
-      _id: id,
-      apikeys: { $elemMatch: { name } },
-    }).exec();
-  }
-
-  async createApiKey(id: string, dto: createUserApiKeyDto) {
-    const checkExistId = await this.exists(id);
-    if (!checkExistId) {
-      throw new HttpException('User not found', 404);
-    }
-    const user = await this.UserModel.findById(id).exec();
-    const checkApiKey = user.apikeys.find((apikey) => apikey.name === dto.name);
-    if (checkApiKey) {
-      throw new HttpException('ApiKey with name already exist', 409);
-    }
-    const value = 'ali_' + this.nanoid(20);
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $push: {
-        apikeys: {
-          name: dto.name,
-          description: dto.description ?? '',
-          value,
-        },
-      },
-    }).exec();
-  }
-
-  async createOwnApiKey(dto: createUserApiKeyDto, user: User) {
-    const checkApiKey = user.apikeys.find((apikey) => apikey.name === dto.name);
-    if (checkApiKey) {
-      throw new HttpException('ApiKey with name already exist', 409);
-    }
-    const value = 'ali_' + this.nanoid(20);
-    return await this.UserModel.findByIdAndUpdate(user._id, {
-      $push: {
-        apikeys: {
-          name: dto.name,
-          description: dto.description ?? '',
-          value,
-        },
-      },
-    }).exec();
-  }
-
-  async deleteApiKey(id: string, value: string) {
-    const checkExistId = await this.exists(id);
-    if (!checkExistId) {
-      throw new HttpException('User not found', 404);
-    }
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $pull: {
-        apikeys: {
-          value,
-        },
       },
     }).exec();
   }

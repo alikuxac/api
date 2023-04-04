@@ -3,7 +3,6 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 import { UserSex } from 'src/modules/api/users/constants/user.constant';
-import { UserProvider, ApiKey } from 'src/modules/api/users/interfaces';
 import { Role } from 'src/modules/api/roles/entity/roles.entity';
 
 @Schema({ collection: 'users', timestamps: true, versionKey: false, _id: true })
@@ -70,16 +69,6 @@ export class User extends Document {
     ref: Role.name,
   })
   role: Types.ObjectId;
-
-  @Prop({ name: 'providers', type: Array<UserProvider>, default: [] })
-  providers: UserProvider[] = [];
-
-  @Prop({
-    name: 'apikeys',
-    type: Array<ApiKey>,
-    default: [],
-  })
-  apikeys: ApiKey[] = [];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

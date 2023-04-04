@@ -5,10 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsEnum,
-  IsArray,
-  ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserSex } from 'src/modules/api/users/constants/user.constant';
 
@@ -73,32 +70,12 @@ export class createUserDto {
   @IsString()
   @IsOptional()
   role?: string;
-
-  @ApiPropertyOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => providerDto)
-  providers?: providerDto[];
 }
 
 export class updateUserDto extends createUserDto {
   @IsString()
   @IsOptional()
   id: string;
-}
-
-export class providerDto {
-  @IsString()
-  @IsNotEmpty()
-  providerId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  provider: string;
-
-  @IsString()
-  @IsNotEmpty()
-  name: string;
 }
 
 export class changePasswordDto {

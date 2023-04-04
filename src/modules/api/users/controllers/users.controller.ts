@@ -17,11 +17,8 @@ import {
   createUserDto,
   updateUserDto,
   changePasswordDto,
-  providerDto,
-  createUserApiKeyDto,
-  deleteUserApiKeyDto,
-} from 'src/modules/api/users/dto';
-import { User } from 'src/modules/api/users/entities';
+} from 'src/modules/api/users/dto/user.dto';
+import { User } from 'src/modules/api/users/entities/user.entity';
 
 import { UserAbilityFactory } from 'src/modules/api/users/factory/user-ability.factory';
 import { RolePermission as userPerms } from 'src/modules/api/roles/constants/role.constant';
@@ -195,36 +192,6 @@ export class UsersController {
     return await this.usersService.banUser(id);
   }
 
-  @Patch([':id/link', ':id/link-provider'])
-  async link(@Req() req, @Param('id') id: string, @Body() dto: providerDto) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.UpdateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to link user provider',
-      );
-    }
-    return await this.usersService.linkUser(id, dto);
-  }
-
-  @Patch(':id/unlink/:provider')
-  async unlink(
-    @Req() req,
-    @Param('id') id: string,
-    @Param('provider') provider: string,
-  ) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.UpdateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to unlink user provider',
-      );
-    }
-    return await this.usersService.unlinkUser(id, provider);
-  }
-
   @Patch(':id/disable')
   async disable(@Req() req, @Param('id') id: string) {
     const ability = await this.userAbilityFactory.createAbilityForUser(
@@ -249,22 +216,5 @@ export class UsersController {
       );
     }
     return await this.usersService.enableUser(id);
-  }
-
-  @Post([':id/api-key', ':id/apikey'])
-  async createUserApiKey(
-    @Req() req,
-    @Param('id') id: string,
-    @Body() dto: createUserApiKeyDto,
-  ) {
-    return await this.usersService.createApiKey(id, dto);
-  }
-
-  @Delete([':id/api-key', ':id/apikey'])
-  async removeApiKey(
-    @Param('id') id: string,
-    @Body() dto: deleteUserApiKeyDto,
-  ) {
-    return await this.usersService.deleteApiKey(id, dto.name);
   }
 }

@@ -43,7 +43,7 @@ export class UserAuthController {
       throw new UnauthorizedException('Wrong password');
     }
 
-    const payload = { _id: user._id, username: user.username };
+    const payload = { _id: user._id, username: user.username, role: user.role };
     const tokenType: string = await this.authService.getTokenType();
     const expiresIn: number =
       await this.authService.getAccessTokenExpirationTime();
@@ -89,7 +89,7 @@ export class UserAuthController {
       throw new BadRequestException('User already exists');
     }
     const user = await this.usersService.create(dto);
-    const payload = { id: user._id, email: user.email, role: user.role };
+    const payload = { id: user._id, username: user.username, role: user.role };
     const tokenType: string = await this.authService.getTokenType();
     const expiresIn: number =
       await this.authService.getAccessTokenExpirationTime();
@@ -99,27 +99,13 @@ export class UserAuthController {
       await this.authService.createPayloadRefreshToken(payload.id, false, {
         loginDate: payloadAccessToken.loginDate,
       });
-    const payloadEncryption = await this.authService.getPayloadEncryption();
-    let payloadHashedAccessToken: Record<string, any> | string =
-      payloadAccessToken;
-    let payloadHashedRefreshToken: Record<string, any> | string =
-      payloadRefreshToken;
-
-    if (payloadEncryption) {
-      payloadHashedAccessToken = await this.authService.encryptAccessToken(
-        payloadAccessToken,
-      );
-      payloadHashedRefreshToken = await this.authService.encryptRefreshToken(
-        payloadRefreshToken,
-      );
-    }
 
     const accessToken: string = await this.authService.createAccessToken(
-      payloadHashedAccessToken,
+      payloadAccessToken,
     );
 
     const refreshToken: string = await this.authService.createRefreshToken(
-      payloadHashedRefreshToken,
+      payloadRefreshToken,
     );
 
     return {

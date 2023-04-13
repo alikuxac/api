@@ -3,7 +3,7 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 import { UserSex } from 'src/modules/api/users/constants/user.constant';
-import { Role } from 'src/modules/api/roles/entity/roles.entity';
+import { Role } from 'src/common/roles/entities/roles.entity';
 
 @Schema({ collection: 'users', timestamps: true, versionKey: false, _id: true })
 export class User extends Document {
@@ -45,14 +45,17 @@ export class User extends Document {
   })
   sex: UserSex;
 
+  @Prop({ name: 'avatar', type: String, default: '' })
+  avatar: string;
+
   @Prop({ name: 'is_active', type: Boolean, default: true })
   isActive: boolean;
 
   @Prop({ name: 'last_active', type: Date, default: new Date() })
   lastActive: Date;
 
-  @Prop({ name: 'banned', type: Boolean, default: false })
-  banned: boolean;
+  @Prop({ name: 'isBanned', type: Boolean, default: false })
+  isBanned: boolean;
 
   @Prop({ name: 'isVerified', type: Boolean, default: false })
   isVerified: boolean;
@@ -72,7 +75,6 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-export type UserDocument = User & Document;
 
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {

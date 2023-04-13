@@ -1,6 +1,5 @@
 import {
   Controller,
-  Req,
   Get,
   Post,
   Body,
@@ -9,212 +8,153 @@ import {
   Delete,
   Query,
   ParseBoolPipe,
-  ForbiddenException,
   Injectable,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { UsersService } from 'src/modules/api/users/services/users.service';
 import {
   createUserDto,
   updateUserDto,
   changePasswordDto,
 } from 'src/modules/api/users/dto/user.dto';
-import { User } from 'src/modules/api/users/entities/user.entity';
-
-import { UserAbilityFactory } from 'src/modules/api/users/factory/user-ability.factory';
-import { RolePermission as userPerms } from 'src/modules/api/roles/constants/role.constant';
-import { ApiTags } from '@nestjs/swagger';
+import { PolicyAbilityProtected } from 'src/common/policy/decorators/policy.decorator';
+import {
+  RolePermission as PermList,
+  RolePermissionGroup as PermGroup,
+} from '@root/common/policy/constants/policy.enum.constant';
 
 @Injectable()
 @Controller('user')
 @ApiTags('Users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly userAbilityFactory: UserAbilityFactory,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   // User Management
   @Get()
-  async findAll(@Req() req) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.ReadUser, User)) {
-      throw new ForbiddenException('You do not have permission to read users');
-    }
+  async findAll() {
     return await this.usersService.findAll();
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Create],
+  })
   @Post()
-  async create(@Req() req, @Body() dto: createUserDto) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.CreateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to create users',
-      );
-    }
+  async create(@Body() dto: createUserDto) {
     return await this.usersService.create(dto);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read],
+  })
   @Get(':id')
   async findOne(
-    @Req() req,
     @Param('id') id: string,
-    @Query('full', ParseBoolPipe) full: boolean,
+    @Query('full', ParseBoolPipe) full?: boolean,
   ) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.ReadUser, User)) {
-      throw new ForbiddenException('You do not have permission to read users');
-    }
     return await this.usersService.findOne(id, full);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Update],
+  })
   @Patch(':id')
-  async update(
-    @Req() req,
-    @Param('id') id: string,
-    @Body() dto: updateUserDto,
-  ) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.UpdateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to update users',
-      );
-    }
+  async update(@Param('id') id: string, @Body() dto: updateUserDto) {
     return await this.usersService.update(id, dto);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Delete],
+  })
   @Delete(':id')
-  async remove(@Req() req, @Param('id') id: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.DeleteUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to delete users',
-      );
-    }
+  async remove(@Param('id') id: string) {
     return await this.usersService.removeUser(id);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read],
+  })
   @Get('username/:username')
-  async findByUsername(@Req() req, @Param('username') username: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.ReadUser, User)) {
-      throw new ForbiddenException('You do not have permission to read users');
-    }
+  async findByUsername(@Param('username') username: string) {
     return await this.usersService.findByUsername(username);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read],
+  })
   @Get('email/:email')
-  async findByEmail(@Req() req, @Param('email') email: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.ReadUser, User)) {
-      throw new ForbiddenException('You do not have permission to read users');
-    }
+  async findByEmail(@Param('email') email: string) {
     return await this.usersService.findByEmail(email);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Update],
+  })
   @Patch(':id/change-password')
   async changePassword(
-    @Req() req,
     @Param('id') id: string,
     @Body() dto: changePasswordDto,
   ) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.ChangePassword, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to change password',
-      );
-    }
     return await this.usersService.changePasswordUser(id, dto.password);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Update],
+  })
   @Patch(':id/active')
-  async active(@Req() req, @Param('id') id: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.UpdateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to active users',
-      );
-    }
+  async active(@Param('id') id: string) {
     return await this.usersService.activeUser(id);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Update],
+  })
   @Patch(':id/deactive')
-  async deactive(@Req() req, @Param('id') id: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.UpdateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to deactive users',
-      );
-    }
+  async deactive(@Param('id') id: string) {
     return await this.usersService.deactiveUser(id);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Update],
+  })
   @Patch(':id/verify')
-  async verify(@Req() req, @Param('id') id: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.UpdateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to verify users',
-      );
-    }
+  async verify(@Param('id') id: string) {
     return await this.usersService.verifyUser(id);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Update],
+  })
   @Patch(':id/ban')
-  async ban(@Req() req, @Param('id') id: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.BanUser, User)) {
-      throw new ForbiddenException('You do not have permission to ban users');
-    }
+  async ban(@Param('id') id: string) {
     return await this.usersService.banUser(id);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Update],
+  })
   @Patch(':id/disable')
-  async disable(@Req() req, @Param('id') id: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.UpdateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to disable users',
-      );
-    }
+  async disable(@Param('id') id: string) {
     return await this.usersService.disableUser(id);
   }
 
+  @PolicyAbilityProtected({
+    subject: PermGroup.USER,
+    action: [PermList.Read, PermList.Update],
+  })
   @Patch(':id/enable')
-  async enable(@Req() req, @Param('id') id: string) {
-    const ability = await this.userAbilityFactory.createAbilityForUser(
-      req.user,
-    );
-    if (!ability.can(userPerms.UpdateUser, User)) {
-      throw new ForbiddenException(
-        'You do not have permission to enable users',
-      );
-    }
+  async enable(@Param('id') id: string) {
     return await this.usersService.enableUser(id);
   }
 }

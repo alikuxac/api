@@ -3,19 +3,23 @@ import {
   HttpException,
   HttpStatus,
   NotFoundException,
-  // BadRequestException,
   OnModuleInit,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { createRoleDto, updateRoleDto } from '../dto/roles.dto';
+import {
+  createRoleDto,
+  updateRoleDto,
+  updateRolePermissionDto,
+} from '../dto/roles.dto';
 
-import { Role } from '../entity/roles.entity';
-// import { UsersService, User } from 'src/modules/api/users';
+import { Role } from '../entities/roles.entity';
+import { User } from 'src/modules/api/users/entities/user.entity';
 
-import { RedisService } from 'src/shared/services/redis.service';
+import { RedisService } from 'src/common/database/services/redis.service';
 
 @Injectable()
 export class RolesService implements OnModuleInit {
@@ -26,7 +30,8 @@ export class RolesService implements OnModuleInit {
   constructor(
     @InjectModel(Role.name, 'api')
     private readonly roleModel: Model<Role>,
-    // private readonly userService: UsersService,
+    @InjectModel(User.name, 'api')
+    private readonly userModel: Model<User>,
     private readonly redisService: RedisService,
   ) {}
 
@@ -128,7 +133,7 @@ export class RolesService implements OnModuleInit {
     if (!role) {
       throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
     }
-    if (dto.name === this.defaultRole[0]) {
+    if (this.defaultRole.includes(dto.name)) {
       throw new HttpException(
         'Role name is already taken',
         HttpStatus.BAD_REQUEST,
@@ -155,31 +160,46 @@ export class RolesService implements OnModuleInit {
     if (!role) {
       throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
     }
+    const userRoleCount = await this.userModel.find({ role: role._id }).exec();
+    if (userRoleCount.length > 0) {
+      throw new BadRequestException(
+        'This role still have users. Please update user role before delete.',
+      );
+    }
     return await this.roleModel.deleteOne({ _id: id }).exec();
   }
 
-  // async swapRole(user: User, id: string, position: number) {
-  //   const userRole = await this.roleModel.findById(user.role).exec();
-  //   const role = await this.roleModel.findById(id).exec();
-  //   if (!role) {
-  //     throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
-  //   }
-  //   const roleWithPosition = await this.roleModel.findOne({ position }).exec();
-  //   if (!roleWithPosition) {
-  //     throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
-  //   }
-  //   if (
-  //     !user.isOwner &&
-  //     (userRole.position < role.position ||
-  //       userRole.position < roleWithPosition.position)
-  //   ) {
-  //     throw new BadRequestException('You dont have permission to do this');
-  //   }
-  //   const temp = role.position;
-  //   role.position = roleWithPosition.position;
-  //   roleWithPosition.position = temp;
-  //   await role.save();
-  //   await roleWithPosition.save();
-  //   return { role, roleWithPosition };
-  // }
+  async updatePermsission(id: string, dto: updateRolePermissionDto) {
+    const role = await this.roleModel.findById(id).exec();
+    if (!role) {
+      throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
+    }
+    role.permissions = dto.permissions;
+    return await role.save();
+  }
+
+  async swapRole(user: User, id: string, position: number) {
+    const userRole = await this.roleModel.findById(user.role).exec();
+    const role = await this.roleModel.findById(id).exec();
+    if (!role) {
+      throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
+    }
+    const roleWithPosition = await this.roleModel.findOne({ position }).exec();
+    if (!roleWithPosition) {
+      throw new HttpException('Role not found', HttpStatus.NOT_FOUND);
+    }
+    if (
+      !user.isOwner &&
+      (userRole.position < role.position ||
+        userRole.position < roleWithPosition.position)
+    ) {
+      throw new BadRequestException('You dont have permission to do this');
+    }
+    const temp = role.position;
+    role.position = roleWithPosition.position;
+    roleWithPosition.position = temp;
+    await role.save();
+    await roleWithPosition.save();
+    return { role, roleWithPosition };
+  }
 }

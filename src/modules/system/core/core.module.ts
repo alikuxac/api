@@ -2,6 +2,7 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 // Module
+import { RolesModule } from '@root/common/roles/roles.module';
 import { UsersModule } from '@root/modules/api/users/users.module';
 import { AuthModule } from '@root/common/auth/auth.module';
 
@@ -22,7 +23,7 @@ import { HttpExceptionFilter } from '@root/modules/system/core/filter/http-excep
  * Import order: Guard -> Interceptor -> Filter -> Pipe
  */
 @Module({
-  imports: [AuthModule, UsersModule],
+  imports: [AuthModule, UsersModule, RolesModule],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthAccessGuard },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },

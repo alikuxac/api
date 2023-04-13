@@ -23,7 +23,7 @@ import {
 import { UserSex } from 'src/modules/api/users/constants/user.constant';
 
 // Service
-import { Role } from 'src/modules/api/roles/entity/roles.entity';
+import { Role } from 'src/common/roles/entities/roles.entity';
 @Injectable()
 export class UsersService implements OnModuleInit {
   private logger = new Logger(UsersService.name);
@@ -184,7 +184,7 @@ export class UsersService implements OnModuleInit {
           displayName: dto.displayName,
           firstName: dto.firstName,
           lastName: dto.lastName,
-          banned: dto.banned,
+          isBanned: dto.banned,
           isActive: dto.isActive,
           isVerified: dto.isVerified,
           sex: dto.sex,

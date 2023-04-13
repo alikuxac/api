@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { RolePermission } from '../constants/role.constant';
-
+import { RolePermissionGroup as PermGroup } from 'src/common/policy/constants/policy.enum.constant';
+import { IPolicyRule } from '@root/common/policy/interfaces/policy.interface';
 @Schema({
   collection: 'role',
   versionKey: false,
@@ -32,11 +32,14 @@ export class Role extends Document {
 
   @Prop({
     name: 'permissions',
-    type: Array<RolePermission>,
-    default: [],
-    enum: RolePermission,
+    type: [
+      {
+        action: { type: Array<string>, default: [], required: true },
+        subject: { type: String, enum: PermGroup, required: true },
+      },
+    ],
   })
-  permissions: RolePermission[];
+  permissions: IPolicyRule[];
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

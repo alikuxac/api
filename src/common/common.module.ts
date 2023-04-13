@@ -1,6 +1,5 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MulterModule } from '@nestjs/platform-express';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -25,6 +24,7 @@ import { AwsModule } from 'src/common/aws/aws.module';
 import { DatabaseModule } from 'src/common/database/database.module';
 import { DiscordModule } from '@discord-nestjs/core';
 import { GatewayIntentBits } from 'discord.js';
+import { PolicyModule } from './policy/policy.module';
 
 @Global()
 @Module({
@@ -114,7 +114,6 @@ import { GatewayIntentBits } from 'discord.js';
           .default('15m')
           .required(),
 
-        AUTH_JWT_PAYLOAD_ENCRYPT: Joi.boolean().default(false).required(),
         AUTH_JWT_PAYLOAD_ACCESS_TOKEN_ENCRYPT_KEY: Joi.string()
           .allow(null, '')
           .min(20)
@@ -160,24 +159,6 @@ import { GatewayIntentBits } from 'discord.js';
       },
     }),
     ScheduleModule.forRoot(),
-    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        defaults: {
-          from: configService.get<string>('mail.from'),
-        },
-        transport: {
-          host: configService.get<string>('mail.host'),
-          port: configService.get<number>('mail.port'),
-          secure: configService.get<boolean>('mail.secure'),
-          auth: {
-            user: configService.get<string>('mail.user'),
-            pass: configService.get<string>('mail.pass'),
-          },
-        },
-      }),
-    }),
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       loaderOptions: {
@@ -227,6 +208,7 @@ import { GatewayIntentBits } from 'discord.js';
     HelperModule,
     DatabaseModule,
     AwsModule,
+    PolicyModule,
     AuthModule,
   ],
 })

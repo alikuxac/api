@@ -14,11 +14,6 @@ export class AppController {
     };
   }
 
-  @Get('permissions')
-  getPermissions() {
-    return this.appService.getRolePermission();
-  }
-
   @Get('status')
   getStatus() {
     return { success: true, message: 'https://status.alikuxac.xyz' };

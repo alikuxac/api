@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { map, lastValueFrom } from 'rxjs';
 
-import { RedisService } from 'src/shared//services/redis.service';
+import { RedisService } from 'src/common/database/services/redis.service';
 
 import {
   ApiKeyInfomationSuccess,

@@ -107,33 +107,9 @@ import { PolicyModule } from './policy/policy.module';
           .max(50)
           .required(),
         AUTH_JWT_REFRESH_TOKEN_EXPIRED: Joi.string().default('7d').required(),
-        AUTH_JWT_REFRESH_TOKEN_REMEMBER_ME_EXPIRED: Joi.string()
-          .default('30d')
-          .required(),
         AUTH_JWT_REFRESH_TOKEN_NOT_BEFORE_EXPIRATION: Joi.string()
           .default('15m')
           .required(),
-
-        AUTH_JWT_PAYLOAD_ACCESS_TOKEN_ENCRYPT_KEY: Joi.string()
-          .allow(null, '')
-          .min(20)
-          .max(50)
-          .optional(),
-        AUTH_JWT_PAYLOAD_ACCESS_TOKEN_ENCRYPT_IV: Joi.string()
-          .allow(null, '')
-          .min(16)
-          .max(50)
-          .optional(),
-        AUTH_JWT_PAYLOAD_REFRESH_TOKEN_ENCRYPT_KEY: Joi.string()
-          .allow(null, '')
-          .min(20)
-          .max(50)
-          .optional(),
-        AUTH_JWT_PAYLOAD_REFRESH_TOKEN_ENCRYPT_IV: Joi.string()
-          .allow(null, '')
-          .min(16)
-          .max(50)
-          .optional(),
 
         // API
         HYPIXEL_KEY: Joi.string().required(),

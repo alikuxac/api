@@ -17,7 +17,6 @@ export class AuthService {
 
   private readonly refreshTokenSecretKey: string;
   private readonly refreshTokenExpirationTime: number;
-  private readonly refreshTokenExpirationTimeRememberMe: number;
   private readonly refreshTokenNotBeforeExpirationTime: number;
 
   private readonly prefixAuthorization: string;
@@ -56,9 +55,6 @@ export class AuthService {
     );
     this.refreshTokenExpirationTime = this.configService.get<number>(
       'auth.refreshToken.expried',
-    );
-    this.refreshTokenExpirationTimeRememberMe = this.configService.get<number>(
-      'auth.refreshToken.rememberMeExprired',
     );
     this.refreshTokenNotBeforeExpirationTime = this.configService.get<number>(
       'auth.refreshToken.notBeforeExpiration',
@@ -105,9 +101,7 @@ export class AuthService {
       { data: payloadHashed },
       {
         secretKey: this.secretKey,
-        expiredIn: options?.rememberMe
-          ? this.refreshTokenExpirationTimeRememberMe
-          : this.refreshTokenExpirationTime,
+        expiredIn: this.refreshTokenExpirationTime,
         notBefore:
           options?.notBeforeExpirationTime ??
           this.refreshTokenNotBeforeExpirationTime,
@@ -140,24 +134,20 @@ export class AuthService {
 
   async createPayloadAccessToken(
     data: Record<string, any>,
-    rememberMe: boolean,
     options?: IAuthPayloadOptions,
   ): Promise<Record<string, any>> {
     return {
       ...data,
-      rememberMe,
       loginDate: options?.loginDate ?? this.helperDateService.create(),
     };
   }
 
   async createPayloadRefreshToken(
     _id: string,
-    rememberMe: boolean,
     options?: IAuthPayloadOptions,
   ): Promise<Record<string, any>> {
     return {
       _id,
-      rememberMe,
       loginDate: options?.loginDate,
     };
   }
@@ -170,10 +160,8 @@ export class AuthService {
     return this.accessTokenExpirationTime;
   }
 
-  async getRefreshTokenExpirationTime(rememberMe?: boolean): Promise<number> {
-    return rememberMe
-      ? this.refreshTokenExpirationTimeRememberMe
-      : this.refreshTokenExpirationTime;
+  async getRefreshTokenExpirationTime(): Promise<number> {
+    return this.refreshTokenExpirationTime;
   }
 
   async getIssuer(): Promise<string> {

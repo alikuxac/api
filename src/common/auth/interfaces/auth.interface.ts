@@ -12,5 +12,4 @@ export interface IAuthPayloadOptions {
 export interface IAuthRefreshTokenOptions {
   // in milis
   notBeforeExpirationTime?: number | string;
-  rememberMe?: boolean;
 }

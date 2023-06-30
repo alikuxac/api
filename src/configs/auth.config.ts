@@ -16,9 +16,6 @@ export default registerAs(
     refreshToken: {
       secretKey: process.env.AUTH_JWT_REFRESH_TOKEN_SECRET_KEY,
       expried: seconds(process.env.AUTH_JWT_REFRESH_TOKEN_EXPIRED) ?? '15m',
-      rememberMeExprired:
-        seconds(process.env.AUTH_JWT_REFRESH_TOKEN_REMEMBER_ME_EXPIRED) ??
-        '30d',
       notBeforeExpiration:
         seconds(process.env.AUTH_JWT_REFRESH_TOKEN_NOT_BEFORE_EXPIRATION) ??
         '15m',

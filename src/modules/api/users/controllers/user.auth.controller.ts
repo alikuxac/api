@@ -30,7 +30,7 @@ export class UserAuthController {
 
   @SkipAuth()
   @Post('login')
-  async login(@Body() { email, password, rememberMe = false }: signInDto) {
+  async login(@Body() { email, password }: signInDto) {
     const user = await this.usersService.findByUsernameOrEmail(email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -49,15 +49,11 @@ export class UserAuthController {
       await this.authService.getAccessTokenExpirationTime();
 
     const payloadAccessToken: Record<string, any> =
-      await this.authService.createPayloadAccessToken(payload, rememberMe);
+      await this.authService.createPayloadAccessToken(payload);
     const payloadRefreshToken: Record<string, any> =
-      await this.authService.createPayloadRefreshToken(
-        payload._id,
-        rememberMe,
-        {
-          loginDate: payloadAccessToken.loginDate,
-        },
-      );
+      await this.authService.createPayloadRefreshToken(payload._id, {
+        loginDate: payloadAccessToken.loginDate,
+      });
 
     const accessToken: string = await this.authService.createAccessToken(
       payloadAccessToken,
@@ -65,7 +61,6 @@ export class UserAuthController {
 
     const refreshToken: string = await this.authService.createRefreshToken(
       payloadRefreshToken,
-      { rememberMe },
     );
 
     return {
@@ -94,9 +89,9 @@ export class UserAuthController {
     const expiresIn: number =
       await this.authService.getAccessTokenExpirationTime();
     const payloadAccessToken: Record<string, any> =
-      await this.authService.createPayloadAccessToken(payload, false);
+      await this.authService.createPayloadAccessToken(payload);
     const payloadRefreshToken: Record<string, any> =
-      await this.authService.createPayloadRefreshToken(payload.id, false, {
+      await this.authService.createPayloadRefreshToken(payload.id, {
         loginDate: payloadAccessToken.loginDate,
       });
 

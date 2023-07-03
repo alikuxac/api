@@ -25,6 +25,7 @@ import { DatabaseModule } from 'src/common/database/database.module';
 import { DiscordModule } from '@discord-nestjs/core';
 import { GatewayIntentBits } from 'discord.js';
 import { PolicyModule } from './policy/policy.module';
+import { ErrorModule } from './error/error.module';
 
 @Global()
 @Module({
@@ -182,6 +183,7 @@ import { PolicyModule } from './policy/policy.module';
     }),
     HttpModule,
     HelperModule,
+    ErrorModule,
     DatabaseModule,
     AwsModule,
     PolicyModule,

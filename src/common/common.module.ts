@@ -43,6 +43,7 @@ import { ErrorModule } from './error/error.module';
         CACHE_TTL: Joi.number().default(120),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRES_IN: Joi.number().default(86400),
+        APP_LANGUAGE: Joi.string().default('en'),
 
         // Database
         MONGO_URI: Joi.string().required(),

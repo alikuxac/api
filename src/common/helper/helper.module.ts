@@ -34,7 +34,6 @@ import { HelperGeoService } from './services/helper.geo.service';
   ],
   controllers: [],
   imports: [
-    // JwtModule.register({}),
     JwtModule.registerAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
@@ -48,19 +47,6 @@ import { HelperGeoService } from './services/helper.geo.service';
         },
       }),
     }),
-    // JwtModule.registerAsync({
-    //   inject: [ConfigService],
-    //   imports: [ConfigModule],
-    //   useFactory: (configService: ConfigService) => ({
-    //     secret: configService.get<string>('auth.accessToken.secretKey'),
-    //     signOptions: {
-    //       expiresIn: configService.get<string>('helper.jwt.expirationTime'),
-    //       audience: configService.get<string>('auth.audience'),
-    //       subject: configService.get<string>('auth.subject'),
-    //       issuer: configService.get<string>('auth.issuer'),
-    //     },
-    //   }),
-    // }),
   ],
 })
 export class HelperModule {}

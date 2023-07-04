@@ -9,6 +9,7 @@ import { HelperNumberService } from './services/helper.number.service';
 import { HelperStringService } from './services/helper.string.service';
 import { HelperFileService } from './services/helper.file.service';
 import { HelperGeoService } from './services/helper.geo.service';
+import { HelperDiscordService } from './services/helper.discord.service';
 
 @Global()
 @Module({
@@ -21,6 +22,7 @@ import { HelperGeoService } from './services/helper.geo.service';
     HelperStringService,
     HelperFileService,
     HelperGeoService,
+    HelperDiscordService,
   ],
   exports: [
     HelperArrayService,
@@ -31,6 +33,7 @@ import { HelperGeoService } from './services/helper.geo.service';
     HelperStringService,
     HelperFileService,
     HelperGeoService,
+    HelperDiscordService,
   ],
   controllers: [],
   imports: [

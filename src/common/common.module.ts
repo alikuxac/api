@@ -26,6 +26,10 @@ import { DiscordModule } from '@discord-nestjs/core';
 import { GatewayIntentBits } from 'discord.js';
 import { PolicyModule } from './policy/policy.module';
 import { ErrorModule } from './error/error.module';
+import { MessageModule } from './message/message.module';
+
+import { APP_LANGUAGE } from '@root/app/constants/app.constant';
+import { ENUM_MESSAGE_LANGUAGE } from './message/constants/message.enum.constant';
 
 @Global()
 @Module({
@@ -43,7 +47,10 @@ import { ErrorModule } from './error/error.module';
         CACHE_TTL: Joi.number().default(120),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRES_IN: Joi.number().default(86400),
-        APP_LANGUAGE: Joi.string().default('en'),
+        APP_LANGUAGE: Joi.string()
+          .valid(...Object.values(ENUM_MESSAGE_LANGUAGE))
+          .default(APP_LANGUAGE)
+          .required(),
 
         // Database
         MONGO_URI: Joi.string().required(),
@@ -182,6 +189,7 @@ import { ErrorModule } from './error/error.module';
         },
       }),
     }),
+    MessageModule,
     HttpModule,
     HelperModule,
     ErrorModule,

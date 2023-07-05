@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { StickRoleService } from 'src/modules/bot/discord/services';
 import { getAllStickRoleDto } from 'src/modules/bot/discord/dto/stickRole.dto';
 
-@Controller('discord/stickrole')
+@Controller('stickrole')
 export class StickRoleController {
   constructor(private readonly stickRoleService: StickRoleService) {}
 

@@ -4,15 +4,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MulterModule } from '@nestjs/platform-express';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
-import {
-  I18nModule,
-  QueryResolver,
-  HeaderResolver,
-  CookieResolver,
-} from 'nestjs-i18n';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import path from 'path';
 import Joi from 'joi';
 
 import configs from 'src/configs';
@@ -26,6 +19,10 @@ import { DiscordModule } from '@discord-nestjs/core';
 import { GatewayIntentBits } from 'discord.js';
 import { PolicyModule } from './policy/policy.module';
 import { ErrorModule } from './error/error.module';
+import { MessageModule } from './message/message.module';
+
+import { APP_LANGUAGE } from '@root/app/constants/app.constant';
+import { ENUM_MESSAGE_LANGUAGE } from './message/constants/message.enum.constant';
 
 @Global()
 @Module({
@@ -43,7 +40,10 @@ import { ErrorModule } from './error/error.module';
         CACHE_TTL: Joi.number().default(120),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRES_IN: Joi.number().default(86400),
-        APP_LANGUAGE: Joi.string().default('en'),
+        APP_LANGUAGE: Joi.string()
+          .valid(...Object.values(ENUM_MESSAGE_LANGUAGE))
+          .default(APP_LANGUAGE)
+          .required(),
 
         // Database
         MONGO_URI: Joi.string().required(),
@@ -137,18 +137,6 @@ import { ErrorModule } from './error/error.module';
       },
     }),
     ScheduleModule.forRoot(),
-    I18nModule.forRoot({
-      fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, '..', '/i18n/'),
-        watch: true,
-      },
-      resolvers: [
-        new QueryResolver(['lang', 'language', 'l']),
-        new HeaderResolver(['x-custom-lang', 'api-lang']),
-        new CookieResolver(['lang', 'l']),
-      ],
-    }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       connectionName: 'api',
@@ -182,6 +170,7 @@ import { ErrorModule } from './error/error.module';
         },
       }),
     }),
+    MessageModule,
     HttpModule,
     HelperModule,
     ErrorModule,

@@ -1,6 +1,12 @@
 import { Global, Module } from '@nestjs/common';
 import * as path from 'path';
-import { I18nModule, HeaderResolver, I18nJsonLoader } from 'nestjs-i18n';
+import {
+  I18nModule,
+  HeaderResolver,
+  I18nJsonLoader,
+  CookieResolver,
+  QueryResolver,
+} from 'nestjs-i18n';
 import { ConfigService } from '@nestjs/config';
 import { MessageService } from './services/message.service';
 import { ENUM_MESSAGE_LANGUAGE } from './constants/message.enum.constant';
@@ -27,7 +33,11 @@ import { MessageMiddlewareModule } from 'src/common/message/middleware/message.m
       }),
       loader: I18nJsonLoader,
       inject: [ConfigService],
-      resolvers: [new HeaderResolver(['x-custom-lang'])],
+      resolvers: [
+        new QueryResolver(['lang', 'language', 'l']),
+        new HeaderResolver(['x-custom-lang', 'api-lang']),
+        new CookieResolver(['lang', 'l']),
+      ],
     }),
     MessageMiddlewareModule,
   ],

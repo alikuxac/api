@@ -4,15 +4,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MulterModule } from '@nestjs/platform-express';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
-import {
-  I18nModule,
-  QueryResolver,
-  HeaderResolver,
-  CookieResolver,
-} from 'nestjs-i18n';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import path from 'path';
 import Joi from 'joi';
 
 import configs from 'src/configs';
@@ -144,18 +137,6 @@ import { ENUM_MESSAGE_LANGUAGE } from './message/constants/message.enum.constant
       },
     }),
     ScheduleModule.forRoot(),
-    I18nModule.forRoot({
-      fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, '..', '/i18n/'),
-        watch: true,
-      },
-      resolvers: [
-        new QueryResolver(['lang', 'language', 'l']),
-        new HeaderResolver(['x-custom-lang', 'api-lang']),
-        new CookieResolver(['lang', 'l']),
-      ],
-    }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       connectionName: 'api',

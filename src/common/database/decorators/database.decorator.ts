@@ -26,6 +26,7 @@ export function DatabaseModel(
 export function DatabaseEntity(options?: SchemaOptions): ClassDecorator {
   return Schema({
     ...options,
+    _id: true,
     versionKey: false,
     timestamps: {
       createdAt: DATABASE_CREATED_AT_FIELD_NAME,

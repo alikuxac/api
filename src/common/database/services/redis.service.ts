@@ -37,7 +37,10 @@ export class RedisService implements OnModuleInit {
       this.logger.log('Redis disconnected');
     });
 
-    this.client.on('error', (err) => this.logger.error(err));
+    this.client.on('error', (err) => {
+      this.isConnected = false;
+      this.logger.error(err);
+    });
 
     this.client.on('reconnecting', () => {
       this.isConnected = false;

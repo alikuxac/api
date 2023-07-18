@@ -20,6 +20,7 @@ import { GatewayIntentBits } from 'discord.js';
 import { PolicyModule } from './policy/policy.module';
 import { ErrorModule } from './error/error.module';
 import { MessageModule } from './message/message.module';
+import { PaginationModule } from './pagination/pagination.module';
 
 import { APP_LANGUAGE } from '@root/app/constants/app.constant';
 import { ENUM_MESSAGE_LANGUAGE } from './message/constants/message.enum.constant';
@@ -173,6 +174,7 @@ import { ENUM_MESSAGE_LANGUAGE } from './message/constants/message.enum.constant
     MessageModule,
     HttpModule,
     HelperModule,
+    PaginationModule,
     ErrorModule,
     DatabaseModule,
     AwsModule,

@@ -31,3 +31,8 @@ export enum ENUM_HELPER_FILE_TYPE {
   XLS = 'xls',
   CSV = 'csv',
 }
+
+export enum ENUM_HELPER_TEXT_DECODE {
+  ENCODE = 'encode',
+  DECODE = 'decode',
+}

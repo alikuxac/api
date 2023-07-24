@@ -23,4 +23,12 @@ export class HelperHashService {
   sha256Compare(hashOne: string, hashTwo: string): boolean {
     return hashOne === hashTwo;
   }
+
+  encodeBase64(text: string) {
+    return Buffer.from(text).toString('base64');
+  }
+
+  decodeBase64(text: string) {
+    return Buffer.from(text, 'base64').toString('ascii');
+  }
 }

@@ -72,4 +72,15 @@ export class HelperStringService {
     const regex = new RegExp('^[A-Za-z0-9_-]+$');
     return regex.test(text);
   }
+
+  reseverse(text: string): string {
+    return Array.from(text).reverse().join('');
+  }
+
+  ascii(text: string) {
+    return text
+      .split('')
+      .map((char) => char.charCodeAt(0))
+      .join(' ');
+  }
 }

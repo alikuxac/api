@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { useContainer } from 'class-validator';
 
 import { json, urlencoded } from 'express';
 import compression from 'compression';
@@ -25,6 +26,8 @@ async function bootstrap() {
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.use(compression());
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   await setupSwagger(app);
 

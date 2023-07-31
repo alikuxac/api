@@ -7,7 +7,7 @@ import { Document } from 'mongoose';
   timestamps: true,
   _id: true,
 })
-export class DiscordGuild extends Document {
+export class DiscordGuild {
   @Prop({
     name: 'guildId',
     type: String,
@@ -29,3 +29,5 @@ export class DiscordGuild extends Document {
 }
 
 export const DiscordGuildSchema = SchemaFactory.createForClass(DiscordGuild);
+
+export type DiscordGuildDoc = DiscordGuild & Document;

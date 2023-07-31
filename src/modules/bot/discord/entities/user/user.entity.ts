@@ -9,7 +9,7 @@ import { UserAfk } from 'src/modules/bot/discord/interfaces';
   timestamps: true,
   _id: true,
 })
-export class DiscordUser extends Document {
+export class DiscordUser {
   @Prop({
     name: 'userId',
     type: String,
@@ -28,3 +28,5 @@ export class DiscordUser extends Document {
 }
 
 export const DiscordUserSchema = SchemaFactory.createForClass(DiscordUser);
+
+export type DiscordUserDoc = DiscordUser & Document;

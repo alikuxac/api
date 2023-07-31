@@ -7,7 +7,7 @@ import { Document } from 'mongoose';
   timestamps: true,
   _id: true,
 })
-export class DiscordUserCurrency extends Document {
+export class DiscordUserCurrency {
   @Prop({
     name: 'userId',
     type: String,
@@ -33,3 +33,5 @@ export class DiscordUserCurrency extends Document {
 
 export const DiscordUserCurrencySchema =
   SchemaFactory.createForClass(DiscordUserCurrency);
+
+export type DiscordUserCurrencyDoc = DiscordUserCurrency & Document;

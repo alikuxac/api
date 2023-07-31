@@ -3,9 +3,14 @@ import { Document } from 'mongoose';
 
 import { BansStatus } from 'src/modules/bot/discord/interfaces/bans.interface';
 
-@Schema({ collection: 'discord_bans', timestamps: true, versionKey: false })
-export class DiscordBan extends Document {
-  @Prop({ name: 'userId', unique: true })
+@Schema({
+  collection: 'discord_bans',
+  timestamps: true,
+  versionKey: false,
+  _id: true,
+})
+export class DiscordBan {
+  @Prop({ name: 'userId', unique: true, index: true, required: true })
   userId: string;
 
   @Prop({ name: 'reason', length: 255, nullable: false })
@@ -32,3 +37,5 @@ export class DiscordBan extends Document {
 }
 
 export const DiscordBanSchema = SchemaFactory.createForClass(DiscordBan);
+
+export type DiscordBansDoc = DiscordBan & Document;

@@ -7,11 +7,11 @@ import { Document } from 'mongoose';
   timestamps: true,
   _id: true,
 })
-export class StickRole extends Document {
-  @Prop({ name: 'guildId', type: String, length: 30 })
+export class StickRole {
+  @Prop({ name: 'guildId', type: String, length: 30, index: true })
   guildId: string;
 
-  @Prop({ name: 'userId', type: String, length: 30 })
+  @Prop({ name: 'userId', type: String, length: 30, index: true })
   userId: string;
 
   @Prop({ name: 'roleId', type: String, length: 30, unique: true, index: true })
@@ -22,3 +22,5 @@ export class StickRole extends Document {
 }
 
 export const StickRoleSchema = SchemaFactory.createForClass(StickRole);
+
+export type StickRoleDoc = StickRole & Document;

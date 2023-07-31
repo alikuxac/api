@@ -7,7 +7,7 @@ import { Document } from 'mongoose';
   versionKey: false,
   _id: true,
 })
-export class DiscordEval extends Document {
+export class DiscordEval {
   @Prop({ name: 'botId', required: true, length: 30 })
   botId: string;
 
@@ -25,3 +25,5 @@ export class DiscordEval extends Document {
 }
 
 export const DiscordEvalSchema = SchemaFactory.createForClass(DiscordEval);
+
+export type DiscordEvalDoc = DiscordEval & Document;

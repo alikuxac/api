@@ -71,15 +71,13 @@ export class HelperEncryptionService {
   }
 
   jwtVerify(token: string, options: IHelperJwtVerifyOptions): boolean {
-    console.log('verifying');
     try {
-      const result = this.jwtService.verify(token, {
+      this.jwtService.verify(token, {
         secret: options.secretKey,
         audience: options.audience,
         issuer: options.issuer,
         subject: options.subject,
       });
-      console.log('jwt verify: ', result);
       return true;
     } catch (err: unknown) {
       return false;

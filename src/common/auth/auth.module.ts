@@ -10,6 +10,6 @@ import { AuthJwtAccessStrategy } from './guards/jwt-access/jwt-access.strategy';
   imports: [],
   controllers: [],
   providers: [AuthService, AuthJwtAccessStrategy],
-  exports: [AuthService, AuthJwtAccessStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

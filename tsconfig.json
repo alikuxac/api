@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "useDefineForClassFields": true,
     "paths": {
       "@root/*": [
         "src/*"
@@ -58,12 +59,6 @@
       ],
       "@finance/*": [
         "libs/finance/src/*"
-      ],
-      "@auth": [
-        "libs/auth/src"
-      ],
-      "@auth/*": [
-        "libs/auth/src/*"
       ]
     }
   }

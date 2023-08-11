@@ -7,6 +7,7 @@ import { HttpModule } from '@nestjs/axios';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import Joi from 'joi';
+import { Partials } from 'discord.js';
 
 import configs from 'src/configs';
 
@@ -151,9 +152,8 @@ import { RequestModule } from './request/request.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        token: configService.get('discord.token'),
-        prefix: configService.get<string>('discord.prefix'),
-        prefixGlobalOptions: { isIgnoreBotMessage: true },
+        token: configService.get('bot.discord.token'),
+        prefix: configService.get<string>('bot.discord.prefix'),
         discordClientOptions: {
           intents: [
             GatewayIntentBits.Guilds,
@@ -167,7 +167,19 @@ import { RequestModule } from './request/request.module';
             GatewayIntentBits.GuildInvites,
             GatewayIntentBits.MessageContent,
             GatewayIntentBits.DirectMessages,
-            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildScheduledEvents,
+            GatewayIntentBits.GuildModeration,
+            GatewayIntentBits.AutoModerationConfiguration,
+            GatewayIntentBits.AutoModerationExecution,
+          ],
+          partials: [
+            Partials.GuildMember,
+            Partials.Channel,
+            Partials.Message,
+            Partials.User,
+            Partials.Reaction,
+            Partials.ThreadMember,
+            Partials.GuildScheduledEvent,
           ],
         },
       }),

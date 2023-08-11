@@ -22,12 +22,4 @@ import { User, UserSchema } from 'src/modules/api/users/entities/user.entity';
   providers: [UsersService],
   exports: [UsersService],
 })
-export class UsersModule {
-  static forFeature(): DynamicModule {
-    return {
-      module: UsersModule,
-      providers: [UsersService],
-      exports: [UsersService],
-    };
-  }
-}
+export class UsersModule {}

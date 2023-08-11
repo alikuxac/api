@@ -9,6 +9,6 @@ import { UsersController } from '@root/modules/api/users/controllers/users.contr
 
 @Module({
   controllers: [RolesController, UsersController],
-  imports: [RolesModule, UsersModule.forFeature()],
+  imports: [RolesModule, UsersModule],
 })
 export class RouterAdminModule {}

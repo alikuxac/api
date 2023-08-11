@@ -34,11 +34,10 @@
     },
 
     "200": "OK",
-
     "201": "Created",
     "202": "Accepted",
     "204": "No Content",
-   
+
     "301": "Move Permanently",
     "302": "Found",
     "304": "Not Modified",
@@ -62,6 +61,5 @@
     "502": "Bad Gateway",
     "503": "Service Unavailable",
     "504": "Gateway Timeout"
-
 
 }

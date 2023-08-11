@@ -1,3 +1,4 @@
 {
-  "get_age": "Someone was born in {year}"
+  "get_age": "Someone was born in {year}",
+  "year_processing": "The year {year} is {percent} complete!"
 }

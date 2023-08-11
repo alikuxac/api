@@ -1,12 +1,14 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema, Types } from 'mongoose';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 import { UserSex } from 'src/modules/api/users/constants/user.constant';
-import { Role } from 'src/common/roles/entities/roles.entity';
+import { RoleEntity } from 'src/common/roles/entities/roles.entity';
+import { DatabaseEntity } from '@root/common/database/decorators/database.decorator';
+import { DatabaseMongoObjectIdEntityAbstract } from '@root/common/database/abstracts/mongo/entities/database.mongo.object-id.entity.abstract';
 
-@Schema({ collection: 'users', timestamps: true, versionKey: false, _id: true })
-export class User extends Document {
+@DatabaseEntity({ collection: 'users', toJSON: { virtuals: true } })
+export class UserEntity extends DatabaseMongoObjectIdEntityAbstract {
   @Prop({
     name: 'username',
     type: String,
@@ -25,16 +27,28 @@ export class User extends Document {
   })
   email: string;
 
-  @Prop({ name: 'password', maxlength: 255 })
+  @Prop({ name: 'password', required: true, type: String })
   password: string;
 
-  @Prop({ name: 'first_name', maxlength: 50, default: '' })
+  @Prop({
+    name: 'first_name',
+    maxlength: 50,
+    lowercase: true,
+    trim: true,
+    default: '',
+  })
   firstName: string;
 
-  @Prop({ name: 'last_name', maxlength: 50, default: '' })
+  @Prop({
+    name: 'last_name',
+    maxlength: 50,
+    lowercase: true,
+    trim: true,
+    default: '',
+  })
   lastName: string;
 
-  @Prop({ name: 'display_name', maxlength: 50, default: '' })
+  @Prop({ name: 'display_name', maxlength: 50, trim: true, default: '' })
   displayName: string;
 
   @Prop({
@@ -45,7 +59,7 @@ export class User extends Document {
   })
   sex: UserSex;
 
-  @Prop({ name: 'avatar', type: String, default: '' })
+  @Prop({ name: 'avatar', type: String, trim: true, default: '' })
   avatar: string;
 
   @Prop({ name: 'is_active', type: Boolean, default: true })
@@ -54,27 +68,42 @@ export class User extends Document {
   @Prop({ name: 'last_active', type: Date, default: new Date() })
   lastActive: Date;
 
-  @Prop({ name: 'isBanned', type: Boolean, default: false })
+  @Prop({ name: 'isBanned', type: Boolean, default: false, index: true })
   isBanned: boolean;
 
-  @Prop({ name: 'isVerified', type: Boolean, default: false })
+  @Prop({ name: 'banned_at', type: Date, default: null })
+  bannedAt: Date;
+
+  @Prop({ name: 'isVerified', type: Boolean, default: false, index: true })
   isVerified: boolean;
 
-  @Prop({ name: 'isDisabled', type: Boolean, default: false })
+  @Prop({ name: 'verified_at', type: Date, default: null })
+  verifiedAt: Date;
+
+  @Prop({ name: 'isDisabled', type: Boolean, default: false, index: true })
   isDisabled: boolean;
+
+  @Prop({ name: 'disabled_at', type: Date, default: null })
+  disabledAt: Date;
 
   @Prop({ name: 'isOwner', type: Boolean, default: false })
   isOwner: boolean;
 
+  @Prop({ name: 'signUpDate', type: Date, default: new Date() })
+  signUpDate: Date;
+
   @Prop({
     name: 'role',
     type: MongooseSchema.Types.ObjectId,
-    ref: Role.name,
+    ref: RoleEntity.name,
+    index: true,
   })
-  role: Types.ObjectId;
+  role: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(UserEntity);
+
+export type UserDoc = UserEntity & Document;
 
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {

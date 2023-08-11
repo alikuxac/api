@@ -1,33 +1,36 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   Controller,
   Post,
   Req,
   Get,
   Body,
-  Injectable,
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 import { AuthService } from '@root/common/auth/services/auth.service';
 import { UsersService } from 'src/modules/api/users/services/users.service';
+import { RolesService } from '@root/common/roles/service/roles.service';
 
 import { signInDto, signUpDto } from 'src/modules/api/users/dto/user.auth.dto';
 import { ApiTags } from '@nestjs/swagger';
+
 import { SkipAuth } from '@root/common/auth/decorators/auth.skip.decorator';
+import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
+import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
+import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
 import { Error } from '@root/common/error/decorators/error.decorator';
 
-@Injectable()
 @Controller('auth')
 @ApiTags('Auth')
 @Error()
+@ThrottleredGuard()
+@ResponseCustomHeader()
 export class UserAuthController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
-    private readonly configService: ConfigService,
+    private readonly rolesService: RolesService,
   ) {}
 
   @SkipAuth()
@@ -45,7 +48,15 @@ export class UserAuthController {
       throw new UnauthorizedException('Wrong password');
     }
 
-    const payload = { _id: user._id, username: user.username, role: user.role };
+    const userWithRole = await this.usersService.joinWithRole(user);
+
+    const userPayload = await this.usersService.payloadSerialization(
+      userWithRole,
+    );
+
+    const payload = await this.authService.createPayloadAccessToken(
+      userPayload,
+    );
     const tokenType: string = await this.authService.getTokenType();
     const expiresIn: number =
       await this.authService.getAccessTokenExpirationTime();
@@ -74,6 +85,7 @@ export class UserAuthController {
   }
 
   @Get('logout')
+  @AuthJwtAccessProtected()
   logout(@Req() req) {
     req.logout();
   }
@@ -86,7 +98,17 @@ export class UserAuthController {
       throw new BadRequestException('User already exists');
     }
     const user = await this.usersService.create(dto);
-    const payload = { id: user._id, username: user.username, role: user.role };
+
+    const userWithRole = await this.usersService.joinWithRole(user);
+
+    const userPayload = await this.usersService.payloadSerialization(
+      userWithRole,
+    );
+
+    const payload = await this.authService.createPayloadAccessToken(
+      userPayload,
+    );
+
     const tokenType: string = await this.authService.getTokenType();
     const expiresIn: number =
       await this.authService.getAccessTokenExpirationTime();
@@ -106,10 +128,12 @@ export class UserAuthController {
     );
 
     return {
-      tokenType,
-      expiresIn,
-      accessToken,
-      refreshToken,
+      data: {
+        tokenType,
+        expiresIn,
+        accessToken,
+        refreshToken,
+      },
     };
   }
 }

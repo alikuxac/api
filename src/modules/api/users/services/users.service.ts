@@ -1,87 +1,118 @@
-import {
-  Injectable,
-  HttpException,
-  Logger,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, HttpException, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-
+import { plainToInstance } from 'class-transformer';
 import { isEmail } from 'class-validator';
 
+import { IUserService } from '../interfaces/user.service.interface';
+import {
+  IDatabaseCreateOptions,
+  IDatabaseExistOptions,
+  IDatabaseFindAllOptions,
+  IDatabaseFindOneOptions,
+  IDatabaseGetTotalOptions,
+  IDatabaseSaveOptions,
+} from '@root/common/database/interfaces/database.interface';
+
 // Entity
-import { User } from 'src/modules/api/users/entities/user.entity';
+import {
+  UserDoc,
+  UserEntity,
+} from 'src/modules/api/users/entities/user.entity';
+
+import { UserRepository } from '../repositories/user.repository';
 
 // Dto
 import {
   createUserDto,
-  updateUserDto,
+  // updateUserDto,
 } from 'src/modules/api/users/dto/user.dto';
-
-// Enum
-import { UserSex } from 'src/modules/api/users/constants/user.constant';
-
 // Service
-import { Role } from 'src/common/roles/entities/roles.entity';
+import { RoleEntity } from 'src/common/roles/entities/roles.entity';
+import { RolesService } from '@root/common/roles/service/roles.service';
+import { IUserDoc, IUserEntity } from '../interfaces/user.interface';
+import { HelperDateService } from '@root/common/helper/services/helper.date.service';
+
+import { UserPayloadSerialization } from '../serializations/user.payload.serialization';
+
 @Injectable()
-export class UsersService implements OnModuleInit {
-  private logger = new Logger(UsersService.name);
+export class UsersService implements OnModuleInit, IUserService {
+  private _adminEmail: string;
+  private _adminPassword: string;
 
   constructor(
-    @InjectModel(Role.name, 'api')
-    private readonly roleModel: Model<Role>,
-    @InjectModel(User.name, 'api')
-    private readonly UserModel: Model<User>,
+    private readonly userRepository: UserRepository,
+    private readonly rolesService: RolesService,
     private readonly configService: ConfigService,
-  ) {}
+    private readonly helperDateService: HelperDateService,
+  ) {
+    this._adminEmail = this.configService.get('ADMIN_EMAIL');
+    this._adminPassword = this.configService.get('ADMIN_PASSWORD');
+  }
 
   async onModuleInit() {
-    this.logger.log('User Service Init');
-    // this.logger.log(this.configService.get('auth'));
-    const role = await this.roleModel.findOne({ name: 'user' }).exec();
+    const role = await this.rolesService.findOneByName('everyone');
     const users = await this.findAll();
     if (users.length === 0) {
-      const admin = new this.UserModel({
-        username: 'admin',
-        password: this.configService.get('ADMIN_PASSWORD'),
-        email: this.configService.get('ADMIN_EMAIL'),
-        displayName: 'Admin',
-        firstName: 'Admin',
-        lastName: 'Admin',
-        isActive: true,
-        isVerified: true,
-        isOwner: true,
-        role,
-        sex: UserSex.UNKNOWN,
-      });
-      await admin.save();
+      const admin = new UserEntity();
+      admin.username = 'admin';
+      admin.email = this._adminEmail;
+      admin.password = this._adminPassword;
+      admin.role = role._id;
+      admin.isOwner = true;
+
+      this.userRepository.create(admin);
     }
   }
 
   // Check if user exists
   async exists(id: string) {
-    return await this.UserModel.exists({ _id: id }).exec();
+    return await this.userRepository.exists({ _id: id }, { withDeleted: true });
   }
 
-  async getTotalUsers() {
-    return await this.UserModel.countDocuments().exec();
+  async existByEmail(
+    email: string,
+    options?: IDatabaseExistOptions,
+  ): Promise<boolean> {
+    return this.userRepository.exists(
+      {
+        email: {
+          $regex: new RegExp(`\\b${email}\\b`),
+          $options: 'i',
+        },
+      },
+      { ...options, withDeleted: true },
+    );
   }
 
-  async validateWithEmail(email: string) {
-    const user = await this.UserModel.findOne({ email }).exec();
-    return user;
+  async existByUsername(
+    username: string,
+    options?: IDatabaseExistOptions,
+  ): Promise<boolean> {
+    return this.userRepository.exists(
+      { username },
+      { ...options, withDeleted: true },
+    );
+  }
+
+  async getTotal(
+    find?: Record<string, any>,
+    options?: IDatabaseGetTotalOptions,
+  ): Promise<number> {
+    return this.userRepository.getTotal(find, { ...options, join: true });
   }
 
   /**
    * Find all
    * @returns Users
    */
-  async findAll(limit = 10, page = 0) {
-    return await this.UserModel.find()
-      .limit(limit)
-      .skip(page * limit)
-      .exec();
+  async findAll(
+    find?: Record<string, any>,
+    options?: IDatabaseFindAllOptions,
+  ): Promise<IUserEntity[]> {
+    return this.userRepository.findAll<IUserEntity>(find, {
+      ...options,
+      join: true,
+    });
   }
 
   /**
@@ -89,17 +120,11 @@ export class UsersService implements OnModuleInit {
    * @param id User id
    * @returns User
    */
-  async findOne(id: string, full?: boolean) {
-    const checkExistId = await this.exists(id);
-    if (!checkExistId) {
-      throw new HttpException('User not found', 404);
-    }
-    const user = this.UserModel.findOne({ _id: id });
-    if (full) {
-      user.populate({ path: 'role', model: Role.name });
-    }
-    const result = await user.exec();
-    return result;
+  async findOne<T>(
+    find: Record<string, any>,
+    options?: IDatabaseFindOneOptions,
+  ): Promise<T> {
+    return this.userRepository.findOne<T>(find, options);
   }
 
   /**
@@ -108,11 +133,9 @@ export class UsersService implements OnModuleInit {
    * @returns User
    */
   async findByUsername(username: string) {
-    const result = await this.UserModel.findOne({
+    const result = await this.userRepository.findAll({
       username: username.toLowerCase(),
-    })
-      .populate({ path: 'role', model: Role.name })
-      .exec();
+    });
     return result;
   }
 
@@ -126,44 +149,80 @@ export class UsersService implements OnModuleInit {
     if (!IsEmail) {
       throw new HttpException('Email is not valid', 400);
     }
-    const result = await this.UserModel.findOne({ email })
-      .populate('role')
-      .exec();
+    const result = await this.userRepository.findOne({ email });
     return result;
   }
 
   async findByUsernameOrEmail(value: string) {
-    const result = await this.UserModel.findOne({
+    const result = this.userRepository.findOne({
       $or: [{ username: value }, { email: value }],
-    })
-      .populate('role')
-      .exec();
+    });
     return result;
   }
 
   async findByRoleId(roleId: string) {
-    const result = await this.UserModel.find({
+    const result = await this.userRepository.findAll({
       $eq: { role: roleId },
-    }).exec();
+    });
     return result;
   }
 
+  async findOneByUsername<T>(
+    username: string,
+    options?: IDatabaseFindOneOptions,
+  ): Promise<T> {
+    return this.userRepository.findOne<T>({ username }, options);
+  }
+
+  async findOneByEmail<T>(
+    email: string,
+    options?: IDatabaseFindOneOptions,
+  ): Promise<T> {
+    return this.userRepository.findOne<T>({ email }, options);
+  }
+
+  async findOneById<T>(
+    _id: string,
+    options?: IDatabaseFindOneOptions,
+  ): Promise<T> {
+    return this.userRepository.findOneById<T>(_id, options);
+  }
+
+  async joinWithRole(repository: UserDoc): Promise<IUserDoc> {
+    return repository.populate({
+      path: 'role',
+      localField: 'role',
+      foreignField: '_id',
+      model: RoleEntity.name,
+    });
+    // return repository.populate('role');
+  }
+
   // Create user
-  async create(dto: createUserDto) {
-    const userExist = await this.UserModel.findOne({
-      $or: [{ email: dto.email }, { username: dto.username }],
-    }).exec();
-    if (userExist) {
-      throw new HttpException('User already exists', 409);
-    }
-    const roleName = dto.role ?? 'user';
-    const role = await this.roleModel.findOne({ name: roleName });
-    if (!role) {
-      throw new HttpException('User role not found', 404);
-    }
-    delete dto.role; // Remove role from dto
-    const user = new this.UserModel({ ...dto, role: role._id });
-    return await user.save();
+  async create(
+    {
+      firstName,
+      lastName,
+      email,
+      role,
+      password,
+      displayName,
+      username,
+    }: createUserDto,
+    options?: IDatabaseCreateOptions,
+  ): Promise<UserDoc> {
+    const create: UserEntity = new UserEntity();
+    create.firstName = firstName;
+    create.email = email;
+    create.password = password;
+    create.role = role;
+    create.isActive = true;
+    create.lastName = lastName;
+    create.displayName = displayName;
+    create.username = username;
+    create.signUpDate = this.helperDateService.create();
+
+    return this.userRepository.create<UserEntity>(create, options);
   }
 
   /**
@@ -172,29 +231,29 @@ export class UsersService implements OnModuleInit {
    * @param dto Update user dto
    * @returns Updated user
    */
-  async update(id: string, dto: updateUserDto) {
-    const checkExistId = await this.exists(id);
-    if (!checkExistId) {
-      throw new HttpException('User not found', 404);
-    }
-    return await this.UserModel.findByIdAndUpdate(
-      checkExistId,
-      {
-        $set: {
-          displayName: dto.displayName,
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          isBanned: dto.banned,
-          isActive: dto.isActive,
-          isVerified: dto.isVerified,
-          sex: dto.sex,
-        },
-      },
-      {
-        new: true,
-      },
-    ).exec();
-  }
+  // async update(id: string, dto: updateUserDto) {
+  //   const checkExistId = await this.exists(id);
+  //   if (!checkExistId) {
+  //     throw new HttpException('User not found', 404);
+  //   }
+  //   return await this.UserModel.findByIdAndUpdate(
+  //     checkExistId,
+  //     {
+  //       $set: {
+  //         displayName: dto.displayName,
+  //         firstName: dto.firstName,
+  //         lastName: dto.lastName,
+  //         isBanned: dto.banned,
+  //         isActive: dto.isActive,
+  //         isVerified: dto.isVerified,
+  //         sex: dto.sex,
+  //       },
+  //     },
+  //     {
+  //       new: true,
+  //     },
+  //   ).exec();
+  // }
 
   /**
    * Update user password
@@ -202,16 +261,13 @@ export class UsersService implements OnModuleInit {
    * @param password New password
    * @returns Updated user
    */
-  async changePasswordUser(id: string, password: string) {
-    const checkExistId = await this.exists(id);
-    if (!checkExistId) {
-      throw new HttpException('User not found', 404);
-    }
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $set: {
-        password,
-      },
-    }).exec();
+  async updatePassword(
+    repository: UserDoc,
+    password: string,
+    options?: IDatabaseSaveOptions,
+  ) {
+    repository.password = password;
+    return this.userRepository.save(repository, options);
   }
 
   /**
@@ -219,8 +275,14 @@ export class UsersService implements OnModuleInit {
    * @param id User id
    * @returns Deleted user
    */
-  async removeUser(id: string) {
-    return await this.UserModel.findByIdAndRemove(id).exec();
+  async delete(repository: UserDoc, options?: IDatabaseSaveOptions) {
+    return this.userRepository.softDelete(repository, options);
+  }
+
+  async payloadSerialization(
+    data: IUserDoc,
+  ): Promise<UserPayloadSerialization> {
+    return plainToInstance(UserPayloadSerialization, data.toObject());
   }
 
   /**
@@ -228,12 +290,9 @@ export class UsersService implements OnModuleInit {
    * @param id User id
    * @returns Activated user
    */
-  async activeUser(id: string) {
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $set: {
-        isActive: true,
-      },
-    }).exec();
+  async active(repository: UserDoc, options?: IDatabaseSaveOptions) {
+    repository.isActive = true;
+    return this.userRepository.save(repository, options);
   }
 
   /**
@@ -241,62 +300,33 @@ export class UsersService implements OnModuleInit {
    * @param id User id
    * @returns Deactivated user
    */
-  async deactiveUser(id: string) {
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $set: {
-        isActive: false,
-      },
-    }).exec();
+  async inactive(repository: UserDoc, options?: IDatabaseSaveOptions) {
+    repository.isActive = false;
+    return this.userRepository.save(repository, options);
   }
 
-  /**
-   * Verify user
-   * @param id User id
-   * @returns Verified user
-   */
-  async verifyUser(id: string) {
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $set: {
-        isVerified: true,
-      },
-    }).exec();
+  async verify(repository: UserDoc, options?: IDatabaseSaveOptions) {
+    repository.isVerified = true;
+    return this.userRepository.save(repository, options);
   }
 
-  /**
-   * Ban user
-   * @param id User id
-   * @returns Banned user
-   */
-  async banUser(id: string) {
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $set: {
-        banned: true,
-      },
-    }).exec();
+  async ban(repository: UserDoc, options?: IDatabaseSaveOptions) {
+    repository.isBanned = true;
+    return this.userRepository.save(repository, options);
   }
 
-  /**
-   *
-   * @param id
-   * @returns
-   */
-  async disableUser(id: string) {
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $set: {
-        isDisabled: true,
-      },
-    }).exec();
+  async unban(repository: UserDoc, options?: IDatabaseSaveOptions) {
+    repository.isBanned = false;
+    return this.userRepository.save(repository, options);
   }
 
-  /**
-   * @param id User id
-   * @returns
-   */
-  async enableUser(id: string) {
-    return await this.UserModel.findByIdAndUpdate(id, {
-      $set: {
-        isDisabled: false,
-      },
-    }).exec();
+  async disable(repository: UserDoc, options?: IDatabaseSaveOptions) {
+    repository.isDisabled = true;
+    return this.userRepository.save(repository, options);
+  }
+
+  async enable(repository: UserDoc, options?: IDatabaseSaveOptions) {
+    repository.isDisabled = false;
+    return this.userRepository.save(repository, options);
   }
 }

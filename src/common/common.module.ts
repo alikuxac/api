@@ -24,6 +24,7 @@ import { PaginationModule } from './pagination/pagination.module';
 
 import { APP_LANGUAGE } from '@root/app/constants/app.constant';
 import { ENUM_MESSAGE_LANGUAGE } from './message/constants/message.enum.constant';
+import { RequestModule } from './request/request.module';
 
 @Global()
 @Module({
@@ -176,6 +177,7 @@ import { ENUM_MESSAGE_LANGUAGE } from './message/constants/message.enum.constant
     HelperModule,
     PaginationModule,
     ErrorModule,
+    RequestModule,
     DatabaseModule,
     AwsModule,
     PolicyModule,

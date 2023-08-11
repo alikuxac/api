@@ -12,6 +12,7 @@ import { HypixelService } from '../services/hypixel.service';
 import { uuidDto, guildDto } from '../dto/hypixel.dto';
 import { HypixelGuard } from '@hypixel/hypixel.guard';
 import { SkipAuth } from '@root/common/auth/decorators/auth.skip.decorator';
+import { Error } from '@root/common/error/decorators/error.decorator';
 
 @Controller('hypixel')
 @UsePipes(
@@ -22,7 +23,7 @@ import { SkipAuth } from '@root/common/auth/decorators/auth.skip.decorator';
 )
 @SkipAuth()
 @UseGuards(HypixelGuard)
-@ApiTags('Hypixel')
+@Error()
 export class HypixelController {
   constructor(private readonly hypixelService: HypixelService) {}
 

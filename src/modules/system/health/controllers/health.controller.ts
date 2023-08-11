@@ -6,8 +6,10 @@ import {
   MongooseHealthIndicator,
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
+import { Error } from '@root/common/error/decorators/error.decorator';
 
 @Controller('health')
+@Error()
 export class HealthController {
   constructor(
     private health: HealthCheckService,

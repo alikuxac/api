@@ -9,14 +9,9 @@ import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { TextService } from '../services/text.service';
 import { TextDto, base64TextDto } from '../dto/text.dto';
 
-@Controller(['text', 'txt'])
-@ApiTags('text')
-@UsePipes(
-  new ValidationPipe({
-    transform: true,
-    transformOptions: { enableImplicitConversion: true },
-  }),
-)
+import { Error } from '@root/common/error/decorators/error.decorator';
+
+@Error()
 export class TextController {
   constructor(private readonly textService: TextService) {}
 

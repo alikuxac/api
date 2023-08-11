@@ -23,9 +23,13 @@ import {
   RolePermissionGroup as PermGroup,
 } from '@root/common/policy/constants/policy.enum.constant';
 
-@Injectable()
+
+
+import { Error } from '@root/common/error/decorators/error.decorator';
+
 @Controller('user')
 @ApiTags('Users')
+@Error()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

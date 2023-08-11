@@ -17,10 +17,12 @@ import { UsersService } from 'src/modules/api/users/services/users.service';
 import { signInDto, signUpDto } from 'src/modules/api/users/dto/user.auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { SkipAuth } from '@root/common/auth/decorators/auth.skip.decorator';
+import { Error } from '@root/common/error/decorators/error.decorator';
 
 @Injectable()
 @Controller('auth')
 @ApiTags('Auth')
+@Error()
 export class UserAuthController {
   constructor(
     private readonly usersService: UsersService,

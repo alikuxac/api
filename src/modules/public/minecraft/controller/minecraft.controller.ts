@@ -14,9 +14,10 @@ import {
   serverDto,
 } from '../dto/minecraft.dto';
 
-@Controller(['minecraft', 'mc'])
-@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-@ApiTags('minecraft')
+import { Error } from '@root/common/error/decorators/error.decorator';
+
+@Controller(['minecraft'])
+@Error()
 export class MinecraftController {
   constructor(private readonly minecraftService: MinecraftService) {}
 

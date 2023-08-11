@@ -25,6 +25,7 @@ import { PaginationModule } from './pagination/pagination.module';
 
 import { APP_LANGUAGE } from '@root/app/constants/app.constant';
 import { ENUM_MESSAGE_LANGUAGE } from './message/constants/message.enum.constant';
+import { ResponseModule } from './response/reponse.module';
 import { RequestModule } from './request/request.module';
 
 @Global()
@@ -39,7 +40,7 @@ import { RequestModule } from './request/request.module';
       validationSchema: Joi.object({
         // APP
         NODE_ENV: Joi.string().default('development').required(),
-        PORT: Joi.number().default(3000),
+        PORT: Joi.number().default(3000).required(),
         CACHE_TTL: Joi.number().default(120),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRES_IN: Joi.number().default(86400),
@@ -56,7 +57,7 @@ import { RequestModule } from './request/request.module';
         REDIS_PORT: Joi.number().required(),
 
         // S3
-        B2_ENABLED: Joi.boolean().default(false).required(),
+        B2_ENABLED: Joi.boolean().default(false).allow(true, false).required(),
         B2_ENDPOINT: Joi.when('B2_ENABLED', {
           is: true,
           then: Joi.string().required(),
@@ -69,7 +70,7 @@ import { RequestModule } from './request/request.module';
           is: true,
           then: Joi.string().required(),
         }),
-        R2_ENABLED: Joi.boolean().default(false).required(),
+        R2_ENABLED: Joi.boolean().default(false).allow(true, false).required(),
         R2_ENDPOINT: Joi.when('R2_ENABLED', {
           is: true,
           then: Joi.string().required(),
@@ -85,7 +86,7 @@ import { RequestModule } from './request/request.module';
 
         // Mailer
         MAILER_HOST: Joi.string().required(),
-        MAILER_PORT: Joi.number().required(),
+        MAILER_PORT: Joi.number().allow(25, 26, 465, 587, 995).required(),
         MAILER_USER: Joi.string().required(),
         MAILER_PASS: Joi.string().required(),
         MAILER_SECURE: Joi.boolean().required(),
@@ -104,16 +105,23 @@ import { RequestModule } from './request/request.module';
           .min(5)
           .max(50)
           .required(),
-        AUTH_JWT_ACCESS_TOKEN_EXPIRED: Joi.string().default('15m').required(),
+        AUTH_JWT_ACCESS_TOKEN_EXPIRED: Joi.string()
+          .default('15m')
+          .regex(/^(\d+h)?(\d+m)?(\d+s)?$/, 'i')
+          .required(),
 
         AUTH_JWT_REFRESH_TOKEN_SECRET_KEY: Joi.string()
           .alphanum()
           .min(5)
           .max(50)
           .required(),
-        AUTH_JWT_REFRESH_TOKEN_EXPIRED: Joi.string().default('7d').required(),
+        AUTH_JWT_REFRESH_TOKEN_EXPIRED: Joi.string()
+          .default('7d')
+          .regex(/^(\d+d)?(\d+h)?(\d+m)?(\d+s)?$/, 'i')
+          .required(),
         AUTH_JWT_REFRESH_TOKEN_NOT_BEFORE_EXPIRATION: Joi.string()
           .default('15m')
+          .regex(/^(\d+h)?(\d+m)?(\d+s)?$/, 'i')
           .required(),
 
         // API
@@ -189,6 +197,7 @@ import { RequestModule } from './request/request.module';
     HelperModule,
     PaginationModule,
     ErrorModule,
+    ResponseModule,
     RequestModule,
     DatabaseModule,
     AwsModule,

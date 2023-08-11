@@ -12,6 +12,7 @@ import {
   IPolicyRule,
   PolicyHandler,
 } from '../interfaces/policy.interface';
+import { IRequestApp } from '@root/common/request/interfaces/request.interface';
 
 @Injectable()
 export class PolicyGuard implements CanActivate {
@@ -27,9 +28,13 @@ export class PolicyGuard implements CanActivate {
         context.getHandler(),
       ) || [];
 
-    const { _user: user, _role } = context.switchToHttp().getRequest();
+    const { user } = context.switchToHttp().getRequest<IRequestApp>();
+    const { permissions } = user;
+
     if (user.isOwner) return true;
-    const ability = this.policyAbilityFactory.defineAbilityFromRole(_role);
+    const ability = this.policyAbilityFactory.defineAbilityFromRole({
+      permissions,
+    });
 
     const policyHandler: PolicyHandler[] =
       this.policyAbilityFactory.mappingRules(policyRule);

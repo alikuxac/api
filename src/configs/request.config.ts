@@ -1,5 +1,7 @@
 import { registerAs } from '@nestjs/config';
+import ms from 'ms';
 
+import { seconds } from 'src/common/helper/constants/helper.function.constant';
 import { ENUM_REQUEST_METHOD } from 'src/common/request/constants/request.enum.constant';
 
 export default registerAs(
@@ -31,16 +33,16 @@ export default registerAs(
         'Access-Control-Max-Age',
         'Referer',
         'Host',
-        // 'X-Requested-With',
-        // 'x-custom-lang',
-        // 'x-timestamp',
-        // 'x-api-key',
-        // 'x-timezone',
-        // 'x-request-id',
-        // 'x-version',
-        // 'x-repo-version',
-        // 'X-Response-Time',
-        // 'user-agent',
+        'X-Requested-With',
+        'x-custom-lang',
+        'x-timestamp',
+        'x-api-key',
+        'x-timezone',
+        'x-request-id',
+        'x-version',
+        'x-repo-version',
+        'X-Response-Time',
+        'user-agent',
       ],
     },
     userAgent: {
@@ -56,5 +58,10 @@ export default registerAs(
         'UCBrowser',
       ],
     },
+    throttle: {
+      ttl: seconds('500'), // 0.5 secs
+      limit: 10, // max request per reset time
+    },
+    timeout: ms('30s'),
   }),
 );

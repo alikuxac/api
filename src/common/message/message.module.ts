@@ -4,7 +4,6 @@ import {
   I18nModule,
   HeaderResolver,
   I18nJsonLoader,
-  CookieResolver,
   QueryResolver,
 } from 'nestjs-i18n';
 import { ConfigService } from '@nestjs/config';
@@ -36,7 +35,6 @@ import { MessageMiddlewareModule } from 'src/common/message/middleware/message.m
       resolvers: [
         new QueryResolver(['lang', 'language', 'l']),
         new HeaderResolver(['x-custom-lang', 'api-lang']),
-        new CookieResolver(['lang', 'l']),
       ],
     }),
     MessageMiddlewareModule,

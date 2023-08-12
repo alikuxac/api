@@ -1,20 +1,30 @@
+import { Injectable } from '@nestjs/common';
 import {
   Command,
   InjectDiscordClient,
-  InteractionEvent,
   Handler,
   IA,
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Client, EmbedBuilder, CommandInteraction } from 'discord.js';
+import {
+  Client,
+  EmbedBuilder,
+  ChatInputCommandInteraction,
+  MessagePayload,
+} from 'discord.js';
 import util from 'util';
 
 import { DiscordEval } from 'src/modules/bot/discord/entities';
 import { EvalDto } from 'src/modules/bot/discord/dto/eval.dto';
 
-@Command({ name: 'eval', description: 'Eval command', dmPermission: true })
+@Command({
+  name: 'eval',
+  description: 'Evaluates the code provide',
+  descriptionLocalizations: { vi: 'Thực thi code' },
+})
+@Injectable()
 export class EvalCommand {
   constructor(
     @InjectDiscordClient()
@@ -42,9 +52,9 @@ export class EvalCommand {
   }
 
   @Handler()
-  async handler(
-    @InteractionEvent(SlashCommandPipe) dto: EvalDto,
-    @IA() interaction: CommandInteraction,
+  async onEval(
+    @IA() interaction: ChatInputCommandInteraction,
+    @IA(SlashCommandPipe) dto: EvalDto,
   ) {
     const { code } = dto;
     try {
@@ -75,7 +85,7 @@ export class EvalCommand {
               Date.now() - interaction.createdTimestamp
             } ms`,
           });
-        await interaction.reply({ embeds: [embed] });
+        return new MessagePayload(interaction.channel, { embeds: [embed] });
       } else {
         const newEval = new this.discordEvalModel({
           botId: this.client.user.id,
@@ -84,12 +94,15 @@ export class EvalCommand {
           result: result,
         });
         await newEval.save();
-        await interaction.reply(
-          'Because result is too long, please check result  by using API',
-        );
+        return new MessagePayload(interaction.channel, {
+          content:
+            'Because result is too long, please check result  by using API',
+        });
       }
     } catch (error) {
-      await interaction.reply({ content: 'Error while evaluating code' });
+      return new MessagePayload(interaction.channel, {
+        content: 'Error while evaluating code',
+      });
     }
   }
 }

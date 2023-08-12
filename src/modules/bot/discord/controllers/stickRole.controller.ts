@@ -1,8 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { StickRoleService } from 'src/modules/bot/discord/services';
 import { getAllStickRoleDto } from 'src/modules/bot/discord/dto/stickRole.dto';
+import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
 
 @Controller('stickrole')
+@ThrottleredGuard()
 export class StickRoleController {
   constructor(private readonly stickRoleService: StickRoleService) {}
 

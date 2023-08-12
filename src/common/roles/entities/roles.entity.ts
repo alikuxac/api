@@ -1,18 +1,20 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { CallbackWithoutResultAndOptionalError, Document } from 'mongoose';
+import { DatabaseEntity } from '@root/common/database/decorators/database.decorator';
+import { DatabaseMongoObjectIdEntityAbstract } from '@root/common/database/abstracts/mongo/entities/database.mongo.object-id.entity.abstract';
 import { RolePermissionGroup as PermGroup } from 'src/common/policy/constants/policy.enum.constant';
 import { IPolicyRule } from '@root/common/policy/interfaces/policy.interface';
-@Schema({
-  collection: 'role',
-  versionKey: false,
-  timestamps: true,
-  toJSON: {
-    virtuals: true,
-  },
-})
-export class Role extends Document {
-  @Prop({ unique: true, index: true, length: 50, required: true })
+
+@DatabaseEntity({ collection: 'role', toJSON: { virtuals: true } })
+export class RoleEntity extends DatabaseMongoObjectIdEntityAbstract {
+  @Prop({
+    unique: true,
+    index: true,
+    required: true,
+    maxlength: 30,
+    type: String,
+    lowercase: true,
+  })
   name: string;
 
   @Prop({
@@ -25,10 +27,11 @@ export class Role extends Document {
   description: string;
 
   @Prop({
-    name: 'position',
-    type: Number,
+    name: 'is_active',
+    type: Boolean,
+    default: true,
   })
-  position: number;
+  isActive: boolean;
 
   @Prop({
     name: 'permissions',
@@ -42,4 +45,12 @@ export class Role extends Document {
   permissions: IPolicyRule[];
 }
 
-export const RoleSchema = SchemaFactory.createForClass(Role);
+export const RoleSchema = SchemaFactory.createForClass(RoleEntity);
+
+export type RoleDoc = RoleEntity & Document;
+
+RoleSchema.pre('save', function (next: CallbackWithoutResultAndOptionalError) {
+  this.name = this.name.toLowerCase();
+
+  next();
+});

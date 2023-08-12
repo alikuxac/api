@@ -1,28 +1,19 @@
-import {
-  Controller,
-  Get,
-  UseGuards,
-  Query,
-  UsePipes,
-  ValidationPipe,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards, Query, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { HypixelService } from '../services/hypixel.service';
 import { uuidDto, guildDto } from '../dto/hypixel.dto';
 import { HypixelGuard } from '@hypixel/hypixel.guard';
+
 import { SkipAuth } from '@root/common/auth/decorators/auth.skip.decorator';
+import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
+import { Error } from '@root/common/error/decorators/error.decorator';
 
 @Controller('hypixel')
-@UsePipes(
-  new ValidationPipe({
-    transform: true,
-    transformOptions: { enableImplicitConversion: true },
-  }),
-)
-@SkipAuth()
-@UseGuards(HypixelGuard)
 @ApiTags('Hypixel')
+@UseGuards(HypixelGuard)
+@Error()
+@ThrottleredGuard()
+@SkipAuth()
 export class HypixelController {
   constructor(private readonly hypixelService: HypixelService) {}
 

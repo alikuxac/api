@@ -3,7 +3,7 @@ import { DiscoveryService } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { InjectDiscordClient } from '@discord-nestjs/core';
-import { DiscordAPIError, Collection, Message, type Client } from 'discord.js';
+import { DiscordAPIError, Message, type Client } from 'discord.js';
 import { isNsfwChannel, isDMChannel } from '@sapphire/discord.js-utilities';
 
 import {
@@ -20,10 +20,7 @@ import { HelperDiscordService } from '@root/common/helper/services/helper.discor
 export class PrefixCommandExplorer implements OnModuleInit {
   private prefix: string;
 
-  private prefixCommands = new Collection<
-    string,
-    DecoratedPrefixCommand<IPrefixCommand>
-  >();
+  private prefixCommands: DecoratedPrefixCommand<IPrefixCommand>[];
 
   constructor(
     private readonly discoveryService: DiscoveryService,
@@ -38,13 +35,15 @@ export class PrefixCommandExplorer implements OnModuleInit {
     return this.prefixCommands;
   }
 
+  setPrefixCommandsList(commands: DecoratedPrefixCommand<IPrefixCommand>[]) {
+    this.prefixCommands = commands;
+  }
+
   onModuleInit() {
     const providers = this.discoveryService.getProviders();
     const prefixCommands = this.getPrefixCommands(providers);
 
-    for (const command of prefixCommands) {
-      this.prefixCommands.set(command.options.name, command);
-    }
+    this.setPrefixCommandsList(prefixCommands);
 
     this.client.on('ready', () => {
       this.registerPrefixCommands(prefixCommands);
@@ -84,7 +83,11 @@ export class PrefixCommandExplorer implements OnModuleInit {
     commands: DecoratedPrefixCommand<IPrefixCommand>[],
   ) {
     this.client.on('messageCreate', async (message) => {
-      if (message.author.bot || !message.content.startsWith(this.prefix))
+      if (
+        message.author.bot ||
+        message.webhookId ||
+        !message.content.startsWith(this.prefix)
+      )
         return;
 
       const args = message.content.slice(this.prefix.length).trim().split(/ +/);

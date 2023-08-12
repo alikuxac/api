@@ -1,33 +1,13 @@
-import { Module, DynamicModule } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { Module } from '@nestjs/common';
 
 import { UsersService } from './services/users.service';
 
-// Entity
-import { User, UserSchema } from 'src/modules/api/users/entities/user.entity';
+import { UserRepositoryModule } from './repositories/user.repository.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature(
-      [
-        {
-          name: User.name,
-          schema: UserSchema,
-        },
-      ],
-      'api',
-    ),
-  ],
+  imports: [UserRepositoryModule],
   controllers: [],
   providers: [UsersService],
   exports: [UsersService],
 })
-export class UsersModule {
-  static forFeature(): DynamicModule {
-    return {
-      module: UsersModule,
-      providers: [UsersService],
-      exports: [UsersService],
-    };
-  }
-}
+export class UsersModule {}

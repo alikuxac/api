@@ -11,15 +11,15 @@ import { AuthModule } from '@root/common/auth/auth.module';
 import { HealthController } from '@root/modules/system/health/controllers/health.controller';
 import { FunController } from '@root/modules/public/fun/controller/fun.controller';
 import { UserAuthController } from '@root/modules/api/users/controllers/user.auth.controller';
+import { MessagePublicController } from '@root/common/message/controllers/message.public.controller';
 
 @Module({
-  controllers: [HealthController, FunController, UserAuthController],
-  imports: [
-    HealthModule,
-    FunModule,
-    UsersModule.forFeature(),
-    AuthModule,
-    TerminusModule,
+  controllers: [
+    HealthController,
+    FunController,
+    UserAuthController,
+    MessagePublicController,
   ],
+  imports: [HealthModule, FunModule, UsersModule, AuthModule, TerminusModule],
 })
 export class RouterModule {}

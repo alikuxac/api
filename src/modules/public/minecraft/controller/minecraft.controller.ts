@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiQuery } from '@nestjs/swagger';
 import { MinecraftService } from '../service/minecraft.service';
 import {
@@ -14,9 +8,15 @@ import {
   serverDto,
 } from '../dto/minecraft.dto';
 
-@Controller(['minecraft', 'mc'])
-@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-@ApiTags('minecraft')
+import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
+import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
+import { Error } from '@root/common/error/decorators/error.decorator';
+
+@Controller(['minecraft'])
+@ApiTags('Minecraft')
+@Error()
+@AuthJwtAccessProtected()
+@ResponseCustomHeader()
 export class MinecraftController {
   constructor(private readonly minecraftService: MinecraftService) {}
 

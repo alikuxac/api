@@ -1,16 +1,20 @@
 export enum RolePermission {
   // All
-  Manage = 'manage',
+  MANAGE = 'manage',
 
   // Default
-  Read = 'read',
-  Create = 'create',
-  Update = 'update',
-  Delete = 'delete',
+  READ = 'read',
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
 
-  // Customize
-  Ban = 'ban',
-  Unban = 'unban',
+export enum RoleRequestPermission {
+  MANAGE,
+  READ,
+  CREATE,
+  UPDATE,
+  DELETE,
 }
 
 export enum RolePermissionGroup {

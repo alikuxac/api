@@ -1,22 +1,19 @@
-import {
-  Controller,
-  Get,
-  Query,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { TextService } from '../services/text.service';
 import { TextDto, base64TextDto } from '../dto/text.dto';
 
-@Controller(['text', 'txt'])
-@ApiTags('text')
-@UsePipes(
-  new ValidationPipe({
-    transform: true,
-    transformOptions: { enableImplicitConversion: true },
-  }),
-)
+import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
+import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
+import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
+import { Error } from '@root/common/error/decorators/error.decorator';
+
+@Controller(['text'])
+@ApiTags('Text')
+@Error()
+@ThrottleredGuard()
+@AuthJwtAccessProtected()
+@ResponseCustomHeader()
 export class TextController {
   constructor(private readonly textService: TextService) {}
 

@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import {
   HealthCheck,
   HealthCheckService,
@@ -6,8 +7,15 @@ import {
   MongooseHealthIndicator,
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
+import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
+import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
+import { Error } from '@root/common/error/decorators/error.decorator';
 
+@ApiTags('Health')
 @Controller('health')
+@Error()
+@ThrottleredGuard()
+@AuthJwtAccessProtected()
 export class HealthController {
   constructor(
     private health: HealthCheckService,

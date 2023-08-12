@@ -1,4 +1,5 @@
 import { InferSubjects, MongoAbility } from '@casl/ability';
+import { UserPayloadPermissionSerialization } from '@root/modules/api/users/serializations/user.payload.serialization';
 import {
   RolePermission,
   RolePermissionGroup,
@@ -29,3 +30,7 @@ interface IPolicyHandler {
 type IPolicyHandlerCallback = (ability: IPolicyAbility) => boolean;
 
 export type PolicyHandler = IPolicyHandler | IPolicyHandlerCallback;
+
+export interface IPolicyRequest {
+  permissions: UserPayloadPermissionSerialization[];
+}

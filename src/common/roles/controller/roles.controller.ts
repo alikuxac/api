@@ -84,6 +84,7 @@ export class RolesController {
   ) {}
 
   @RoleCreateDoc()
+  @Response('role.create')
   @PolicyAbilityProtected({
     subject: PermGroup.ROLE,
     action: [PermList.CREATE],

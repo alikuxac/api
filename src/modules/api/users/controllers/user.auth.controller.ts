@@ -20,6 +20,8 @@ import { ThrottleredGuard } from '@root/common/request/decorators/request.decora
 import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
 import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
 import { Error } from '@root/common/error/decorators/error.decorator';
+import { Response } from '@root/common/response/decorators/response.decorator';
+import { UserLoginSerialization } from '../serializations/user.login.serialization';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -34,6 +36,7 @@ export class UserAuthController {
   ) {}
 
   @SkipAuth()
+  @Response('user.login', { serialization: UserLoginSerialization })
   @Post('login')
   async login(@Body() { email, password }: signInDto) {
     const user = await this.usersService.findByUsernameOrEmail(email);
@@ -77,10 +80,7 @@ export class UserAuthController {
     );
 
     return {
-      tokenType,
-      expiresIn,
-      accessToken,
-      refreshToken,
+      data: { tokenType, expiresIn, accessToken, refreshToken },
     };
   }
 
@@ -91,6 +91,7 @@ export class UserAuthController {
   }
 
   @SkipAuth()
+  @Response('user.signUp')
   @Post('signup')
   async signup(@Body() dto: signUpDto) {
     const checkUser = await this.usersService.findByEmail(dto.email);

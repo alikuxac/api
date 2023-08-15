@@ -9,6 +9,11 @@ export function PrefixCommand(
   options?: PrefixCommandOptions,
 ) {
   return applyDecorators(
-    UseInterceptors(new PrefixCommandInterceptor(commandName, options)),
+    UseInterceptors(
+      new PrefixCommandInterceptor(commandName, {
+        isIgnoreBotMessage: true,
+        ...options,
+      }),
+    ),
   );
 }

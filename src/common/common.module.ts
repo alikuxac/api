@@ -125,7 +125,6 @@ import { RequestModule } from './request/request.module';
           .required(),
 
         // API
-        HYPIXEL_KEY: Joi.string().required(),
 
         // Admin
         ADMIN_EMAIL: Joi.string().required(),

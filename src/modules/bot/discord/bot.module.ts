@@ -15,13 +15,10 @@ import {
   DiscordGuildSchema,
 } from './entities';
 
-import { PrefixCommandModule } from './libs/prefix-commands/prefix-commands.module';
-
 import { StickRoleService } from './services';
 
 @Module({
   imports: [
-    PrefixCommandModule,
     DiscordModule.forFeature(),
     MongooseModule.forFeature(
       [

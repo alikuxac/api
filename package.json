@@ -11,7 +11,7 @@
     "@modules/*": "./dist/modules/*.js",
     "@utils/*": "./dist/utils/*.js"
   },
-  "scripts": {  
+  "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -72,7 +72,6 @@
     "joi": "^17.9.2",
     "lodash": "^4.17.21",
     "luxon": "^3.4.0",
-    "minecraft-server-util": "^5.4.4",
     "mongoose": "7.4.3",
     "ms": "^2.1.3",
     "nanoid": "4.0.2",

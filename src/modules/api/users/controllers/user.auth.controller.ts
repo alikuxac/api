@@ -10,7 +10,6 @@ import {
 
 import { AuthService } from '@root/common/auth/services/auth.service';
 import { UsersService } from 'src/modules/api/users/services/users.service';
-import { RolesService } from '@root/common/roles/service/roles.service';
 
 import { signInDto, signUpDto } from 'src/modules/api/users/dto/user.auth.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -32,7 +31,6 @@ export class UserAuthController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
-    private readonly rolesService: RolesService,
   ) {}
 
   @SkipAuth()
@@ -53,13 +51,11 @@ export class UserAuthController {
 
     const userWithRole = await this.usersService.joinWithRole(user);
 
-    const userPayload = await this.usersService.payloadSerialization(
-      userWithRole,
-    );
+    const userPayload =
+      await this.usersService.payloadSerialization(userWithRole);
 
-    const payload = await this.authService.createPayloadAccessToken(
-      userPayload,
-    );
+    const payload =
+      await this.authService.createPayloadAccessToken(userPayload);
     const tokenType: string = await this.authService.getTokenType();
     const expiresIn: number =
       await this.authService.getAccessTokenExpirationTime();
@@ -71,13 +67,11 @@ export class UserAuthController {
         loginDate: payloadAccessToken.loginDate,
       });
 
-    const accessToken: string = await this.authService.createAccessToken(
-      payloadAccessToken,
-    );
+    const accessToken: string =
+      await this.authService.createAccessToken(payloadAccessToken);
 
-    const refreshToken: string = await this.authService.createRefreshToken(
-      payloadRefreshToken,
-    );
+    const refreshToken: string =
+      await this.authService.createRefreshToken(payloadRefreshToken);
 
     return {
       data: { tokenType, expiresIn, accessToken, refreshToken },
@@ -102,13 +96,11 @@ export class UserAuthController {
 
     const userWithRole = await this.usersService.joinWithRole(user);
 
-    const userPayload = await this.usersService.payloadSerialization(
-      userWithRole,
-    );
+    const userPayload =
+      await this.usersService.payloadSerialization(userWithRole);
 
-    const payload = await this.authService.createPayloadAccessToken(
-      userPayload,
-    );
+    const payload =
+      await this.authService.createPayloadAccessToken(userPayload);
 
     const tokenType: string = await this.authService.getTokenType();
     const expiresIn: number =
@@ -120,13 +112,11 @@ export class UserAuthController {
         loginDate: payloadAccessToken.loginDate,
       });
 
-    const accessToken: string = await this.authService.createAccessToken(
-      payloadAccessToken,
-    );
+    const accessToken: string =
+      await this.authService.createAccessToken(payloadAccessToken);
 
-    const refreshToken: string = await this.authService.createRefreshToken(
-      payloadRefreshToken,
-    );
+    const refreshToken: string =
+      await this.authService.createRefreshToken(payloadRefreshToken);
 
     return {
       data: {

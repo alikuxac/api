@@ -24,7 +24,7 @@
     "test": "echo no test"
   },
   "dependencies": {
-    "@apollo/server": "^4.9.2",
+    "@apollo/server": "^4.9.3",
     "@casl/ability": "^6.5.0",
     "@discord-nestjs/common": "^5.2.8",
     "@discord-nestjs/core": "^5.3.10",

@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import {
   Command,
   InjectDiscordClient,
@@ -24,7 +23,6 @@ import { EvalDto } from 'src/modules/bot/discord/dto/eval.dto';
   description: 'Evaluates the code provide',
   descriptionLocalizations: { vi: 'Thực thi code' },
 })
-@Injectable()
 export class EvalCommand {
   constructor(
     @InjectDiscordClient()

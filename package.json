@@ -47,7 +47,7 @@
     "@nestjs/schedule": "^3.0.3",
     "@nestjs/swagger": "^7.1.10",
     "@nestjs/terminus": "^10.0.1",
-    "@nestjs/throttler": "^4.2.1",
+    "@nestjs/throttler": "^5.0.0",
     "@nestjs/websockets": "^10.2.4",
     "@notionhq/client": "^2.2.13",
     "@sapphire/discord-utilities": "^3.1.1",

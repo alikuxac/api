@@ -1,0 +1,10 @@
+{
+  "error": {
+    "notFound": "Không tìm thấy file",
+    "maxSize": "Kích thước file quá lớn",
+    "maxFiles": "Số file quá nhiều",
+    "mimeInvalid": "Kiểu file không hợp lệ",
+    "needExtractFirst": "Cần trích xuất dữ liệu",
+    "validationDto": "Dữ liệu nhập vào không hợp lệ"
+  }
+}

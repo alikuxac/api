@@ -93,8 +93,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.8.1",
-    "@commitlint/config-conventional": "^17.8.1",
+    "@commitlint/cli": "^18.0.0",
+    "@commitlint/config-conventional": "^18.0.0",
     "@nestjs/cli": "^10.1.18",
     "@nestjs/schematics": "^10.0.2",
     "@ryansonshine/commitizen": "^4.2.8",
@@ -117,7 +117,7 @@
     "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
-    "commitlint": "^17.8.1",
+    "commitlint": "^18.0.0",
     "commitlint-config-gitmoji": "^2.3.1",
     "cz-customizable": "^7.0.0",
     "eslint": "^8.52.0",

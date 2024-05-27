@@ -29,7 +29,7 @@
     "@discord-nestjs/common": "^5.2.12",
     "@discord-nestjs/core": "^5.3.14",
     "@faker-js/faker": "^8.4.1",
-    "@nestjs-modules/mailer": "^1.11.2",
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/apollo": "^12.1.0",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.3.8",

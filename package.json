@@ -89,7 +89,7 @@
     "swagger-ui-express": "^5.0.1",
     "telegraf": "^4.16.3",
     "ua-parser-js": "^1.0.38",
-    "uuid": "^9.0.1",
+    "uuid": "^10.0.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
@@ -114,7 +114,7 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.2",
     "@types/ua-parser-js": "^0.7.39",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.14.1",
     "commitlint": "^19.3.0",

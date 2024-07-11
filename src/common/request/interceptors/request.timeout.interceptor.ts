@@ -10,11 +10,11 @@ import { Reflector } from '@nestjs/core';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 import ms from 'ms';
-import { ENUM_ERROR_STATUS_CODE_ERROR } from 'src/common/error/constants/error.status-code.constant';
 import {
   REQUEST_CUSTOM_TIMEOUT_META_KEY,
   REQUEST_CUSTOM_TIMEOUT_VALUE_META_KEY,
 } from 'src/common/request/constants/request.constant';
+import { ENUM_REQUEST_STATUS_CODE_ERROR } from 'src/common/request/constants/request.status-code.constant';
 
 @Injectable()
 export class RequestTimeoutInterceptor
@@ -50,7 +50,7 @@ export class RequestTimeoutInterceptor
           catchError((err) => {
             if (err instanceof TimeoutError) {
               throw new RequestTimeoutException({
-                statusCode: ENUM_ERROR_STATUS_CODE_ERROR.ERROR_REQUEST_TIMEOUT,
+                statusCode: ENUM_REQUEST_STATUS_CODE_ERROR.TIMEOUT_ERROR,
                 message: 'http.clientError.requestTimeOut',
               });
             }
@@ -63,7 +63,7 @@ export class RequestTimeoutInterceptor
           catchError((err) => {
             if (err instanceof TimeoutError) {
               throw new RequestTimeoutException({
-                statusCode: ENUM_ERROR_STATUS_CODE_ERROR.ERROR_REQUEST_TIMEOUT,
+                statusCode: ENUM_REQUEST_STATUS_CODE_ERROR.TIMEOUT_ERROR,
                 message: 'http.clientError.requestTimeOut',
               });
             }

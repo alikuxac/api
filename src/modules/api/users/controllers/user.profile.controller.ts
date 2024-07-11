@@ -6,9 +6,7 @@ import { UserDoc } from '../entities/user.entity';
 import { GetUser, UserProtected } from '../decorators/users.decorator';
 import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
 import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
-import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
 import { Response } from '@root/common/response/decorators/response.decorator';
-import { Error } from '@root/common/error/decorators/error.decorator';
 
 import { IUserDoc } from '../interfaces/user.interface';
 
@@ -17,10 +15,8 @@ import { UserProfileSerialization } from '../serializations/user.profile.seriali
 import { changePasswordDto } from '../dto/user.dto';
 
 @Controller('profile')
-@Error()
 @AuthJwtAccessProtected()
 @ThrottleredGuard()
-@ResponseCustomHeader()
 export class UserProfileController {
   constructor(private readonly usersService: UsersService) {}
 

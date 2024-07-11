@@ -2,16 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ValidationError } from 'class-validator';
 import { I18nService } from 'nestjs-i18n';
-import {
-  IErrors,
-  IErrorsImport,
-  IValidationErrorImport,
-} from 'src/common/error/interfaces/error.interface';
 import { HelperArrayService } from 'src/common/helper/services/helper.array.service';
 import {
   IMessageErrorOptions,
-  IMessageOptions,
   IMessageSetOptions,
+  IMessageValidationError,
+  IMessageValidationImportError,
+  IMessageValidationImportErrorParam,
 } from 'src/common/message/interfaces/message.interface';
 import { IMessageService } from 'src/common/message/interfaces/message.service.interface';
 
@@ -19,6 +16,7 @@ import { IMessageService } from 'src/common/message/interfaces/message.service.i
 export class MessageService implements IMessageService {
   private readonly appDefaultLanguage: string;
   private readonly appDefaultAvailableLanguage: string[];
+  private readonly debug: boolean;
 
   constructor(
     private readonly i18n: I18nService,
@@ -30,6 +28,7 @@ export class MessageService implements IMessageService {
     this.appDefaultAvailableLanguage = this.configService.get<string[]>(
       'message.availableLanguage',
     );
+    this.debug = this.configService.get<boolean>('app.debug');
   }
 
   getAvailableLanguages(): string[] {
@@ -40,94 +39,61 @@ export class MessageService implements IMessageService {
     return this.appDefaultLanguage;
   }
 
-  filterLanguage(customLanguages: string[]): string[] {
-    return this.helperArrayService.filterIncludeUniqueByArray(
-      customLanguages,
+  setMessage(path: string, options?: IMessageSetOptions): string {
+    const language: string = options?.customLanguage
+      ? this.filterLanguage(options.customLanguage)[0]
+      : this.appDefaultLanguage;
+
+    return this.i18n.translate(path, {
+      lang: language,
+      args: options?.properties,
+      debug: this.debug,
+    }) as any;
+  }
+
+  filterLanguage(customLanguages: string): string[] {
+    return this.helperArrayService.getIntersection(
+      [customLanguages],
       this.appDefaultAvailableLanguage,
     );
   }
 
-  setMessage(lang: string, key: string, options?: IMessageSetOptions): string {
-    return this.i18n.translate(key, {
-      lang: lang,
-      args: options?.properties,
-    }) as any;
-  }
-
-  getRequestErrorsMessage(
-    requestErrors: ValidationError[],
+  setValidationMessage(
+    errors: ValidationError[],
     options?: IMessageErrorOptions,
-  ): IErrors[] {
-    const messages: Array<IErrors[]> = [];
-    for (const requestError of requestErrors) {
-      let children: Record<string, any>[] = requestError.children;
-      let constraints: string[] = Object.keys(requestError.constraints);
-      let property: string = requestError.property;
-      let propertyValue: string = requestError.value;
+  ): IMessageValidationError[] {
+    const messages: IMessageValidationError[] = [];
+    for (const error of errors) {
+      const property = error.property ?? 'unknown';
+      const constraints: string[] = Object.keys(error.constraints ?? []);
 
-      while (children.length > 0) {
-        property = `${property}.${children[0].property}`;
-
-        if (children[0].children?.length > 0) {
-          children = children[0].children;
-        } else {
-          constraints = Object.keys(children[0].constraints);
-          propertyValue = children[0].value;
-          children = [];
-        }
-      }
-
-      const errors: IErrors[] = [];
       for (const constraint of constraints) {
-        errors.push({
+        const message = this.setMessage(`request.${constraint}`, {
+          customLanguage: options?.customLanguage,
+          properties: {
+            property,
+            value: error.value,
+          },
+        });
+
+        messages.push({
           property,
-          message: this.get(`request.${constraint}`, {
-            customLanguages: options?.customLanguages,
-            properties: {
-              property,
-              value: propertyValue,
-            },
-          }),
+          message: message,
         });
       }
-
-      messages.push(errors);
     }
 
-    return messages.flat(1) as IErrors[];
+    return messages;
   }
 
-  getImportErrorsMessage(
-    errors: IValidationErrorImport[],
+  setValidationImportMessage(
+    errors: IMessageValidationImportErrorParam[],
     options?: IMessageErrorOptions,
-  ): IErrorsImport[] {
+  ): IMessageValidationImportError[] {
     return errors.map((val) => ({
       row: val.row,
-      file: val.file,
-      errors: this.getRequestErrorsMessage(val.errors, options),
+      sheetName: val.sheetName,
+      errors: this.setValidationMessage(val.error, options),
     }));
-  }
-
-  get<T = string>(key: string, options?: IMessageOptions): T {
-    const customLanguages =
-      options?.customLanguages?.length > 0
-        ? this.filterLanguage(options.customLanguages)
-        : [this.appDefaultLanguage];
-
-    if (customLanguages.length > 1) {
-      return customLanguages.reduce(
-        (a, v) => ({
-          ...a,
-          [v]: this.setMessage(v, key, {
-            properties: options?.properties,
-          }),
-        }),
-        {},
-      ) as any;
-    }
-
-    return this.setMessage(customLanguages[0], key, {
-      properties: options?.properties,
-    }) as any;
   }
 }

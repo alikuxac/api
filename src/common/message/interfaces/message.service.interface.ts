@@ -1,27 +1,23 @@
-import { ValidationError } from '@nestjs/common';
-import {
-  IErrors,
-  IErrorsImport,
-  IValidationErrorImport,
-} from 'src/common/error/interfaces/error.interface';
+import { ValidationError } from 'class-validator';
 import {
   IMessageErrorOptions,
-  IMessageOptions,
   IMessageSetOptions,
+  IMessageValidationError,
+  IMessageValidationImportError,
+  IMessageValidationImportErrorParam,
 } from 'src/common/message/interfaces/message.interface';
 
 export interface IMessageService {
   getAvailableLanguages(): string[];
   getLanguage(): string;
-  filterLanguage(customLanguages: string[]): string[];
-  setMessage(lang: string, key: string, options?: IMessageSetOptions): string;
-  getRequestErrorsMessage(
-    requestErrors: ValidationError[],
+  filterLanguage(customLanguage: string): string[];
+  setMessage(path: string, options?: IMessageSetOptions): string;
+  setValidationMessage(
+    errors: ValidationError[],
     options?: IMessageErrorOptions,
-  ): IErrors[];
-  getImportErrorsMessage(
-    errors: IValidationErrorImport[],
+  ): IMessageValidationError[];
+  setValidationImportMessage(
+    errors: IMessageValidationImportErrorParam[],
     options?: IMessageErrorOptions,
-  ): IErrorsImport[];
-  get<T = string>(key: string, options?: IMessageOptions): T;
+  ): IMessageValidationImportError[];
 }

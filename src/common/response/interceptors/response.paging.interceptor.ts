@@ -18,10 +18,7 @@ import {
 } from 'class-transformer';
 import qs from 'qs';
 import { IRequestApp } from 'src/common/request/interfaces/request.interface';
-import {
-  IMessage,
-  IMessageOptionsProperties,
-} from 'src/common/message/interfaces/message.interface';
+import { IMessageOptionsProperties } from 'src/common/message/interfaces/message.interface';
 import {
   ResponsePaginationCursorSerialization,
   ResponsePagingMetadataSerialization,
@@ -76,7 +73,7 @@ export class ResponsePagingInterceptor<T>
             );
 
           // metadata
-          const __customLang = request.__customLang;
+          const __customLang = request.__language;
           const __path = request.path;
           const __requestId = request.__id;
           const __timestamp = request.__xTimestamp ?? request.__timestamp;
@@ -174,7 +171,7 @@ export class ResponsePagingInterceptor<T>
           };
 
           if (
-            !this.helperArrayService.includes(
+            !this.helperArrayService.notIn(
               Object.values(cursorPaginationMetadata),
               undefined,
             )
@@ -182,10 +179,10 @@ export class ResponsePagingInterceptor<T>
             metadata.cursor = cursorPaginationMetadata;
           }
 
-          const message: string | IMessage = await this.messageService.get(
+          const message: string = await this.messageService.setMessage(
             messagePath,
             {
-              customLanguages: __customLang,
+              customLanguage: __customLang,
               properties: messageProperties,
             },
           );

@@ -5,15 +5,11 @@ import { TextDto, base64TextDto } from '../dto/text.dto';
 
 import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
 import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
-import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
-import { Error } from '@root/common/error/decorators/error.decorator';
 
 @Controller(['text'])
 @ApiTags('Text')
-@Error()
 @ThrottleredGuard()
 @AuthJwtAccessProtected()
-@ResponseCustomHeader()
 export class TextController {
   constructor(private readonly textService: TextService) {}
 

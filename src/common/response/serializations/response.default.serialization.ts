@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IMessage } from 'src/common/message/interfaces/message.interface';
 
 export class ResponseMetadataSerialization {
-  languages: string[];
+  languages: string;
   timestamp: number;
   timezone: string;
   requestId: string;
@@ -40,7 +39,7 @@ export class ResponseDefaultSerialization<T = Record<string, any>> {
       },
     ],
   })
-  message: string | IMessage;
+  message: string;
 
   @ApiProperty({
     name: '_metadata',

@@ -50,7 +50,6 @@ import {
 } from '@root/common/response/decorators/response.decorator';
 import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
 import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
-import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
 
 import {
   UserAdminGetGuard,
@@ -64,14 +63,11 @@ import { GetUser } from '../decorators/users.decorator';
 import { UserListSerialization } from '../serializations/user.list.serialization';
 import { ResponseIdSerialization } from '@root/common/response/serializations/response.id.serialization';
 import { UserGetSerialization } from '../serializations/user.get.serialization';
-import { Error } from '@root/common/error/decorators/error.decorator';
 
 @Controller('user')
 @ApiTags('Users')
-@Error()
 @AuthJwtAccessProtected()
 @ThrottleredGuard()
-@ResponseCustomHeader()
 export class UsersController {
   constructor(
     private readonly rolesService: RolesService,

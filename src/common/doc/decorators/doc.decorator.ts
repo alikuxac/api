@@ -30,7 +30,6 @@ import {
   IDocOfOptions,
   IDocResponseOptions,
 } from 'src/common/doc/interfaces/doc.interface';
-import { ENUM_ERROR_STATUS_CODE_ERROR } from 'src/common/error/constants/error.status-code.constant';
 import { ENUM_FILE_EXCEL_MIME } from 'src/common/files/constants/file.enum.constant';
 import { FileMultipleDto } from 'src/common/files/dtos/file.multiple.dto';
 import { FileSingleDto } from 'src/common/files/dtos/file.single.dto';
@@ -256,21 +255,6 @@ export function Doc(options?: IDocOptions): MethodDecorator {
         },
       },
     ]),
-    DocDefault({
-      httpStatus: HttpStatus.SERVICE_UNAVAILABLE,
-      messagePath: 'http.serverError.serviceUnavailable',
-      statusCode: ENUM_ERROR_STATUS_CODE_ERROR.ERROR_SERVICE_UNAVAILABLE,
-    }),
-    DocDefault({
-      httpStatus: HttpStatus.INTERNAL_SERVER_ERROR,
-      messagePath: 'http.serverError.internalServerError',
-      statusCode: ENUM_ERROR_STATUS_CODE_ERROR.ERROR_UNKNOWN,
-    }),
-    DocDefault({
-      httpStatus: HttpStatus.REQUEST_TIMEOUT,
-      messagePath: 'http.serverError.requestTimeout',
-      statusCode: ENUM_ERROR_STATUS_CODE_ERROR.ERROR_REQUEST_TIMEOUT,
-    }),
   );
 }
 
@@ -289,7 +273,7 @@ export function DocRequest(options?: IDocRequestOptions) {
     docs.push(
       DocDefault({
         httpStatus: HttpStatus.UNPROCESSABLE_ENTITY,
-        statusCode: ENUM_REQUEST_STATUS_CODE_ERROR.REQUEST_VALIDATION_ERROR,
+        statusCode: ENUM_REQUEST_STATUS_CODE_ERROR.VALIDATION_ERROR,
         messagePath: 'request.validation',
       }),
     );
@@ -354,28 +338,20 @@ export function DocGuard(options?: IDocGuardOptions) {
     oneOfForbidden.push(
       {
         statusCode:
-          ENUM_REQUEST_STATUS_CODE_ERROR.REQUEST_USER_AGENT_OS_INVALID_ERROR,
+          ENUM_REQUEST_STATUS_CODE_ERROR.USER_AGENT_OS_INVALID_ERROR,
         messagePath: 'request.error.userAgentInvalid',
       },
       {
         statusCode:
-          ENUM_REQUEST_STATUS_CODE_ERROR.REQUEST_USER_AGENT_BROWSER_INVALID_ERROR,
+          ENUM_REQUEST_STATUS_CODE_ERROR.USER_AGENT_BROWSER_INVALID_ERROR,
         messagePath: 'request.error.userAgentBrowserInvalid',
       },
       {
         statusCode:
-          ENUM_REQUEST_STATUS_CODE_ERROR.REQUEST_USER_AGENT_OS_INVALID_ERROR,
+          ENUM_REQUEST_STATUS_CODE_ERROR.USER_AGENT_OS_INVALID_ERROR,
         messagePath: 'request.error.userAgentOsInvalid',
       },
     );
-  }
-
-  if (options?.timestamp) {
-    oneOfForbidden.push({
-      statusCode:
-        ENUM_REQUEST_STATUS_CODE_ERROR.REQUEST_TIMESTAMP_INVALID_ERROR,
-      messagePath: 'request.error.timestampInvalid',
-    });
   }
 
   if (options?.role) {

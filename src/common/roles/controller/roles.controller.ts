@@ -53,8 +53,6 @@ import {
 
 import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
 import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
-import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
-import { Error } from '@root/common/error/decorators/error.decorator';
 import { GetRole } from '../decorators/role.decorator';
 import {
   RoleAdminDeleteGuard,
@@ -72,10 +70,8 @@ import { ResponseIdSerialization } from '@root/common/response/serializations/re
 
 @Controller('role')
 @ApiTags('Roles')
-@Error()
 @ThrottleredGuard()
 @AuthJwtAccessProtected()
-@ResponseCustomHeader()
 export class RolesController {
   constructor(
     private readonly usersService: UsersService,

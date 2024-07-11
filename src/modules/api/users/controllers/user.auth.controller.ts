@@ -17,16 +17,12 @@ import { ApiTags } from '@nestjs/swagger';
 import { SkipAuth } from '@root/common/auth/decorators/auth.skip.decorator';
 import { ThrottleredGuard } from '@root/common/request/decorators/request.decorator';
 import { AuthJwtAccessProtected } from '@root/common/auth/decorators/auth.jwt.decorator';
-import { ResponseCustomHeader } from '@root/common/response/decorators/headers.decorator';
-import { Error } from '@root/common/error/decorators/error.decorator';
 import { Response } from '@root/common/response/decorators/response.decorator';
 import { UserLoginSerialization } from '../serializations/user.login.serialization';
 
 @Controller('auth')
 @ApiTags('Auth')
-@Error()
 @ThrottleredGuard()
-@ResponseCustomHeader()
 export class UserAuthController {
   constructor(
     private readonly usersService: UsersService,

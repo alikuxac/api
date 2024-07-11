@@ -27,39 +27,36 @@
       "@assets/*": [
         "src/assets/*"
       ],
+      "@common": [
+        "src/common"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@database": [
+        "src/common/database"
+      ],
+      "@database/*": [
+        "src/common/database/*"
+      ],
+      "@discord": [
+        "src/modules/bot/discord"
+      ],
+      "@discord/*": [
+        "src/modules/bot/discord/*"
+      ],
+      "@helper/": [
+        "src/common/helper"
+      ],
+      "@helper/*": [
+        "src/common/helper/*"
+      ],
       "@modules": [
         "src/modules"
       ],
       "@modules/*": [
         "src/modules/*"
       ],
-      "@utils/*": [
-        "src/utils/*"
-      ],
-      "@ptero": [
-        "libs/ptero/src"
-      ],
-      "@ptero/*": [
-        "libs/ptero/src/*"
-      ],
-      "@hypixel": [
-        "libs/hypixel/src"
-      ],
-      "@hypixel/*": [
-        "libs/hypixel/src/*"
-      ],
-      "@forum": [
-        "libs/forum/src"
-      ],
-      "@forum/*": [
-        "libs/forum/src/*"
-      ],
-      "@finance": [
-        "libs/finance/src"
-      ],
-      "@finance/*": [
-        "libs/finance/src/*"
-      ]
     }
   }
 }
